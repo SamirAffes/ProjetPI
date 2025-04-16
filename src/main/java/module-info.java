@@ -1,8 +1,15 @@
-module com.pijava {
+module com.projetpi {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.graphics;
+    requires static lombok;
+    requires org.slf4j;
+    requires java.sql;
+    requires ch.qos.logback.core;
+    requires java.dotenv;
 
 
-    opens com.pijava to javafx.fxml;
-    exports com.pijava;
+    exports controllers;
+    exports test;
+    opens controllers to javafx.fxml;
 }
