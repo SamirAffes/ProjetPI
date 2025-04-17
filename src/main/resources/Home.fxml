@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.Home"
+            stylesheets="@css/styles.css"
+            styleClass="home-container"
+            prefWidth="1280" 
+            prefHeight="800">
+    
+    <!-- Left Sidebar Navigation -->
+    <left>
+        <VBox styleClass="sidebar">
+            <!-- Logo and Brand -->
+            <HBox styleClass="logo-container" alignment="CENTER">
+                <Label styleClass="logo-text" text="TMS" />
+            </HBox>
+            
+            <!-- Navigation Menu -->
+            <VBox styleClass="nav-menu">
+                <Button styleClass="nav-button, nav-button-active" text="Accueil" onAction="#handleButtonAction">
+                    <graphic>
+                        <ImageView fitWidth="24" fitHeight="24" preserveRatio="true" smooth="true">
+                            <Image url="@icons/home.png" />
+                        </ImageView>
+                    </graphic>
+                </Button>
+                
+                <Button styleClass="nav-button" text="Trajets" onAction="#handleButtonAction">
+                    <graphic>
+                        <ImageView fitWidth="24" fitHeight="24" preserveRatio="true" smooth="true">
+                            <Image url="@icons/route.png" />
+                        </ImageView>
+                    </graphic>
+                </Button>
+                
+                <Button styleClass="nav-button" text="Transports" onAction="#handleButtonAction">
+                    <graphic>
+                        <ImageView fitWidth="24" fitHeight="24" preserveRatio="true" smooth="true">
+                            <Image url="@icons/transport.png" />
+                        </ImageView>
+                    </graphic>
+                </Button>
+                
+                <Button styleClass="nav-button" text="Réservations" onAction="#handleButtonAction">
+                    <graphic>
+                        <ImageView fitWidth="24" fitHeight="24" preserveRatio="true" smooth="true">
+                            <Image url="@icons/reservation.png" />
+                        </ImageView>
+                    </graphic>
+                </Button>
+                
+                <Button styleClass="nav-button" text="Utilisateurs" onAction="#handleButtonAction">
+                    <graphic>
+                        <ImageView fitWidth="24" fitHeight="24" preserveRatio="true" smooth="true">
+                            <Image url="@icons/user.png" />
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </VBox>
+            
+            <!-- Footer -->
+            <Region VBox.vgrow="ALWAYS" />
+            <HBox styleClass="sidebar-footer" alignment="CENTER">
+                <Text styleClass="footer-text" text="TunTransport © 2025" />
+            </HBox>
+        </VBox>
+    </left>
+    
+    <!-- Main Content Area -->
+    <center>
+        <VBox styleClass="main-area">
+            <!-- Header with user info -->
+            <HBox styleClass="top-header">
+                <Label styleClass="page-title" text="Système de Gestion de Transport" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Label styleClass="user-info" text="Med Amine" />
+            </HBox>
+            
+            <!-- Dashboard Content -->
+            <VBox styleClass="dashboard-content">
+                <Text styleClass="welcome-text" text="Bienvenue au système de gestion de transport tunisien" />
+                
+                <!-- Quick Stats -->
+                <HBox spacing="20" styleClass="stats-container">
+                    <VBox styleClass="stat-card">
+                        <Label styleClass="stat-value" text="24" />
+                        <Label styleClass="stat-label" text="Transports actifs" />
+                    </VBox>
+                    
+                    <VBox styleClass="stat-card">
+                        <Label styleClass="stat-value" text="128" />
+                        <Label styleClass="stat-label" text="Réservations aujourd'hui" />
+                    </VBox>
+                    
+                    <VBox styleClass="stat-card">
+                        <Label styleClass="stat-value" text="1,549 DT" />
+                        <Label styleClass="stat-label" text="Revenus aujourd'hui" />
+                    </VBox>
+                    
+                    <VBox styleClass="stat-card">
+                        <Label styleClass="stat-value" text="98%" />
+                        <Label styleClass="stat-label" text="Satisfaction client" />
+                    </VBox>
+                </HBox>
+                
+                <!-- Quick Access Buttons -->
+                <HBox spacing="15" styleClass="quick-actions">
+                    <Button styleClass="quick-action-button" text="Nouvelle Réservation" onAction="#handleButtonAction">
+                        <graphic>
+                            <ImageView fitWidth="16" fitHeight="16" preserveRatio="true" smooth="true">
+                                <Image url="@icons/add.png" />
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                    <Button styleClass="quick-action-button" text="Ajouter un Transport" onAction="#handleButtonAction">
+                        <graphic>
+                            <ImageView fitWidth="16" fitHeight="16" preserveRatio="true" smooth="true">
+                                <Image url="@icons/add.png" />
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                    <Button styleClass="quick-action-button" text="Créer un Trajet" onAction="#handleButtonAction">
+                        <graphic>
+                            <ImageView fitWidth="16" fitHeight="16" preserveRatio="true" smooth="true">
+                                <Image url="@icons/add.png" />
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                    <Button styleClass="quick-action-button" text="Rapports" onAction="#handleButtonAction">
+                        <graphic>
+                            <ImageView fitWidth="16" fitHeight="16" preserveRatio="true" smooth="true">
+                                <Image url="@icons/add.png" />
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                </HBox>
+                
+                <!-- Recent Activities Section -->
+                <VBox styleClass="recent-section">
+                    <Label styleClass="section-title" text="Activités Récentes" />
+                    <TableView styleClass="recent-activities-table">
+                        <columns>
+                            <TableColumn text="ID" prefWidth="50" />
+                            <TableColumn text="Type" prefWidth="100" />
+                            <TableColumn text="Description" prefWidth="300" />
+                            <TableColumn text="Date" prefWidth="150" />
+                            <TableColumn text="Statut" prefWidth="100" />
+                        </columns>
+                        <placeholder>
+                            <Label text="Aucune activité récente" />
+                        </placeholder>
+                    </TableView>
+                </VBox>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

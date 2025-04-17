@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<VBox alignment="CENTER" spacing="15.0" xmlns:fx="http://javafx.com/fxml"
+    fx:controller="controllers.EditReservationController"
+    stylesheets="@css/styles.css" minWidth="600" minHeight="550">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+
+    <Text styleClass="title" text="Modifier la Réservation" />
+    
+    <GridPane hgap="15" vgap="15">
+        <columnConstraints>
+            <ColumnConstraints hgrow="NEVER" minWidth="150" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="250" />
+        </columnConstraints>
+        
+        <Label text="Trajet:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <ComboBox fx:id="routeComboBox" GridPane.columnIndex="1" GridPane.rowIndex="0" 
+                GridPane.hgrow="ALWAYS" maxWidth="Infinity" />
+        
+        <Label text="Transport:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <ComboBox fx:id="transportComboBox" GridPane.columnIndex="1" GridPane.rowIndex="1" 
+                GridPane.hgrow="ALWAYS" maxWidth="Infinity" />
+        
+        <Label text="Date:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <DatePicker fx:id="datePicker" GridPane.columnIndex="1" GridPane.rowIndex="2"
+                GridPane.hgrow="ALWAYS" maxWidth="Infinity" />
+        
+        <Label text="Heure:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+        <ComboBox fx:id="timeComboBox" GridPane.columnIndex="1" GridPane.rowIndex="3" 
+                GridPane.hgrow="ALWAYS" maxWidth="Infinity" />
+        
+        <CheckBox fx:id="roundTripCheckBox" text="Aller-retour" 
+                GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="2" />
+        
+        <Label text="Date de retour:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+        <DatePicker fx:id="returnDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="5"
+                GridPane.hgrow="ALWAYS" maxWidth="Infinity" />
+        
+        <Label text="Heure de retour:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+        <ComboBox fx:id="returnTimeComboBox" GridPane.columnIndex="1" GridPane.rowIndex="6" 
+                GridPane.hgrow="ALWAYS" maxWidth="Infinity" />
+        
+        <Label text="Statut:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+        <ComboBox fx:id="statusComboBox" GridPane.columnIndex="1" GridPane.rowIndex="7" 
+                GridPane.hgrow="ALWAYS" maxWidth="Infinity" />
+        
+        <Label text="Prix Total:" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+        <Label fx:id="priceLabel" text="0.00 DT" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+        
+        <Separator GridPane.columnIndex="0" GridPane.rowIndex="9" GridPane.columnSpan="2" />
+        
+        <Label text="Moyen de Paiement:" GridPane.columnIndex="0" GridPane.rowIndex="10" />
+        <HBox spacing="15" GridPane.columnIndex="1" GridPane.rowIndex="10" alignment="CENTER_LEFT">
+            <RadioButton fx:id="payWalletRadio" text="Portefeuille" />
+            <RadioButton fx:id="payCardRadio" text="Carte de crédit" />
+        </HBox>
+    </GridPane>
+    
+    <HBox spacing="15" alignment="CENTER_RIGHT">
+        <Button fx:id="cancelButton" text="Annuler" styleClass="cancel-button" />
+        <Button fx:id="saveButton" text="Enregistrer" styleClass="action-button" />
+    </HBox>
+    
+</VBox> 
