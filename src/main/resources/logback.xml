@@ -35,6 +35,24 @@
         </rollingPolicy>
     </appender>
 
+    <appender name="HIBERNATE_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/hibernate.log</file>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/hibernate.%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Configure Hibernate logging -->
+    <logger name="org.hibernate" level="INFO" additivity="false">
+        <appender-ref ref="HIBERNATE_FILE" />
+    </logger>
+    <logger name="org.hibernate.orm" level="INFO" additivity="false">
+        <appender-ref ref="HIBERNATE_FILE" />
+    </logger>
+
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="INFO_FILE" />

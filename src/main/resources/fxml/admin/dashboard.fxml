@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AdminDashboardController">
+   <left>
+      <VBox prefHeight="200.0" prefWidth="220.0" styleClass="sidebar" stylesheets="@../../styles/style.css" BorderPane.alignment="CENTER">
+         <children>
+            <Label styleClass="sidebar-title" text="TuniTransport" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="20.0" top="10.0" />
+               </VBox.margin>
+            </Label>
+            <Button fx:id="dashboardButton" mnemonicParsing="false" onAction="#showDashboard" prefWidth="200.0" styleClass="sidebar-button" text="Dashboard" textFill="WHITE" />
+            <Button fx:id="organisationsButton" layoutX="10.0" layoutY="47.0" mnemonicParsing="false" onAction="#showOrganisations" prefWidth="200.0" styleClass="sidebar-button" text="Gérer Organisations" textFill="WHITE" />
+            <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#logout" prefWidth="200.0" styleClass="sidebar-button" text="Déconnexion" textFill="WHITE" />
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </left>
+   <center>
+      <StackPane fx:id="contentArea" BorderPane.alignment="CENTER">
+         <children>
+            <VBox fx:id="dashboardView" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/style.css">
+               <children>
+                  <Label styleClass="dashboard-title" text="TuniTransport">
+                     <font>
+                        <Font size="36.0" />
+                     </font>
+                  </Label>
+                  <Label text="Système de Gestion des Moyens de Transport">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox fx:id="organisationsView" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/style.css" visible="false">
+               <children>
+                  <Label styleClass="dashboard-title" text="Gestion des Organisations">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="20.0" top="20.0" />
+                     </VBox.margin>
+                  </Label>
+                  <fx:include fx:id="organisationManagementContent" source="organisationManagement.fxml" />
+               </children>
+            </VBox>
+         </children>
+      </StackPane>
+   </center>
+</BorderPane>
