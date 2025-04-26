@@ -5,24 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="97c7973e-54a8-402c-9812-fa5eda47bb91" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/entities/Conducteur.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/entities/Maintenance.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/entities/OrgType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/entities/Organisation.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/entities/TypeMaintenance.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/entities/Vehicule.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/entities/VehiculeStatut.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/entities/VehiculeType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/services/OrganisationService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/Home.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/entities/pushToGit" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/persistence.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/CRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/CRUD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/test/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/test/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/Home.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/logback.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/logback.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/ConducteurManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/ConducteurManagementController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/OrganisationDashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/OrganisationDashboardController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/OrganisationLoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/OrganisationLoginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/VehiculeManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/VehiculeManagementController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/entities/Vehicule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/entities/Vehicule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/utils/OrganisationContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/utils/OrganisationContext.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -143,7 +132,7 @@
       <workItem from="1745657082374" duration="2996000" />
       <workItem from="1745661773907" duration="41000" />
       <workItem from="1745662636564" duration="3332000" />
-      <workItem from="1745667157734" duration="2688000" />
+      <workItem from="1745667157734" duration="4239000" />
     </task>
     <servers />
   </component>

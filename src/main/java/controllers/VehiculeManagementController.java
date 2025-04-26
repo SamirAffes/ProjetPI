@@ -3,17 +3,18 @@ package controllers;
 import entities.Conducteur;
 import entities.Organisation;
 import entities.Vehicule;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import entities.VehiculeStatut;
+import entities.VehiculeType;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -28,67 +29,33 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class VehiculeManagementController {
 
     @FXML
-    private TableView<Vehicule> vehiculeTableView;
-    
-    @FXML
-    private TableColumn<Vehicule, Integer> idColumn;
-    
-    @FXML
-    private TableColumn<Vehicule, String> immatriculationColumn;
-    
-    @FXML
-    private TableColumn<Vehicule, String> marqueColumn;
-    
-    @FXML
-    private TableColumn<Vehicule, String> modeleColumn;
-    
-    @FXML
-    private TableColumn<Vehicule, Integer> anneeColumn;
-    
-    @FXML
-    private TableColumn<Vehicule, String> statusColumn;
-    
-    @FXML
-    private TableColumn<Vehicule, String> typeColumn;
-    
-    @FXML
-    private TableColumn<Vehicule, Vehicule> actionsColumn;
-    
-    @FXML
-    private Button addVehiculeButton;
+    private FlowPane vehiculesContainer;
 
     @FXML
-    private TextField searchField;
+    private Button addButton;
+
+    private final VehiculeService vehiculeService = new VehiculeService();
+    private final ConducteurService conducteurService = new ConducteurService();
     
-    private VehiculeService vehiculeService = new VehiculeService();
-    private ConducteurService conducteurService = new ConducteurService();
-    private ObservableList<Vehicule> vehiculesList = FXCollections.observableArrayList();
     private Organisation organisation;
     
-    // Dossier pour stocker les photos des véhicules
-    private static final String PHOTOS_DIRECTORY = "src/main/resources/Images/vehicles/";
+    // Directory to store vehicle photos
+    private static final String PHOTOS_DIRECTORY = "src/main/resources/Images/Vehicles/";
 
     @FXML
     public void initialize() {
-        // Créer le dossier de photos si nécessaire
+        // Create photos directory if it doesn't exist
         createPhotosDirectory();
-        
-        setupTableColumns();
-        
-        // Setup search functionality
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filterVehicles(newValue);
-        });
         
         // Essayer de charger l'organisation depuis le contexte global
         if (OrganisationContext.getInstance().hasCurrentOrganisation()) {
@@ -96,8 +63,14 @@ public class VehiculeManagementController {
             loadVehicules();
             log.info("Organisation chargée depuis le contexte global dans VehiculeManagementController");
         }
-        
-        addVehiculeButton.setOnAction(e -> showVehiculeForm(null));
+    }
+    
+    public void setOrganisation(Organisation organisation) {
+        this.organisation = organisation;
+        // Load vehicles for this organization
+        loadVehicules();
+        log.info("Organisation définie dans VehiculeManagementController: {}", 
+                 organisation != null ? organisation.getNom() : "null");
     }
     
     private void createPhotosDirectory() {
@@ -111,252 +84,389 @@ public class VehiculeManagementController {
             }
         }
     }
-    
-    public void setOrganisation(Organisation organisation) {
-        this.organisation = organisation;
-        loadVehicules();
-        log.info("Organisation définie dans VehiculeManagementController: {}", 
-                 organisation != null ? organisation.getNom() : "null");
-    }
-    
-    private void setupTableColumns() {
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        immatriculationColumn.setCellValueFactory(new PropertyValueFactory<>("immatriculation"));
-        marqueColumn.setCellValueFactory(new PropertyValueFactory<>("marque"));
-        modeleColumn.setCellValueFactory(new PropertyValueFactory<>("modele"));
-        anneeColumn.setCellValueFactory(new PropertyValueFactory<>("annee"));
-        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
-        typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+
+    @FXML
+    public void onAddButtonClicked() {
+        if (organisation == null && OrganisationContext.getInstance().hasCurrentOrganisation()) {
+            this.organisation = OrganisationContext.getInstance().getCurrentOrganisation();
+        }
         
-        // Setup action column with buttons
-        actionsColumn.setCellFactory(column -> new TableCell<Vehicule, Vehicule>() {
-            private final Button viewBtn = new Button("Voir");
-            private final Button editBtn = new Button("Modifier");
-            private final Button deleteBtn = new Button("Supprimer");
+        showVehiculeForm(null);
+    }
+
+    private void loadVehicules() {
+        vehiculesContainer.getChildren().clear();
+
+        // Utiliser l'organisation du contexte global si elle n'est pas déjà définie
+        if (organisation == null && OrganisationContext.getInstance().hasCurrentOrganisation()) {
+            this.organisation = OrganisationContext.getInstance().getCurrentOrganisation();
+        }
+
+        if (organisation != null) {
+            // Get all vehicles and filter by organization
+            List<Vehicule> allVehicules = vehiculeService.afficher_tout();
+            boolean found = false;
             
-            {
-                viewBtn.getStyleClass().add("button-small");
-                editBtn.getStyleClass().add("button-small");
-                deleteBtn.getStyleClass().add("button-small");
-                
-                viewBtn.setOnAction(event -> {
-                    Vehicule vehicule = getTableView().getItems().get(getIndex());
-                    showVehiculeDetails(vehicule);
-                });
-                
-                editBtn.setOnAction(event -> {
-                    Vehicule vehicule = getTableView().getItems().get(getIndex());
-                    showVehiculeForm(vehicule);
-                });
-                
-                deleteBtn.setOnAction(event -> {
-                    Vehicule vehicule = getTableView().getItems().get(getIndex());
-                    deleteVehicule(vehicule);
-                });
-            }
-            
-            @Override
-            protected void updateItem(Vehicule vehicule, boolean empty) {
-                super.updateItem(vehicule, empty);
-                
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    HBox buttons = new HBox(5);
-                    buttons.getChildren().addAll(viewBtn, editBtn, deleteBtn);
-                    setGraphic(buttons);
+            for (Vehicule vehicule : allVehicules) {
+                if (vehicule.getOrganisationId() == organisation.getId()) {
+                    vehiculesContainer.getChildren().add(createVehiculeCard(vehicule));
+                    found = true;
                 }
             }
-        });
-    }
-    
-    private void loadVehicules() {
-        try {
-            // Utiliser l'organisation du contexte global si elle n'est pas déjà définie
-            if (organisation == null && OrganisationContext.getInstance().hasCurrentOrganisation()) {
-                this.organisation = OrganisationContext.getInstance().getCurrentOrganisation();
+            
+            if (!found) {
+                Label emptyLabel = new Label("Aucun véhicule trouvé");
+                emptyLabel.setFont(Font.font("System", FontWeight.NORMAL, 14));
+                vehiculesContainer.getChildren().add(emptyLabel);
             }
-            
-            List<Vehicule> allVehicules = vehiculeService.afficher_tout();
-            
-            // Filter by organisation
-            if (organisation != null) {
-                List<Vehicule> filteredVehicules = allVehicules.stream()
-                    .filter(v -> v.getOrganisationId() == organisation.getId())
-                    .collect(Collectors.toList());
-                
-                vehiculesList = FXCollections.observableArrayList(filteredVehicules);
-            } else {
-                vehiculesList = FXCollections.observableArrayList(allVehicules);
-            }
-            
-            vehiculeTableView.setItems(vehiculesList);
-        } catch (Exception e) {
-            log.error("Error loading vehicles", e);
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger la liste des véhicules.");
-        }
-    }
-    
-    private void filterVehicles(String searchText) {
-        if (searchText == null || searchText.isEmpty()) {
-            loadVehicules();
         } else {
-            String lowerCaseSearch = searchText.toLowerCase();
-            List<Vehicule> filteredList = vehiculesList.stream()
-                .filter(v -> 
-                    (v.getImmatriculation() != null && v.getImmatriculation().toLowerCase().contains(lowerCaseSearch)) ||
-                    (v.getMarque() != null && v.getMarque().toLowerCase().contains(lowerCaseSearch)) ||
-                    (v.getModele() != null && v.getModele().toLowerCase().contains(lowerCaseSearch)) ||
-                    (v.getType() != null && v.getType().toLowerCase().contains(lowerCaseSearch))
-                )
-                .collect(Collectors.toList());
-            
-            vehiculeTableView.setItems(FXCollections.observableArrayList(filteredList));
+            Label errorLabel = new Label("Erreur: Organisation non définie");
+            errorLabel.setFont(Font.font("System", FontWeight.NORMAL, 14));
+            vehiculesContainer.getChildren().add(errorLabel);
         }
     }
-    
+
+    private VBox createVehiculeCard(Vehicule vehicule) {
+        VBox card = new VBox(10);
+        card.getStyleClass().add("card");
+        card.setMaxWidth(300);
+        card.setMinWidth(300);
+        card.setPrefWidth(300);
+        card.setPrefHeight(220);
+        
+        // Create a layout with photo on the left and basic info on the right
+        HBox topContent = new HBox(10);
+        
+        // Photo area
+        StackPane photoContainer = new StackPane();
+        photoContainer.setMinWidth(80);
+        photoContainer.setMaxWidth(80);
+        photoContainer.setPrefWidth(80);
+        photoContainer.setMinHeight(80);
+        photoContainer.setMaxHeight(80);
+        photoContainer.setPrefHeight(80);
+        photoContainer.getStyleClass().add("logo-container");
+        
+        ImageView photoView = new ImageView();
+        photoView.setFitWidth(70);
+        photoView.setFitHeight(70);
+        photoView.setPreserveRatio(true);
+        
+        // Try to load the vehicle photo
+        if (vehicule.getPhoto() != null && !vehicule.getPhoto().isEmpty()) {
+            try {
+                File photoFile = new File(vehicule.getPhoto());
+                if (photoFile.exists()) {
+                    Image photoImage = new Image(photoFile.toURI().toString());
+                    photoView.setImage(photoImage);
+                } else {
+                    // Use a default image if the photo file doesn't exist
+                    photoView.setImage(new Image(getClass().getResourceAsStream("/Images/Vehicles/default_vehicle.png")));
+                }
+            } catch (Exception e) {
+                log.error("Error loading photo for vehicle: {}", vehicule.getImmatriculation(), e);
+                // Use a default image in case of error
+                photoView.setImage(new Image(getClass().getResourceAsStream("/Images/Vehicles/default_vehicle.png")));
+            }
+        } else {
+            // Use a default image if no photo is set
+            photoView.setImage(new Image(getClass().getResourceAsStream("/Images/Vehicles/default_vehicle.png")));
+        }
+        
+        photoContainer.getChildren().add(photoView);
+        
+        // Vehicle details
+        VBox detailsContainer = new VBox(5);
+        detailsContainer.setAlignment(Pos.TOP_LEFT);
+        
+        // Vehicle marca and model
+        Label nameLabel = new Label(vehicule.getMarque() + " " + vehicule.getModele());
+        nameLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
+        nameLabel.setWrapText(true);
+        
+        // Vehicle immatriculation
+        Label immatLabel = new Label("Immat: " + vehicule.getImmatriculation());
+        
+        // Vehicle status
+        Label statusLabel = new Label("Statut: " + vehicule.getStatut());
+        
+        // Conducteur info if assigned
+        Label conducteurLabel = new Label();
+        if (vehicule.getConducteurId() > 0) {
+            Conducteur conducteur = conducteurService.afficher(vehicule.getConducteurId());
+            if (conducteur != null) {
+                conducteurLabel.setText("Conducteur: " + conducteur.getPrenom() + " " + conducteur.getNom());
+            } else {
+                conducteurLabel.setText("Conducteur: Non trouvé");
+            }
+        } else {
+            conducteurLabel.setText("Conducteur: Non assigné");
+        }
+        
+        detailsContainer.getChildren().addAll(nameLabel, immatLabel, statusLabel, conducteurLabel);
+        
+        topContent.getChildren().addAll(photoContainer, detailsContainer);
+        
+        // Add some spacing for better appearance
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+        
+        // Buttons container
+        HBox buttonBox = new HBox(10);
+        buttonBox.setAlignment(Pos.CENTER_RIGHT);
+        
+        // Detail button
+        Button detailBtn = new Button("Détails");
+        detailBtn.getStyleClass().add("detail-button");
+        detailBtn.setOnAction(e -> showVehiculeDetails(vehicule));
+        
+        // Edit button
+        Button editBtn = new Button("Modifier");
+        editBtn.getStyleClass().add("edit-button");
+        editBtn.setOnAction(e -> showVehiculeForm(vehicule));
+        
+        // Delete button
+        Button deleteBtn = new Button("Supprimer");
+        deleteBtn.getStyleClass().add("delete-button");
+        deleteBtn.setOnAction(e -> deleteVehicule(vehicule));
+        
+        buttonBox.getChildren().addAll(detailBtn, editBtn, deleteBtn);
+        
+        // Add all elements to the card
+        card.getChildren().addAll(topContent, spacer, buttonBox);
+        card.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
+        
+        return card;
+    }
+
     private void showVehiculeDetails(Vehicule vehicule) {
         try {
             Stage detailStage = new Stage();
             detailStage.initModality(Modality.APPLICATION_MODAL);
             detailStage.setTitle("Détails du véhicule");
             
-            BorderPane detailPane = new BorderPane();
-            detailPane.setPadding(new Insets(20));
+            BorderPane detailsPane = new BorderPane();
+            detailsPane.setPadding(new Insets(20));
             
-            // Header with vehicle info
-            VBox headerBox = new VBox(10);
-            headerBox.setAlignment(Pos.CENTER);
+            VBox detailsBox = new VBox(15);
+            detailsBox.setAlignment(Pos.TOP_LEFT);
             
-            // Photo
+            // Add photo at the top
             ImageView photoView = new ImageView();
+            photoView.setFitWidth(150);
             photoView.setFitHeight(150);
-            photoView.setFitWidth(180);
             photoView.setPreserveRatio(true);
             
-            // Try to load vehicle's photo if available
+            // Try to load the vehicle photo
             if (vehicule.getPhoto() != null && !vehicule.getPhoto().isEmpty()) {
                 try {
                     File photoFile = new File(vehicule.getPhoto());
                     if (photoFile.exists()) {
-                        Image photo = new Image(photoFile.toURI().toString());
-                        photoView.setImage(photo);
+                        Image photoImage = new Image(photoFile.toURI().toString());
+                        photoView.setImage(photoImage);
                     } else {
-                        // Load default photo
-                        photoView.setImage(new Image(getClass().getResourceAsStream("/Images/default_vehicle.png")));
+                        photoView.setImage(new Image(getClass().getResourceAsStream("/Images/Vehicles/default_vehicle.png")));
                     }
                 } catch (Exception e) {
-                    log.warn("Could not load vehicle photo", e);
-                    photoView.setImage(new Image(getClass().getResourceAsStream("/Images/default_vehicle.png")));
+                    log.error("Error loading photo for vehicle details: {}", vehicule.getImmatriculation(), e);
+                    photoView.setImage(new Image(getClass().getResourceAsStream("/Images/Vehicles/default_vehicle.png")));
                 }
             } else {
-                // Load default photo
-                photoView.setImage(new Image(getClass().getResourceAsStream("/Images/default_vehicle.png")));
+                photoView.setImage(new Image(getClass().getResourceAsStream("/Images/Vehicles/default_vehicle.png")));
             }
             
-            Label nameLabel = new Label(vehicule.getMarque() + " " + vehicule.getModele() + " (" + vehicule.getAnnee() + ")");
-            nameLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+            // Add vehicle details
+            Label titleLabel = new Label(vehicule.getMarque() + " " + vehicule.getModele());
+            titleLabel.setFont(Font.font("System", FontWeight.BOLD, 18));
             
-            headerBox.getChildren().addAll(photoView, nameLabel);
+            // Format dates
+            String dateAjoutStr = "N/A";
+            String dateFabStr = "N/A";
             
-            // Vehicle details grid
-            GridPane detailsGrid = new GridPane();
-            detailsGrid.setHgap(10);
-            detailsGrid.setVgap(10);
-            detailsGrid.setPadding(new Insets(20, 0, 20, 0));
+            if (vehicule.getDateAjout() != null) {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                dateAjoutStr = sdf.format(vehicule.getDateAjout());
+            }
             
-            int row = 0;
+            if (vehicule.getDateFabrication() != null) {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                dateFabStr = sdf.format(vehicule.getDateFabrication());
+            }
             
-            // Immatriculation
-            Label immatriculationLbl = new Label("Immatriculation:");
-            immatriculationLbl.setStyle("-fx-font-weight: bold;");
-            Label immatriculationValue = new Label(vehicule.getImmatriculation());
-            detailsGrid.add(immatriculationLbl, 0, row);
-            detailsGrid.add(immatriculationValue, 1, row++);
+            // Create labels for all vehicle details
+            Label immatLabel = new Label("Immatriculation: " + vehicule.getImmatriculation());
+            Label typeLabel = new Label("Type: " + vehicule.getType());
+            Label statusLabel = new Label("Statut: " + vehicule.getStatut());
+            Label capaciteLabel = new Label("Capacité: " + vehicule.getCapacite() + " personnes");
+            Label dateAjoutLabel = new Label("Date d'ajout: " + dateAjoutStr);
+            Label dateFabLabel = new Label("Date de fabrication: " + dateFabStr);
             
-            // Type
-            Label typeLbl = new Label("Type:");
-            typeLbl.setStyle("-fx-font-weight: bold;");
-            Label typeValue = new Label(vehicule.getType());
-            detailsGrid.add(typeLbl, 0, row);
-            detailsGrid.add(typeValue, 1, row++);
-            
-            // Status
-            Label statusLbl = new Label("Status:");
-            statusLbl.setStyle("-fx-font-weight: bold;");
-            Label statusValue = new Label(vehicule.getStatus());
-            detailsGrid.add(statusLbl, 0, row);
-            detailsGrid.add(statusValue, 1, row++);
-            
-            // Date d'acquisition
-            Label acquisitionLbl = new Label("Date d'acquisition:");
-            acquisitionLbl.setStyle("-fx-font-weight: bold;");
-            Label acquisitionValue;
-            if (vehicule.getDateAcquisition() != null) {
-                acquisitionValue = new Label(vehicule.getDateAcquisition().toString());
+            // Conducteur info
+            Label conducteurLabel = new Label();
+            if (vehicule.getConducteurId() > 0) {
+                Conducteur conducteur = conducteurService.afficher(vehicule.getConducteurId());
+                if (conducteur != null) {
+                    conducteurLabel.setText("Conducteur: " + conducteur.getPrenom() + " " + conducteur.getNom() + " (Tél: " + conducteur.getTelephone() + ")");
+                } else {
+                    conducteurLabel.setText("Conducteur: Non trouvé");
+                }
             } else {
-                acquisitionValue = new Label("Non spécifiée");
-            }
-            detailsGrid.add(acquisitionLbl, 0, row);
-            detailsGrid.add(acquisitionValue, 1, row++);
-            
-            // Kilométrage
-            Label kmLbl = new Label("Kilométrage:");
-            kmLbl.setStyle("-fx-font-weight: bold;");
-            Label kmValue = new Label(vehicule.getKilometrage() + " km");
-            detailsGrid.add(kmLbl, 0, row);
-            detailsGrid.add(kmValue, 1, row++);
-            
-            // Conducteur assigné
-            Label conducteurLbl = new Label("Conducteur assigné:");
-            conducteurLbl.setStyle("-fx-font-weight: bold;");
-            Label conducteurValue;
-            
-            // Find driver assigned to this vehicle
-            List<Conducteur> conducteurs = conducteurService.afficher_tout();
-            Optional<Conducteur> assignedConducteur = conducteurs.stream()
-                .filter(c -> c.getVehiculeId() == vehicule.getId())
-                .findFirst();
-            
-            if (assignedConducteur.isPresent()) {
-                Conducteur conducteur = assignedConducteur.get();
-                conducteurValue = new Label(conducteur.getNom() + " " + conducteur.getPrenom());
-            } else {
-                conducteurValue = new Label("Non assigné");
-            }
-            detailsGrid.add(conducteurLbl, 0, row);
-            detailsGrid.add(conducteurValue, 1, row++);
-            
-            // Description
-            if (vehicule.getDescription() != null && !vehicule.getDescription().isEmpty()) {
-                Label descriptionLbl = new Label("Description:");
-                descriptionLbl.setStyle("-fx-font-weight: bold;");
-                TextArea descriptionValue = new TextArea(vehicule.getDescription());
-                descriptionValue.setEditable(false);
-                descriptionValue.setWrapText(true);
-                descriptionValue.setPrefRowCount(3);
-                descriptionValue.setPrefColumnCount(20);
-                detailsGrid.add(descriptionLbl, 0, row);
-                detailsGrid.add(descriptionValue, 1, row++);
+                conducteurLabel.setText("Conducteur: Non assigné");
             }
             
-            // Buttons
+            // Buttons for assigning/changing conducteur
+            Button assignConducteurBtn = new Button(vehicule.getConducteurId() > 0 ? "Changer conducteur" : "Assigner un conducteur");
+            assignConducteurBtn.getStyleClass().add("button-primary");
+            assignConducteurBtn.setOnAction(e -> assignConducteur(vehicule, detailStage));
+            
             Button closeButton = new Button("Fermer");
+            closeButton.getStyleClass().add("button-secondary");
+            closeButton.setPrefWidth(100);
             closeButton.setOnAction(e -> detailStage.close());
             
-            // Layout
-            VBox mainLayout = new VBox(20);
-            mainLayout.getChildren().addAll(headerBox, detailsGrid, closeButton);
+            HBox buttonBox = new HBox(10);
+            buttonBox.setAlignment(Pos.CENTER_RIGHT);
+            buttonBox.getChildren().addAll(assignConducteurBtn, closeButton);
             
-            detailPane.setCenter(mainLayout);
+            // Add photo to top center
+            HBox photoBox = new HBox();
+            photoBox.setAlignment(Pos.CENTER);
+            photoBox.getChildren().add(photoView);
             
-            Scene scene = new Scene(detailPane, 500, 600);
-            scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
+            // Add all elements to the details box
+            detailsBox.getChildren().addAll(
+                titleLabel, 
+                immatLabel,
+                typeLabel,
+                statusLabel,
+                capaciteLabel,
+                dateAjoutLabel,
+                dateFabLabel,
+                conducteurLabel,
+                buttonBox
+            );
+            
+            detailsPane.setTop(photoBox);
+            detailsPane.setCenter(detailsBox);
+            
+            detailsPane.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
+            
+            Scene scene = new Scene(detailsPane, 450, 550);
             detailStage.setScene(scene);
             detailStage.showAndWait();
+            
         } catch (Exception e) {
             log.error("Error showing vehicle details", e);
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'afficher les détails du véhicule.");
+        }
+    }
+    
+    private void assignConducteur(Vehicule vehicule, Stage parentStage) {
+        try {
+            // Get all conducteurs from the current organization
+            List<Conducteur> conducteurs = conducteurService.afficher_tout();
+            
+            if (conducteurs.isEmpty()) {
+                showAlert(Alert.AlertType.INFORMATION, "Information", "Aucun conducteur disponible. Veuillez ajouter des conducteurs d'abord.");
+                return;
+            }
+            
+            // Create a dialog to select a conducteur
+            Stage dialogStage = new Stage();
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(parentStage);
+            dialogStage.setTitle("Assigner un conducteur");
+            
+            VBox dialogVbox = new VBox(15);
+            dialogVbox.setPadding(new Insets(20));
+            
+            Label titleLabel = new Label("Sélectionner un conducteur");
+            titleLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
+            
+            // Create a combobox of conducteurs
+            ComboBox<Conducteur> conducteurCombo = new ComboBox<>();
+            for (Conducteur c : conducteurs) {
+                // Only show conducteurs from this organization
+                if (c.getOrganisationId() == organisation.getId()) {
+                    conducteurCombo.getItems().add(c);
+                }
+            }
+            
+            // Custom cell factory to display conducteur info
+            conducteurCombo.setCellFactory(param -> new ListCell<Conducteur>() {
+                @Override
+                protected void updateItem(Conducteur item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                    } else {
+                        setText(item.getPrenom() + " " + item.getNom() + " (" + item.getTelephone() + ")");
+                    }
+                }
+            });
+            
+            // Custom string converter for the selected item
+            conducteurCombo.setButtonCell(new ListCell<Conducteur>() {
+                @Override
+                protected void updateItem(Conducteur item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                    } else {
+                        setText(item.getPrenom() + " " + item.getNom() + " (" + item.getTelephone() + ")");
+                    }
+                }
+            });
+            
+            // Set current conducteur if any
+            if (vehicule.getConducteurId() > 0) {
+                for (Conducteur c : conducteurCombo.getItems()) {
+                    if (c.getId() == vehicule.getConducteurId()) {
+                        conducteurCombo.setValue(c);
+                        break;
+                    }
+                }
+            }
+            
+            // Action buttons
+            Button assignButton = new Button("Assigner");
+            assignButton.getStyleClass().add("button-primary");
+            assignButton.setOnAction(e -> {
+                Conducteur selectedConducteur = conducteurCombo.getValue();
+                if (selectedConducteur != null) {
+                    // Update the vehicle
+                    vehicule.setConducteurId(selectedConducteur.getId());
+                    vehiculeService.modifier(vehicule);
+                    
+                    // Close dialog and refresh details
+                    dialogStage.close();
+                    parentStage.close();
+                    showVehiculeDetails(vehicule);
+                    
+                    // Also update the cards view
+                    loadVehicules();
+                } else {
+                    showAlert(Alert.AlertType.WARNING, "Avertissement", "Veuillez sélectionner un conducteur.");
+                }
+            });
+            
+            Button cancelButton = new Button("Annuler");
+            cancelButton.setOnAction(e -> dialogStage.close());
+            
+            HBox buttonBox = new HBox(10);
+            buttonBox.setAlignment(Pos.CENTER_RIGHT);
+            buttonBox.getChildren().addAll(cancelButton, assignButton);
+            
+            dialogVbox.getChildren().addAll(titleLabel, conducteurCombo, buttonBox);
+            dialogVbox.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
+            
+            Scene dialogScene = new Scene(dialogVbox, 400, 150);
+            dialogStage.setScene(dialogScene);
+            dialogStage.showAndWait();
+            
+        } catch (Exception e) {
+            log.error("Error showing conductor assignment dialog", e);
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'afficher la boîte de dialogue d'assignation.");
         }
     }
 
@@ -379,146 +489,166 @@ public class VehiculeManagementController {
             formStage.setTitle(title);
             
             BorderPane mainPane = new BorderPane();
-            mainPane.setPadding(new Insets(20));
             
-            // Create form layout
             GridPane formGrid = new GridPane();
             formGrid.setHgap(10);
-            formGrid.setVgap(15);
-            formGrid.setPadding(new Insets(20, 10, 10, 10));
+            formGrid.setVgap(10);
+            formGrid.setPadding(new Insets(20));
             
-            // Photo section
-            VBox photoBox = new VBox(10);
-            photoBox.setAlignment(Pos.TOP_CENTER);
-            photoBox.setPadding(new Insets(0, 20, 0, 0));
+            // Add form fields
+            Label marqueLabel = new Label("Marque:");
+            TextField marqueField = new TextField();
+            marqueField.setPrefWidth(300);
             
-            ImageView photoView = new ImageView();
-            photoView.setFitHeight(150);
-            photoView.setFitWidth(180);
-            photoView.setPreserveRatio(true);
+            Label modelLabel = new Label("Modèle:");
+            TextField modelField = new TextField();
             
-            // Try to load vehicle's photo if editing
-            String initialPhotoPath;
+            Label immatLabel = new Label("Immatriculation:");
+            TextField immatField = new TextField();
+            
+            Label typeLabel = new Label("Type:");
+            ComboBox<VehiculeType> typeCombo = new ComboBox<>();
+            typeCombo.getItems().addAll(VehiculeType.values());
+            
+            Label statutLabel = new Label("Statut:");
+            ComboBox<VehiculeStatut> statutCombo = new ComboBox<>();
+            statutCombo.getItems().addAll(VehiculeStatut.values());
+            
+            Label capaciteLabel = new Label("Capacité:");
+            Spinner<Integer> capaciteSpinner = new Spinner<>(1, 100, 5);
+            
+            Label dateFabLabel = new Label("Date de fabrication:");
+            DatePicker dateFabPicker = new DatePicker();
+            
+            // Photo selection
+            Label photoLabel = new Label("Photo:");
+            
+            HBox photoBox = new HBox(10);
+            photoBox.setAlignment(Pos.CENTER_LEFT);
+            
+            TextField photoPathField = new TextField();
+            photoPathField.setEditable(false);
+            photoPathField.setPrefWidth(230);
+            
+            Button browseButton = new Button("Parcourir...");
+            
+            // Image preview
+            ImageView photoPreview = new ImageView();
+            photoPreview.setFitWidth(120);
+            photoPreview.setFitHeight(120);
+            photoPreview.setPreserveRatio(true);
+            
+            photoBox.getChildren().addAll(photoPathField, browseButton);
+            
+            VBox photoPreviewBox = new VBox(5);
+            photoPreviewBox.setAlignment(Pos.CENTER);
+            photoPreviewBox.getChildren().add(photoPreview);
+            
+            // Set current photo if available
+            String photoPath = null;
             if (vehiculeToEdit != null && vehiculeToEdit.getPhoto() != null) {
-                initialPhotoPath = vehiculeToEdit.getPhoto();
+                photoPath = vehiculeToEdit.getPhoto();
+                photoPathField.setText(photoPath);
+                
                 try {
-                    File photoFile = new File(initialPhotoPath);
+                    File photoFile = new File(photoPath);
                     if (photoFile.exists()) {
-                        Image photo = new Image(photoFile.toURI().toString());
-                        photoView.setImage(photo);
-                    } else {
-                        // Load default photo
-                        photoView.setImage(new Image(getClass().getResourceAsStream("/Images/default_vehicle.png")));
+                        Image photoImage = new Image(photoFile.toURI().toString());
+                        photoPreview.setImage(photoImage);
                     }
                 } catch (Exception e) {
-                    log.warn("Could not load vehicle photo", e);
-                    photoView.setImage(new Image(getClass().getResourceAsStream("/Images/default_vehicle.png")));
+                    log.error("Error loading existing photo: {}", e.getMessage());
                 }
-            } else {
-                initialPhotoPath = null;
-                // Load default photo
-                photoView.setImage(new Image(getClass().getResourceAsStream("/Images/default_vehicle.png")));
             }
             
-            Button photoButton = new Button("Choisir une photo");
-            photoButton.setOnAction(e -> {
+            // Final photo path that will be saved
+            final String[] selectedPhotoPath = {photoPath};
+            
+            browseButton.setOnAction(e -> {
                 FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle("Sélectionner une photo");
+                fileChooser.setTitle("Select Vehicle Photo");
                 fileChooser.getExtensionFilters().addAll(
-                        new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif")
+                    new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif")
                 );
+                
                 File selectedFile = fileChooser.showOpenDialog(formStage);
                 if (selectedFile != null) {
                     try {
-                        Image photo = new Image(selectedFile.toURI().toString());
-                        photoView.setImage(photo);
-                        photoView.setUserData(selectedFile.getAbsolutePath());
-                    } catch (Exception ex) {
-                        log.warn("Could not load selected photo", ex);
-                        showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger la photo sélectionnée.");
+                        // Generate unique file name to avoid overwrites
+                        String uniqueFileName = UUID.randomUUID().toString() + "_" + selectedFile.getName();
+                        Path targetPath = Paths.get(PHOTOS_DIRECTORY + uniqueFileName);
+                        
+                        // Create directory if it doesn't exist
+                        Files.createDirectories(targetPath.getParent());
+                        
+                        // Copy the file to our photos directory
+                        Files.copy(selectedFile.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+                        
+                        // Update the photo preview
+                        Image photoImage = new Image(targetPath.toFile().toURI().toString());
+                        photoPreview.setImage(photoImage);
+                        
+                        // Store the path to save later
+                        selectedPhotoPath[0] = targetPath.toString();
+                        photoPathField.setText(targetPath.toString());
+                        
+                        log.info("Photo selected and copied to: {}", targetPath);
+                    } catch (IOException ex) {
+                        log.error("Error copying photo file", ex);
+                        showAlert(Alert.AlertType.ERROR, "Erreur", 
+                                "Impossible de copier le fichier photo. " + ex.getMessage());
                     }
                 }
             });
             
-            photoBox.getChildren().addAll(photoView, photoButton);
-            
-            // Form fields
-            int row = 0;
-            
-            // Immatriculation
-            Label immatriculationLabel = new Label("Immatriculation *");
-            TextField immatriculationField = new TextField();
-            formGrid.add(immatriculationLabel, 0, row);
-            formGrid.add(immatriculationField, 1, row++);
-            
-            // Marque
-            Label marqueLabel = new Label("Marque *");
-            TextField marqueField = new TextField();
-            formGrid.add(marqueLabel, 0, row);
-            formGrid.add(marqueField, 1, row++);
-            
-            // Modèle
-            Label modeleLabel = new Label("Modèle *");
-            TextField modeleField = new TextField();
-            formGrid.add(modeleLabel, 0, row);
-            formGrid.add(modeleField, 1, row++);
-            
-            // Année
-            Label anneeLabel = new Label("Année *");
-            TextField anneeField = new TextField();
-            formGrid.add(anneeLabel, 0, row);
-            formGrid.add(anneeField, 1, row++);
-            
-            // Type de véhicule
-            Label typeLabel = new Label("Type *");
-            ComboBox<String> typeComboBox = new ComboBox<>();
-            typeComboBox.getItems().addAll(
-                "Voiture", "Bus", "Camion", "Utilitaire", "Autre"
-            );
-            formGrid.add(typeLabel, 0, row);
-            formGrid.add(typeComboBox, 1, row++);
-            
-            // Status
-            Label statusLabel = new Label("Status *");
-            ComboBox<String> statusComboBox = new ComboBox<>();
-            statusComboBox.getItems().addAll(
-                "En service", "En maintenance", "Hors service", "Réservé"
-            );
-            formGrid.add(statusLabel, 0, row);
-            formGrid.add(statusComboBox, 1, row++);
-            
-            // Kilométrage
-            Label kilometrageLabel = new Label("Kilométrage");
-            TextField kilometrageField = new TextField();
-            formGrid.add(kilometrageLabel, 0, row);
-            formGrid.add(kilometrageField, 1, row++);
-            
-            // Description
-            Label descriptionLabel = new Label("Description");
-            TextArea descriptionArea = new TextArea();
-            descriptionArea.setPrefRowCount(3);
-            descriptionArea.setWrapText(true);
-            formGrid.add(descriptionLabel, 0, row);
-            formGrid.add(descriptionArea, 1, row++);
-            
-            // Fill form with data if editing
+            // Set values if editing
             if (vehiculeToEdit != null) {
-                immatriculationField.setText(vehiculeToEdit.getImmatriculation());
                 marqueField.setText(vehiculeToEdit.getMarque());
-                modeleField.setText(vehiculeToEdit.getModele());
-                anneeField.setText(String.valueOf(vehiculeToEdit.getAnnee()));
-                typeComboBox.setValue(vehiculeToEdit.getType());
-                statusComboBox.setValue(vehiculeToEdit.getStatus());
-                kilometrageField.setText(String.valueOf(vehiculeToEdit.getKilometrage()));
-                if (vehiculeToEdit.getDescription() != null) {
-                    descriptionArea.setText(vehiculeToEdit.getDescription());
+                modelField.setText(vehiculeToEdit.getModele());
+                immatField.setText(vehiculeToEdit.getImmatriculation());
+                typeCombo.setValue(vehiculeToEdit.getType());
+                statutCombo.setValue(vehiculeToEdit.getStatut());
+                capaciteSpinner.getValueFactory().setValue(vehiculeToEdit.getCapacite());
+                if (vehiculeToEdit.getDateFabrication() != null) {
+                    dateFabPicker.setValue(vehiculeToEdit.getDateFabrication().toInstant()
+                            .atZone(java.time.ZoneId.systemDefault())
+                            .toLocalDate());
                 }
             } else {
-                // Set default values for new vehicle
-                typeComboBox.setValue("Voiture");
-                statusComboBox.setValue("En service");
-                kilometrageField.setText("0");
+                typeCombo.setValue(VehiculeType.VOITURE);
+                statutCombo.setValue(VehiculeStatut.DISPONIBLE);
             }
+            
+            // Add elements to grid
+            formGrid.add(marqueLabel, 0, 0);
+            formGrid.add(marqueField, 1, 0);
+            
+            formGrid.add(modelLabel, 0, 1);
+            formGrid.add(modelField, 1, 1);
+            
+            formGrid.add(immatLabel, 0, 2);
+            formGrid.add(immatField, 1, 2);
+            
+            formGrid.add(typeLabel, 0, 3);
+            formGrid.add(typeCombo, 1, 3);
+            
+            formGrid.add(statutLabel, 0, 4);
+            formGrid.add(statutCombo, 1, 4);
+            
+            formGrid.add(capaciteLabel, 0, 5);
+            formGrid.add(capaciteSpinner, 1, 5);
+            
+            formGrid.add(dateFabLabel, 0, 6);
+            formGrid.add(dateFabPicker, 1, 6);
+            
+            formGrid.add(photoLabel, 0, 7);
+            formGrid.add(photoBox, 1, 7);
+            
+            // Add photo preview to the left side of the form
+            VBox leftSide = new VBox(10);
+            leftSide.setAlignment(Pos.TOP_CENTER);
+            leftSide.setPadding(new Insets(20));
+            leftSide.getChildren().add(photoPreviewBox);
             
             // Buttons
             Button saveButton = new Button(vehiculeToEdit == null ? "Ajouter" : "Enregistrer");
@@ -530,78 +660,44 @@ public class VehiculeManagementController {
             buttonBox.setAlignment(Pos.CENTER_RIGHT);
             buttonBox.getChildren().addAll(cancelButton, saveButton);
             
-            formGrid.add(buttonBox, 1, row);
+            formGrid.add(buttonBox, 1, 8);
             
             // Event handlers
             saveButton.setOnAction(e -> {
-                if (immatriculationField.getText().trim().isEmpty() ||
-                    marqueField.getText().trim().isEmpty() ||
-                    modeleField.getText().trim().isEmpty() ||
-                    anneeField.getText().trim().isEmpty() ||
-                    typeComboBox.getValue() == null ||
-                    statusComboBox.getValue() == null) {
+                if (marqueField.getText().trim().isEmpty() || 
+                    modelField.getText().trim().isEmpty() ||
+                    immatField.getText().trim().isEmpty()) {
                     
                     showAlert(Alert.AlertType.ERROR, "Erreur", "Veuillez remplir tous les champs obligatoires.");
                     return;
                 }
                 
                 try {
-                    int annee;
-                    int kilometrage = 0;
-                    
-                    try {
-                        annee = Integer.parseInt(anneeField.getText().trim());
-                    } catch (NumberFormatException ex) {
-                        showAlert(Alert.AlertType.ERROR, "Erreur", "L'année doit être un nombre entier.");
-                        return;
-                    }
-                    
-                    if (!kilometrageField.getText().trim().isEmpty()) {
-                        try {
-                            kilometrage = Integer.parseInt(kilometrageField.getText().trim());
-                        } catch (NumberFormatException ex) {
-                            showAlert(Alert.AlertType.ERROR, "Erreur", "Le kilométrage doit être un nombre entier.");
-                            return;
-                        }
-                    }
-                    
-                    // Create or update vehicle
                     Vehicule vehicule = vehiculeToEdit == null ? new Vehicule() : vehiculeToEdit;
                     
-                    vehicule.setImmatriculation(immatriculationField.getText().trim());
                     vehicule.setMarque(marqueField.getText().trim());
-                    vehicule.setModele(modeleField.getText().trim());
-                    vehicule.setAnnee(annee);
-                    vehicule.setType(typeComboBox.getValue());
-                    vehicule.setStatus(statusComboBox.getValue());
-                    vehicule.setKilometrage(kilometrage);
-                    vehicule.setDescription(descriptionArea.getText().trim());
+                    vehicule.setModele(modelField.getText().trim());
+                    vehicule.setImmatriculation(immatField.getText().trim());
+                    vehicule.setType(typeCombo.getValue());
+                    vehicule.setStatut(statutCombo.getValue());
+                    vehicule.setCapacite(capaciteSpinner.getValue());
                     
-                    // Handle photo
-                    String savedPhotoPath = null;
-                    if (photoView.getUserData() != null) {
-                        // New photo selected, save it
-                        String sourcePhotoPath = (String) photoView.getUserData();
-                        savedPhotoPath = saveVehiclePhoto(sourcePhotoPath, vehiculeToEdit);
-                    } else if (initialPhotoPath != null) {
-                        // Keep existing photo
-                        savedPhotoPath = initialPhotoPath;
+                    // Set the organisation ID - FIX: Utiliser l'ID de l'organisation courante
+                    vehicule.setOrganisationId(organisation.getId());
+                    log.info("ID de l'organisation utilisé pour le véhicule: {}", organisation.getId());
+                    
+                    // Set the date of fabrication if provided
+                    if (dateFabPicker.getValue() != null) {
+                        vehicule.setDateFabrication(java.sql.Date.valueOf(dateFabPicker.getValue()));
                     }
                     
-                    vehicule.setPhoto(savedPhotoPath);
-                    
-                    // Set acquisition date if not already set
-                    if (vehicule.getDateAcquisition() == null) {
-                        vehicule.setDateAcquisition(new Date());
-                    }
-                    
-                    // Définir l'ID de l'organisation actuelle
-                    if (vehiculeToEdit == null) {
-                        vehicule.setOrganisationId(organisation.getId());
-                        log.info("ID de l'organisation utilisé pour le véhicule: {}", organisation.getId());
+                    // Set the photo path if a photo was selected
+                    if (selectedPhotoPath[0] != null) {
+                        vehicule.setPhoto(selectedPhotoPath[0]);
                     }
                     
                     if (vehiculeToEdit == null) {
+                        vehicule.setDateAjout(new Date());
                         vehiculeService.ajouter(vehicule);
                     } else {
                         vehiculeService.modifier(vehicule);
@@ -617,16 +713,13 @@ public class VehiculeManagementController {
             
             cancelButton.setOnAction(e -> formStage.close());
             
-            // Layout
-            BorderPane formPane = new BorderPane();
-            formPane.setLeft(photoBox);
-            formPane.setCenter(formGrid);
-            
-            mainPane.setCenter(formPane);
+            // Set up the main layout
+            mainPane.setCenter(formGrid);
+            mainPane.setLeft(leftSide);
             
             // Set scene and show
-            Scene scene = new Scene(mainPane, 600, 550);
-            scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
+            mainPane.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
+            Scene scene = new Scene(mainPane, 650, 500);
             formStage.setScene(scene);
             formStage.showAndWait();
             
@@ -635,68 +728,33 @@ public class VehiculeManagementController {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'afficher le formulaire.");
         }
     }
-    
-    private String saveVehiclePhoto(String sourcePhotoPath, Vehicule existingVehicle) {
-        try {
-            // Create photos directory if it doesn't exist
-            Path photosDir = Paths.get(PHOTOS_DIRECTORY);
-            if (!Files.exists(photosDir)) {
-                Files.createDirectories(photosDir);
-            }
-            
-            // Generate a unique filename based on vehicle info
-            String fileName;
-            if (existingVehicle != null) {
-                // Use existing vehicle info
-                fileName = "vehicle_" + existingVehicle.getImmatriculation().replaceAll("[^a-zA-Z0-9]", "_")
-                        + "_" + UUID.randomUUID().toString().substring(0, 8) 
-                        + getFileExtension(sourcePhotoPath);
-            } else {
-                // Use UUID for new vehicle
-                fileName = "vehicle_" + UUID.randomUUID().toString().substring(0, 8) 
-                        + getFileExtension(sourcePhotoPath);
-            }
-            
-            Path targetPath = photosDir.resolve(fileName);
-            
-            // Copy file
-            Files.copy(Paths.get(sourcePhotoPath), targetPath, StandardCopyOption.REPLACE_EXISTING);
-            
-            return targetPath.toString();
-        } catch (IOException e) {
-            log.error("Error saving vehicle photo", e);
-            return null;
-        }
-    }
-    
-    private String getFileExtension(String path) {
-        int lastDotIndex = path.lastIndexOf(".");
-        if (lastDotIndex != -1) {
-            return path.substring(lastDotIndex);
-        }
-        return "";
-    }
-    
+
     private void deleteVehicule(Vehicule vehicule) {
-        // Vérifier si ce véhicule est assigné à un conducteur
-        List<Conducteur> conducteurs = conducteurService.afficher_tout();
-        boolean isAssigned = conducteurs.stream().anyMatch(c -> c.getVehiculeId() == vehicule.getId());
-        
-        if (isAssigned) {
-            showAlert(Alert.AlertType.WARNING, "Attention", "Ce véhicule est assigné à un conducteur. Veuillez désassigner le conducteur avant de supprimer le véhicule.");
-            return;
-        }
-        
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmAlert.setTitle("Confirmation de suppression");
         confirmAlert.setHeaderText("Supprimer le véhicule");
-        confirmAlert.setContentText("Êtes-vous sûr de vouloir supprimer " + 
-                                    vehicule.getMarque() + " " + vehicule.getModele() + 
-                                    " (" + vehicule.getImmatriculation() + ") ?");
+        confirmAlert.setContentText("Êtes-vous sûr de vouloir supprimer le véhicule '" + vehicule.getMarque() + " " + vehicule.getModele() + "' ?");
         
         Optional<ButtonType> result = confirmAlert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
+                // Delete photo file if it exists
+                if (vehicule.getPhoto() != null && !vehicule.getPhoto().isEmpty()) {
+                    try {
+                        File photoFile = new File(vehicule.getPhoto());
+                        if (photoFile.exists() && photoFile.isFile()) {
+                            boolean deleted = photoFile.delete();
+                            if (deleted) {
+                                log.info("Deleted photo file: {}", vehicule.getPhoto());
+                            } else {
+                                log.warn("Failed to delete photo file: {}", vehicule.getPhoto());
+                            }
+                        }
+                    } catch (Exception e) {
+                        log.error("Error deleting photo file", e);
+                    }
+                }
+                
                 vehiculeService.supprimer(vehicule);
                 loadVehicules();
             } catch (Exception e) {

@@ -22,7 +22,6 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import services.ConducteurService;
 import services.VehiculeService;
-import utils.OrganisationContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,15 +78,9 @@ public class ConducteurManagementController {
     private final VehiculeService vehiculeService = new VehiculeService();
     private ObservableList<Conducteur> conducteursList = FXCollections.observableArrayList();
     private Organisation organisation;
-    
-    // Dossier pour stocker les photos des conducteurs
-    private static final String PHOTOS_DIRECTORY = "src/main/resources/Images/drivers/";
 
     @FXML
     public void initialize() {
-        // Créer le dossier de photos si nécessaire
-        createPhotosDirectory();
-        
         setupTableColumns();
         
         // Setup search functionality
@@ -95,33 +88,12 @@ public class ConducteurManagementController {
             filterDrivers(newValue);
         });
         
-        // Essayer de charger l'organisation depuis le contexte global
-        if (OrganisationContext.getInstance().hasCurrentOrganisation()) {
-            this.organisation = OrganisationContext.getInstance().getCurrentOrganisation();
-            loadConducteurs();
-            log.info("Organisation chargée depuis le contexte global dans ConducteurManagementController");
-        }
-        
         addConducteurButton.setOnAction(e -> showConducteurForm(null));
-    }
-    
-    private void createPhotosDirectory() {
-        File directory = new File(PHOTOS_DIRECTORY);
-        if (!directory.exists()) {
-            boolean created = directory.mkdirs();
-            if (created) {
-                log.info("Created driver photos directory: {}", PHOTOS_DIRECTORY);
-            } else {
-                log.error("Failed to create driver photos directory: {}", PHOTOS_DIRECTORY);
-            }
-        }
     }
     
     public void setOrganisation(Organisation organisation) {
         this.organisation = organisation;
         loadConducteurs();
-        log.info("Organisation définie dans ConducteurManagementController: {}", 
-                 organisation != null ? organisation.getNom() : "null");
     }
     
     private void setupTableColumns() {
@@ -201,11 +173,6 @@ public class ConducteurManagementController {
     
     private void loadConducteurs() {
         try {
-            // Utiliser l'organisation du contexte global si elle n'est pas déjà définie
-            if (organisation == null && OrganisationContext.getInstance().hasCurrentOrganisation()) {
-                this.organisation = OrganisationContext.getInstance().getCurrentOrganisation();
-            }
-            
             List<Conducteur> allConducteurs = conducteurService.afficher_tout();
             
             // Filter by organisation
@@ -444,16 +411,6 @@ public class ConducteurManagementController {
     
     private void showVehiculeAssignmentDialog(Conducteur conducteur) {
         try {
-            // Vérifier si l'organisation est disponible
-            if (organisation == null && OrganisationContext.getInstance().hasCurrentOrganisation()) {
-                this.organisation = OrganisationContext.getInstance().getCurrentOrganisation();
-            }
-            
-            if (organisation == null) {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de déterminer l'organisation actuelle.");
-                return;
-            }
-            
             // Get vehicles for this organization
             List<Vehicule> organisationVehicles = vehiculeService.afficher_tout().stream()
                 .filter(v -> v.getOrganisationId() == organisation.getId())
@@ -577,16 +534,6 @@ public class ConducteurManagementController {
     
     private void showConducteurForm(Conducteur conducteurToEdit) {
         try {
-            // Vérifier si l'organisation est disponible
-            if (organisation == null && OrganisationContext.getInstance().hasCurrentOrganisation()) {
-                this.organisation = OrganisationContext.getInstance().getCurrentOrganisation();
-            }
-            
-            if (organisation == null) {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de déterminer l'organisation actuelle.");
-                return;
-            }
-            
             Stage formStage = new Stage();
             formStage.initModality(Modality.APPLICATION_MODAL);
             
@@ -838,12 +785,9 @@ public class ConducteurManagementController {
                     conducteur.setPhoto(savedPhotoPath);
                     
                     if (conducteurToEdit == null) {
-                        // Définir l'ID de l'organisation courante pour le nouveau conducteur
-                        conducteur.setOrganisationId(organisation.getId());
-                        log.info("ID de l'organisation utilisé pour le conducteur: {}", organisation.getId());
-                        
-                        // For new driver, set vehiculeId to 0 (unassigned)
+                        // For new driver, set vehiculeId to 0 (unassigned) and set the current organisation
                         conducteur.setVehiculeId(0);
+                        conducteur.setOrganisationId(organisation.getId());
                         conducteurService.ajouter(conducteur);
                     } else {
                         // Keep existing vehicle assignment
@@ -882,7 +826,7 @@ public class ConducteurManagementController {
     private String saveDriverPhoto(String sourcePhotoPath, Conducteur existingDriver) {
         try {
             // Create photos directory if it doesn't exist
-            Path photosDir = Paths.get(PHOTOS_DIRECTORY);
+            Path photosDir = Paths.get("src/main/resources/Images/drivers");
             if (!Files.exists(photosDir)) {
                 Files.createDirectories(photosDir);
             }

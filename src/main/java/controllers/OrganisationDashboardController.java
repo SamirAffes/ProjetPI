@@ -1,146 +1,211 @@
 package controllers;
 
 import entities.Organisation;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
-import utils.OrganisationContext;
 
+import java.io.File;
 import java.io.IOException;
 
 @Slf4j
 public class OrganisationDashboardController {
-
+    
+    @FXML
+    private Button dashboardButton;
+    
+    @FXML
+    private Button vehiculesButton;
+    
+    @FXML
+    private Button conducteursButton;
+    
+    @FXML
+    private Button maintenancesButton;
+    
+    @FXML
+    private Button logoutButton;
+    
+    @FXML
+    private StackPane contentArea;
+    
+    @FXML
+    private VBox dashboardView;
+    
+    @FXML
+    private VBox vehiculesView;
+    
+    @FXML
+    private VBox conducteursView;
+    
+    @FXML
+    private VBox maintenancesView;
+    
     @FXML
     private Label organisationNameLabel;
-
+    
     @FXML
-    private BorderPane contentPane;
-
+    private ImageView orgLogoView;
+    
     @FXML
-    private Button vehiculesBtn;
-
+    private Node vehiculeManagementContent;
+    
     @FXML
-    private Button conducteursBtn;
-
+    private Node conducteurManagementContent;
+    
     @FXML
-    private Button maintenanceBtn;
-
-    @FXML
-    private Button logoutBtn;
-
+    private Node maintenanceManagementContent;
+    
     private Organisation organisation;
-
-    @FXML
-    public void initialize() {
-        // Initialiser les boutons de navigation
-        vehiculesBtn.setOnAction(e -> loadVehiculesManagement());
-        conducteursBtn.setOnAction(e -> loadConducteursManagement());
-        maintenanceBtn.setOnAction(e -> loadMaintenanceManagement());
-        logoutBtn.setOnAction(e -> handleLogout());
-        
-        // Essayer de charger l'organisation depuis le contexte global
-        if (OrganisationContext.getInstance().hasCurrentOrganisation()) {
-            this.organisation = OrganisationContext.getInstance().getCurrentOrganisation();
-            updateUI();
-            log.info("Organisation chargée depuis le contexte global dans OrganisationDashboardController");
-        }
-    }
-
+    
     public void setOrganisation(Organisation organisation) {
         this.organisation = organisation;
-        updateUI();
+        
+        // Set organization name in the UI
+        organisationNameLabel.setText(organisation.getNom());
+        
+        // Load organization logo
+        loadOrganisationLogo();
+        
+        // Pass the organization to the subcontrollers
+        passOrganisationToSubcontrollers();
     }
-
-    private void updateUI() {
-        if (organisation != null) {
-            organisationNameLabel.setText(organisation.getNom());
-        } else {
-            organisationNameLabel.setText("Erreur: Organisation non identifiée");
-            log.error("Tentative d'accéder au Dashboard sans organisation");
-        }
+    
+    @FXML
+    public void initialize() {
+        // Set default view
+        showDashboard();
     }
-
-    private void loadVehiculesManagement() {
+    
+    @FXML
+    public void showDashboard() {
+        dashboardView.setVisible(true);
+        vehiculesView.setVisible(false);
+        conducteursView.setVisible(false);
+        maintenancesView.setVisible(false);
+        setActiveButton(dashboardButton);
+    }
+    
+    @FXML
+    public void showVehicules() {
+        dashboardView.setVisible(false);
+        vehiculesView.setVisible(true);
+        conducteursView.setVisible(false);
+        maintenancesView.setVisible(false);
+        setActiveButton(vehiculesButton);
+    }
+    
+    @FXML
+    public void showConducteurs() {
+        dashboardView.setVisible(false);
+        vehiculesView.setVisible(false);
+        conducteursView.setVisible(true);
+        maintenancesView.setVisible(false);
+        setActiveButton(conducteursButton);
+    }
+    
+    @FXML
+    public void showMaintenances() {
+        dashboardView.setVisible(false);
+        vehiculesView.setVisible(false);
+        conducteursView.setVisible(false);
+        maintenancesView.setVisible(true);
+        setActiveButton(maintenancesButton);
+    }
+    
+    @FXML
+    public void logout(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/VehiculeManagement.fxml"));
-            Parent vehiculesView = loader.load();
-            
-            VehiculeManagementController controller = loader.getController();
-            controller.setOrganisation(organisation);
-            
-            contentPane.setCenter(vehiculesView);
-        } catch (IOException e) {
-            log.error("Erreur lors du chargement de la gestion des véhicules", e);
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger la gestion des véhicules");
-        }
-    }
-
-    private void loadConducteursManagement() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ConducteurManagement.fxml"));
-            Parent conducteursView = loader.load();
-            
-            ConducteurManagementController controller = loader.getController();
-            controller.setOrganisation(organisation);
-            
-            contentPane.setCenter(conducteursView);
-        } catch (IOException e) {
-            log.error("Erreur lors du chargement de la gestion des conducteurs", e);
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger la gestion des conducteurs");
-        }
-    }
-
-    private void loadMaintenanceManagement() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MaintenanceManagement.fxml"));
-            Parent maintenanceView = loader.load();
-            
-            MaintenanceManagementController controller = loader.getController();
-            // Assurez-vous que la classe MaintenanceManagementController a une méthode setOrganisation
-            if (organisation != null) {
-                controller.setOrganisation(organisation);
-            }
-            
-            contentPane.setCenter(maintenanceView);
-        } catch (IOException e) {
-            log.error("Erreur lors du chargement de la gestion de la maintenance", e);
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger la gestion de maintenance");
-        }
-    }
-
-    private void handleLogout() {
-        try {
-            // Effacer l'organisation du contexte avant la déconnexion
-            OrganisationContext.getInstance().clearCurrentOrganisation();
-            log.info("Déconnexion de l'organisation: {}", organisation.getNom());
-            
-            // Retour à la page d'accueil
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Home.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/home.fxml"));
             Parent root = loader.load();
             
-            Stage stage = (Stage) logoutBtn.getScene().getWindow();
-            stage.setTitle("Accueil");
-            stage.setScene(new Scene(root));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setTitle("TuniTransport");
+            stage.setScene(scene);
             stage.show();
+            
+            log.info("Organisation logged out: {}", organisation.getNom());
         } catch (IOException e) {
-            log.error("Erreur lors du retour à l'accueil", e);
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de retourner à l'accueil");
+            log.error("Error returning to home view", e);
         }
     }
-
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+    
+    private void setActiveButton(Button button) {
+        // Reset styles
+        dashboardButton.getStyleClass().remove("active");
+        vehiculesButton.getStyleClass().remove("active");
+        conducteursButton.getStyleClass().remove("active");
+        maintenancesButton.getStyleClass().remove("active");
+        
+        // Set active style
+        button.getStyleClass().add("active");
+    }
+    
+    private void loadOrganisationLogo() {
+        if (organisation != null && organisation.getLogo() != null && !organisation.getLogo().isEmpty()) {
+            try {
+                File logoFile = new File(organisation.getLogo());
+                if (logoFile.exists()) {
+                    Image logoImage = new Image(logoFile.toURI().toString());
+                    orgLogoView.setImage(logoImage);
+                    return;
+                }
+            } catch (Exception e) {
+                log.error("Error loading organisation logo", e);
+            }
+        }
+        
+        // Use default logo if organization has no logo or error occurred
+        try {
+            orgLogoView.setImage(new Image(getClass().getResourceAsStream("/Images/Logos/default_logo.png")));
+        } catch (Exception e) {
+            log.error("Error loading default logo", e);
+        }
+    }
+    
+    private void passOrganisationToSubcontrollers() {
+        try {
+            // La méthode standard pour obtenir le contrôleur d'un élément fx:include
+            VehiculeManagementController vehiculeController = 
+                (VehiculeManagementController) vehiculeManagementContent.getProperties().get("fx:controller");
+            if (vehiculeController != null) {
+                vehiculeController.setOrganisation(organisation);
+                log.info("Organisation passée à VehiculeManagementController");
+            } else {
+                log.warn("VehiculeManagementController est null - impossible de passer l'organisation");
+            }
+            
+            ConducteurManagementController conducteurController = 
+                (ConducteurManagementController) conducteurManagementContent.getProperties().get("fx:controller");
+            if (conducteurController != null) {
+                conducteurController.setOrganisation(organisation);
+                log.info("Organisation passée à ConducteurManagementController");
+            } else {
+                log.warn("ConducteurManagementController est null - impossible de passer l'organisation");
+            }
+            
+            MaintenanceManagementController maintenanceController = 
+                (MaintenanceManagementController) maintenanceManagementContent.getProperties().get("fx:controller");
+            if (maintenanceController != null) {
+                maintenanceController.setOrganisation(organisation);
+                log.info("Organisation passée à MaintenanceManagementController");
+            } else {
+                log.warn("MaintenanceManagementController est null - impossible de passer l'organisation");
+            }
+        } catch (Exception e) {
+            log.error("Erreur lors de la transmission de l'organisation aux sous-contrôleurs", e);
+        }
     }
 }
