@@ -1,12 +1,12 @@
 package utils;
 
 import lombok.Getter;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import io.github.cdimascio.dotenv.Dotenv;
 
 
@@ -26,6 +26,7 @@ public class db_context{
         try {
             conn = DriverManager.getConnection(URL, USER, PASSWORD);
             log.info("Connected to database");
+            initTables();
         } catch (SQLException e) {
             log.error(e.getMessage());
         }
@@ -42,6 +43,31 @@ public class db_context{
         }
         return temp;
     }
-
-
+    
+    /**
+     * Initialise les tables de la base de données si elles n'existent pas
+     */
+    private void initTables() {
+        try {
+            Statement stmt = conn.createStatement();
+            
+            // Création de la table Reclamation si elle n'existe pas
+            String createTableReclamation = "CREATE TABLE IF NOT EXISTS Reclamation (" +
+                "id INT PRIMARY KEY AUTO_INCREMENT, " +
+                "type VARCHAR(100) NOT NULL, " +
+                "description TEXT, " +
+                "date DATE NOT NULL, " +
+                "etat ENUM('EN_ATTENTE', 'TRAITE', 'REFUSE', 'EN_COURS', 'TERMINE') NOT NULL DEFAULT 'EN_ATTENTE', " +
+                "user_id INT, " +
+                "chauffeur_id INT, " +
+                "organisme_id INT" +
+                ")";
+            
+            stmt.executeUpdate(createTableReclamation);
+            log.info("Table Reclamation vérifiée/créée avec succès");
+            
+        } catch (SQLException e) {
+            log.error("Erreur lors de l'initialisation des tables: " + e.getMessage());
+        }
+    }
 }
