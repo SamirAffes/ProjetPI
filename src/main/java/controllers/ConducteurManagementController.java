@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import services.ConducteurService;
 import services.VehiculeService;
+import utils.OrganisationContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,34 +43,10 @@ import java.util.stream.Collectors;
 public class ConducteurManagementController {
 
     @FXML
-    private TableView<Conducteur> conducteurTableView;
+    private FlowPane conducteursContainer;
     
     @FXML
-    private TableColumn<Conducteur, Integer> idColumn;
-    
-    @FXML
-    private TableColumn<Conducteur, String> nomColumn;
-    
-    @FXML
-    private TableColumn<Conducteur, String> prenomColumn;
-    
-    @FXML
-    private TableColumn<Conducteur, String> cinColumn;
-    
-    @FXML
-    private TableColumn<Conducteur, String> permisColumn;
-    
-    @FXML
-    private TableColumn<Conducteur, Date> dateNaissanceColumn;
-    
-    @FXML
-    private TableColumn<Conducteur, String> vehiculeAssigneColumn;
-    
-    @FXML
-    private TableColumn<Conducteur, Conducteur> actionsColumn;
-    
-    @FXML
-    private Button addConducteurButton;
+    private Button addButton;
     
     @FXML
     private TextField searchField;
@@ -78,135 +55,109 @@ public class ConducteurManagementController {
     private final VehiculeService vehiculeService = new VehiculeService();
     private ObservableList<Conducteur> conducteursList = FXCollections.observableArrayList();
     private Organisation organisation;
+    
+    // Directory to store driver photos
+    private static final String PHOTOS_DIRECTORY = "src/main/resources/Images/drivers/";
 
     @FXML
     public void initialize() {
-        setupTableColumns();
+        // Create photos directory if it doesn't exist
+        createPhotosDirectory();
         
         // Setup search functionality
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
             filterDrivers(newValue);
         });
         
-        addConducteurButton.setOnAction(e -> showConducteurForm(null));
+        // Try to get organization from global context
+        if (OrganisationContext.getInstance().hasCurrentOrganisation()) {
+            this.organisation = OrganisationContext.getInstance().getCurrentOrganisation();
+            loadConducteurs();
+            log.info("Organisation chargée depuis le contexte global dans ConducteurManagementController");
+        }
+        
+        addButton.setOnAction(e -> showConducteurForm(null));
+    }
+    
+    private void createPhotosDirectory() {
+        File directory = new File(PHOTOS_DIRECTORY);
+        if (!directory.exists()) {
+            boolean created = directory.mkdirs();
+            if (created) {
+                log.info("Created driver photos directory: {}", PHOTOS_DIRECTORY);
+            } else {
+                log.error("Failed to create driver photos directory: {}", PHOTOS_DIRECTORY);
+            }
+        }
     }
     
     public void setOrganisation(Organisation organisation) {
         this.organisation = organisation;
         loadConducteurs();
+        log.info("Organisation définie dans ConducteurManagementController: {}", 
+                 organisation != null ? organisation.getNom() : "null");
     }
     
-    private void setupTableColumns() {
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        nomColumn.setCellValueFactory(new PropertyValueFactory<>("nom"));
-        prenomColumn.setCellValueFactory(new PropertyValueFactory<>("prenom"));
-        cinColumn.setCellValueFactory(new PropertyValueFactory<>("cin"));
-        permisColumn.setCellValueFactory(new PropertyValueFactory<>("numeroPermis"));
-        dateNaissanceColumn.setCellValueFactory(new PropertyValueFactory<>("dateNaissance"));
+    @FXML
+    public void onAddButtonClicked() {
+        if (organisation == null && OrganisationContext.getInstance().hasCurrentOrganisation()) {
+            this.organisation = OrganisationContext.getInstance().getCurrentOrganisation();
+        }
         
-        // Custom cell factory to display assigned vehicle information
-        vehiculeAssigneColumn.setCellFactory(column -> new TableCell<Conducteur, String>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                
-                if (empty) {
-                    setText(null);
-                } else {
-                    Conducteur conducteur = getTableView().getItems().get(getIndex());
-                    if (conducteur.getVehiculeId() > 0) {
-                        Vehicule vehicule = vehiculeService.afficher(conducteur.getVehiculeId());
-                        if (vehicule != null) {
-                            setText(vehicule.getMarque() + " " + vehicule.getModele() + 
-                                   " (" + vehicule.getImmatriculation() + ")");
-                        } else {
-                            setText("N/A");
-                        }
-                    } else {
-                        setText("Non assigné");
-                    }
-                }
-            }
-        });
-        
-        // Setup action column with buttons
-        actionsColumn.setCellFactory(column -> new TableCell<Conducteur, Conducteur>() {
-            private final Button viewBtn = new Button("Voir");
-            private final Button editBtn = new Button("Modifier");
-            private final Button deleteBtn = new Button("Supprimer");
-            
-            {
-                viewBtn.getStyleClass().add("button-small");
-                editBtn.getStyleClass().add("button-small");
-                deleteBtn.getStyleClass().add("button-small");
-                
-                viewBtn.setOnAction(event -> {
-                    Conducteur conducteur = getTableView().getItems().get(getIndex());
-                    showConducteurDetails(conducteur);
-                });
-                
-                editBtn.setOnAction(event -> {
-                    Conducteur conducteur = getTableView().getItems().get(getIndex());
-                    showConducteurForm(conducteur);
-                });
-                
-                deleteBtn.setOnAction(event -> {
-                    Conducteur conducteur = getTableView().getItems().get(getIndex());
-                    deleteConducteur(conducteur);
-                });
-            }
-            
-            @Override
-            protected void updateItem(Conducteur conducteur, boolean empty) {
-                super.updateItem(conducteur, empty);
-                
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    HBox buttons = new HBox(5);
-                    buttons.getChildren().addAll(viewBtn, editBtn, deleteBtn);
-                    setGraphic(buttons);
-                }
-            }
-        });
+        showConducteurForm(null);
     }
     
     private void loadConducteurs() {
-        try {
+        conducteursContainer.getChildren().clear();
+
+        // Use organization from global context if not already defined
+        if (organisation == null && OrganisationContext.getInstance().hasCurrentOrganisation()) {
+            this.organisation = OrganisationContext.getInstance().getCurrentOrganisation();
+        }
+
+        if (organisation != null) {
             List<Conducteur> allConducteurs = conducteurService.afficher_tout();
             
             // Filter by organisation
-            if (organisation != null) {
-                List<Vehicule> organisationVehicles = vehiculeService.afficher_tout().stream()
-                    .filter(v -> v.getOrganisationId() == organisation.getId())
-                    .collect(Collectors.toList());
-                
-                // Get IDs of vehicles owned by this organization
-                List<Integer> organisationVehicleIds = organisationVehicles.stream()
-                    .map(Vehicule::getId)
-                    .collect(Collectors.toList());
-                
-                // Filter conducteurs who are assigned to this organization's vehicles
-                // or who belong to this organization directly
-                List<Conducteur> filteredConducteurs = allConducteurs.stream()
-                    .filter(c -> c.getOrganisationId() == organisation.getId() || 
-                                 c.getVehiculeId() == 0 || 
-                                 organisationVehicleIds.contains(c.getVehiculeId()))
-                    .collect(Collectors.toList());
-                
-                conducteursList = FXCollections.observableArrayList(filteredConducteurs);
-            } else {
-                conducteursList = FXCollections.observableArrayList(allConducteurs);
+            List<Vehicule> organisationVehicles = vehiculeService.afficher_tout().stream()
+                .filter(v -> v.getOrganisationId() == organisation.getId())
+                .collect(Collectors.toList());
+            
+            // Get IDs of vehicles owned by this organization
+            List<Integer> organisationVehicleIds = organisationVehicles.stream()
+                .map(Vehicule::getId)
+                .collect(Collectors.toList());
+            
+            // Filter conducteurs who are assigned to this organization's vehicles
+            // or who belong to this organization directly
+            List<Conducteur> filteredConducteurs = allConducteurs.stream()
+                .filter(c -> c.getOrganisationId() == organisation.getId() || 
+                             c.getVehiculeId() == 0 || 
+                             organisationVehicleIds.contains(c.getVehiculeId()))
+                .collect(Collectors.toList());
+            
+            boolean found = false;
+            
+            for (Conducteur conducteur : filteredConducteurs) {
+                conducteursContainer.getChildren().add(createConducteurCard(conducteur));
+                found = true;
             }
             
-            conducteurTableView.setItems(conducteursList);
-        } catch (Exception e) {
-            log.error("Error loading conducteurs", e);
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger la liste des conducteurs.");
+            if (!found) {
+                Label emptyLabel = new Label("Aucun conducteur trouvé");
+                emptyLabel.setFont(Font.font("System", FontWeight.NORMAL, 14));
+                conducteursContainer.getChildren().add(emptyLabel);
+            }
+        } else {
+            Label errorLabel = new Label("Erreur: Organisation non définie");
+            errorLabel.setFont(Font.font("System", FontWeight.NORMAL, 14));
+            conducteursContainer.getChildren().add(errorLabel);
         }
     }
     
     private void filterDrivers(String searchText) {
+        conducteursContainer.getChildren().clear();
+        
         if (searchText == null || searchText.isEmpty()) {
             loadConducteurs();
         } else {
@@ -220,8 +171,132 @@ public class ConducteurManagementController {
                 )
                 .collect(Collectors.toList());
             
-            conducteurTableView.setItems(FXCollections.observableArrayList(filteredList));
+            if (filteredList.isEmpty()) {
+                Label noResultLabel = new Label("Aucun conducteur trouvé pour: " + searchText);
+                noResultLabel.setFont(Font.font("System", FontWeight.NORMAL, 14));
+                conducteursContainer.getChildren().add(noResultLabel);
+            } else {
+                for (Conducteur conducteur : filteredList) {
+                    conducteursContainer.getChildren().add(createConducteurCard(conducteur));
+                }
+            }
         }
+    }
+    
+    private VBox createConducteurCard(Conducteur conducteur) {
+        VBox card = new VBox(10);
+        card.getStyleClass().add("card");
+        card.setMaxWidth(300);
+        card.setMinWidth(300);
+        card.setPrefWidth(300);
+        card.setPrefHeight(220);
+
+        // Create a layout with photo on the left and basic info on the right
+        HBox topContent = new HBox(10);
+        
+        // Photo area
+        StackPane photoContainer = new StackPane();
+        photoContainer.setMinWidth(80);
+        photoContainer.setMaxWidth(80);
+        photoContainer.setPrefWidth(80);
+        photoContainer.setMinHeight(80);
+        photoContainer.setMaxHeight(80);
+        photoContainer.setPrefHeight(80);
+        photoContainer.getStyleClass().add("photo-container");
+        
+        ImageView photoView = new ImageView();
+        photoView.setFitWidth(70);
+        photoView.setFitHeight(70);
+        photoView.setPreserveRatio(true);
+        
+        // Try to load driver's photo if available
+        if (conducteur.getPhoto() != null && !conducteur.getPhoto().isEmpty()) {
+            try {
+                File photoFile = new File(conducteur.getPhoto());
+                if (photoFile.exists()) {
+                    Image photo = new Image(photoFile.toURI().toString());
+                    photoView.setImage(photo);
+                } else {
+                    // Load default photo
+                    Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.svg"));
+                    photoView.setImage(defaultPhoto);
+                }
+            } catch (Exception e) {
+                log.warn("Could not load driver photo", e);
+                // Default photo as fallback
+                Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.svg"));
+                photoView.setImage(defaultPhoto);
+            }
+        } else {
+            // Load default photo
+            Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.svg"));
+            photoView.setImage(defaultPhoto);
+        }
+        
+        photoContainer.getChildren().add(photoView);
+        
+        // Driver details
+        VBox detailsContainer = new VBox(5);
+        detailsContainer.setAlignment(Pos.TOP_LEFT);
+        
+        // Driver name
+        Label nameLabel = new Label(conducteur.getNom() + " " + conducteur.getPrenom());
+        nameLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
+        nameLabel.setWrapText(true);
+        
+        // Driver CIN
+        Label cinLabel = new Label("CIN: " + conducteur.getCin());
+        
+        // Driver status
+        Label statusLabel = new Label("Statut: " + (conducteur.getStatut() != null ? conducteur.getStatut() : "Actif"));
+        
+        // Vehicle info if assigned
+        Label vehiculeLabel = new Label();
+        if (conducteur.getVehiculeId() > 0) {
+            Vehicule vehicule = vehiculeService.afficher(conducteur.getVehiculeId());
+            if (vehicule != null) {
+                vehiculeLabel.setText("Véhicule: " + vehicule.getMarque() + " " + vehicule.getModele());
+            } else {
+                vehiculeLabel.setText("Véhicule: Non trouvé");
+            }
+        } else {
+            vehiculeLabel.setText("Véhicule: Non assigné");
+        }
+        
+        detailsContainer.getChildren().addAll(nameLabel, cinLabel, statusLabel, vehiculeLabel);
+        
+        topContent.getChildren().addAll(photoContainer, detailsContainer);
+        
+        // Add some spacing for better appearance
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+        
+        // Buttons container
+        HBox buttonBox = new HBox(10);
+        buttonBox.setAlignment(Pos.CENTER_RIGHT);
+        
+        // Detail button
+        Button detailBtn = new Button("Détails");
+        detailBtn.getStyleClass().add("detail-button");
+        detailBtn.setOnAction(e -> showConducteurDetails(conducteur));
+        
+        // Edit button
+        Button editBtn = new Button("Modifier");
+        editBtn.getStyleClass().add("edit-button");
+        editBtn.setOnAction(e -> showConducteurForm(conducteur));
+        
+        // Delete button
+        Button deleteBtn = new Button("Supprimer");
+        deleteBtn.getStyleClass().add("delete-button");
+        deleteBtn.setOnAction(e -> deleteConducteur(conducteur));
+        
+        buttonBox.getChildren().addAll(detailBtn, editBtn, deleteBtn);
+        
+        // Add all elements to the card
+        card.getChildren().addAll(topContent, spacer, buttonBox);
+        card.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
+        
+        return card;
     }
     
     private void showConducteurDetails(Conducteur conducteur) {
@@ -253,17 +328,17 @@ public class ConducteurManagementController {
                         photoView.setImage(photo);
                     } else {
                         // Load default photo
-                        Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/default_driver.png"));
+                        Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.svg"));
                         photoView.setImage(defaultPhoto);
                     }
                 } catch (Exception e) {
                     log.warn("Could not load driver photo", e);
-                    Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/default_driver.png"));
+                    Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.svg"));
                     photoView.setImage(defaultPhoto);
                 }
             } else {
                 // Load default photo
-                Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/default_driver.png"));
+                Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.svg"));
                 photoView.setImage(defaultPhoto);
             }
             
@@ -569,18 +644,18 @@ public class ConducteurManagementController {
                         photoView.setImage(photo);
                     } else {
                         // Load default photo
-                        Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/default_driver.png"));
+                        Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.svg"));
                         photoView.setImage(defaultPhoto);
                     }
                 } catch (Exception e) {
                     log.warn("Could not load driver photo", e);
-                    Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/default_driver.png"));
+                    Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.svg"));
                     photoView.setImage(defaultPhoto);
                 }
             } else {
                 initialPhotoPath = null;
                 // Load default photo
-                Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/default_driver.png"));
+                Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.svg"));
                 photoView.setImage(defaultPhoto);
             }
             

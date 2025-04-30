@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import services.MaintenanceService;
 import services.VehiculeService;
+import utils.OrganisationContext;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -42,6 +43,12 @@ public class MaintenanceManagementController {
 
     @FXML
     public void initialize() {
+        // Try to get organization from global context
+        if (OrganisationContext.getInstance().hasCurrentOrganisation()) {
+            this.organisation = OrganisationContext.getInstance().getCurrentOrganisation();
+            loadMaintenances();
+            log.info("Organisation chargée depuis le contexte global dans MaintenanceManagementController");
+        }
     }
     
     public void setOrganisation(Organisation organisation) {
@@ -52,6 +59,10 @@ public class MaintenanceManagementController {
 
     @FXML
     public void onAddButtonClicked() {
+        // Check for organisation in global context if not already set
+        if (organisation == null && OrganisationContext.getInstance().hasCurrentOrganisation()) {
+            this.organisation = OrganisationContext.getInstance().getCurrentOrganisation();
+        }
         showMaintenanceForm(null);
     }
 
@@ -419,36 +430,39 @@ public class MaintenanceManagementController {
 
     private void showMaintenanceForm(Maintenance maintenanceToEdit) {
         try {
-            // Check if we have any vehicles to assign maintenance to
-            List<Vehicule> organisationVehicles = getOrganisationVehicles();
-            if (organisationVehicles.isEmpty()) {
-                showAlert(Alert.AlertType.WARNING, "Avertissement", 
-                    "Aucun véhicule disponible pour cette organisation. Veuillez d'abord ajouter des véhicules.");
+            if (organisation == null) {
+                log.error("Organisation is null when trying to show maintenance form");
+                showAlert(Alert.AlertType.ERROR, "Erreur", "Organisation non définie.");
                 return;
             }
             
+            // Ensure vehicles are loaded
+            List<Vehicule> organisationVehicles = getOrganisationVehicles();
+            if (organisationVehicles.isEmpty()) {
+                showAlert(Alert.AlertType.WARNING, "Avertissement", "Aucun véhicule disponible pour cette organisation.");
+                return;
+            }
+
+            // Initialize form stage
             Stage formStage = new Stage();
             formStage.initModality(Modality.APPLICATION_MODAL);
-            
-            String title = maintenanceToEdit == null ? "Ajouter une maintenance" : "Modifier la maintenance";
-            formStage.setTitle(title);
-            
+            formStage.setTitle(maintenanceToEdit == null ? "Ajouter une maintenance" : "Modifier la maintenance");
+
             BorderPane mainPane = new BorderPane();
             mainPane.setPadding(new Insets(20));
             
+            // Form layout
             GridPane formGrid = new GridPane();
             formGrid.setHgap(10);
-            formGrid.setVgap(15);
-            
+            formGrid.setVgap(10);
+            formGrid.setPadding(new Insets(20));
+
             // Add form fields
             int row = 0;
             
             Label vehiculeLabel = new Label("Véhicule:");
             ComboBox<Vehicule> vehiculeCombo = new ComboBox<>();
-            
-            for (Vehicule v : organisationVehicles) {
-                vehiculeCombo.getItems().add(v);
-            }
+            vehiculeCombo.getItems().addAll(organisationVehicles);
             
             // Custom cell factory to display vehicle info
             vehiculeCombo.setCellFactory(param -> new ListCell<Vehicule>() {
@@ -463,7 +477,7 @@ public class MaintenanceManagementController {
                 }
             });
             
-            // Custom string converter for the selected item
+            // Same for the button cell
             vehiculeCombo.setButtonCell(new ListCell<Vehicule>() {
                 @Override
                 protected void updateItem(Vehicule item, boolean empty) {
@@ -475,32 +489,40 @@ public class MaintenanceManagementController {
                     }
                 }
             });
-            
+
             Label typeLabel = new Label("Type:");
             ComboBox<TypeMaintenance> typeCombo = new ComboBox<>();
             typeCombo.getItems().addAll(TypeMaintenance.values());
-            
+
             Label statusLabel = new Label("Statut:");
             ComboBox<StatusMaintenance> statusCombo = new ComboBox<>();
             statusCombo.getItems().addAll(StatusMaintenance.values());
-            
+
             Label dateDebutLabel = new Label("Date de début:");
             DatePicker dateDebutPicker = new DatePicker();
-            
+
             Label dateFinLabel = new Label("Date de fin:");
             DatePicker dateFinPicker = new DatePicker();
-            
+
             Label coutLabel = new Label("Coût:");
             TextField coutField = new TextField();
-            
+            coutField.setText("0.0");
+
             Label descLabel = new Label("Description:");
             TextArea descArea = new TextArea();
-            descArea.setPrefRowCount(5);
+            descArea.setPrefRowCount(3);
             descArea.setWrapText(true);
             
-            // Set values if editing
-            if (maintenanceToEdit != null) {
-                // Find and select the vehicle
+            // Set default values for new maintenance
+            if (maintenanceToEdit == null) {
+                if (!vehiculeCombo.getItems().isEmpty()) {
+                    vehiculeCombo.setValue(vehiculeCombo.getItems().get(0));
+                }
+                typeCombo.setValue(TypeMaintenance.PREVENTIFE);
+                statusCombo.setValue(StatusMaintenance.EN_ATTENTE);
+                dateDebutPicker.setValue(LocalDate.now());
+            } else {
+                // Set values for existing maintenance
                 for (Vehicule v : vehiculeCombo.getItems()) {
                     if (v.getId() == maintenanceToEdit.getVehiculeId()) {
                         vehiculeCombo.setValue(v);
@@ -525,15 +547,8 @@ public class MaintenanceManagementController {
                 
                 coutField.setText(Double.toString(maintenanceToEdit.getPrix()));
                 descArea.setText(maintenanceToEdit.getDescription());
-            } else {
-                // Default values for new maintenance
-                vehiculeCombo.setValue(vehiculeCombo.getItems().get(0));
-                typeCombo.setValue(TypeMaintenance.AUTRE);
-                statusCombo.setValue(StatusMaintenance.EN_ATTENTE);
-                dateDebutPicker.setValue(LocalDate.now());
-                coutField.setText("0.0");
             }
-            
+
             // Add fields to grid
             formGrid.add(vehiculeLabel, 0, row);
             formGrid.add(vehiculeCombo, 1, row++);
@@ -555,26 +570,25 @@ public class MaintenanceManagementController {
             
             formGrid.add(descLabel, 0, row);
             formGrid.add(descArea, 1, row++);
-            
+
             // Buttons
             Button saveButton = new Button(maintenanceToEdit == null ? "Ajouter" : "Enregistrer");
             saveButton.getStyleClass().add("button-primary");
             
             Button cancelButton = new Button("Annuler");
             cancelButton.getStyleClass().add("button-secondary");
-            
+            cancelButton.setOnAction(e -> formStage.close());
+
             HBox buttonBox = new HBox(10);
             buttonBox.setAlignment(Pos.CENTER_RIGHT);
             buttonBox.getChildren().addAll(cancelButton, saveButton);
             
             formGrid.add(buttonBox, 1, row);
-            
-            // Event handlers
+
             saveButton.setOnAction(e -> {
-                if (vehiculeCombo.getValue() == null ||
-                    typeCombo.getValue() == null ||
-                    statusCombo.getValue() == null ||
-                    dateDebutPicker.getValue() == null ||
+                // Validate form
+                if (vehiculeCombo.getValue() == null || typeCombo.getValue() == null || 
+                    statusCombo.getValue() == null || dateDebutPicker.getValue() == null ||
                     coutField.getText().trim().isEmpty()) {
                     
                     showAlert(Alert.AlertType.ERROR, "Erreur", "Veuillez remplir tous les champs obligatoires.");
@@ -582,7 +596,7 @@ public class MaintenanceManagementController {
                 }
                 
                 try {
-                    // Validate cost input
+                    // Parse cost
                     double cout;
                     try {
                         cout = Double.parseDouble(coutField.getText().trim());
@@ -612,7 +626,7 @@ public class MaintenanceManagementController {
                     } else {
                         maintenance.setDateFin(null);
                     }
-                    
+
                     if (maintenanceToEdit == null) {
                         maintenanceService.ajouter(maintenance);
                     } else {
@@ -623,18 +637,15 @@ public class MaintenanceManagementController {
                     loadMaintenances();
                 } catch (Exception ex) {
                     log.error("Error saving maintenance", ex);
-                    showAlert(Alert.AlertType.ERROR, "Erreur", "Une erreur est survenue lors de l'enregistrement de la maintenance.");
+                    showAlert(Alert.AlertType.ERROR, "Erreur", "Une erreur est survenue lors de l'enregistrement.");
                 }
             });
-            
-            cancelButton.setOnAction(e -> formStage.close());
-            
-            // Set up the main layout
-            mainPane.setCenter(formGrid);
-            
+
             // Set scene and show
+            mainPane.setCenter(formGrid);
             mainPane.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
-            Scene scene = new Scene(mainPane, 550, 550);
+            
+            Scene scene = new Scene(mainPane, 500, 500);
             formStage.setScene(scene);
             formStage.showAndWait();
             
