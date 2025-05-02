@@ -24,6 +24,10 @@ public class Subscription {
 
 
     private boolean isValid;
+    @Setter @Getter
+    private String stationStart;
+    @Setter @Getter
+    private String stationEnd;
 
    /* @Setter
     @Getter
@@ -52,11 +56,15 @@ public class Subscription {
     }
 
 
-    public Subscription(String type, LocalDate startDate, LocalDate endDate, double price, boolean isValid) {
+
+
+    public Subscription(String type, LocalDate startDate, LocalDate endDate, double price, String stationStart, String stationEnd, boolean isValid) {
         this.type = type;
         this.startDate = startDate;
         this.endDate = endDate;
         this.price = price;
+        this.stationStart = stationStart;
+        this.stationEnd = stationEnd;
         this.isValid = isValid;
     }
 
@@ -64,10 +72,12 @@ public class Subscription {
     public String toString() {
         return "Subscription{" +
                 "id=" + id +
-                ", lines='" + type + '\'' +
+                ", type='" + type + '\'' +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 ", price=" + price +
+                ", stationStart='" + stationStart + '\'' +
+                ", stationEnd='" + stationEnd + '\'' +
                 ", isValid=" + isValid +
                 '}';
     }

@@ -20,6 +20,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.Callback;
+import lombok.Getter;
+import lombok.Setter;
 import services.SubscriptionService;
 
 import java.time.LocalDate;
@@ -38,12 +40,12 @@ public class SubscriptionFormController {
 
     // static list of available lines
     private static final ObservableList<Line> LINES = FXCollections.observableArrayList(
-            new Line("12(k)", 10.0),
-            new Line("56(o)", 12.5),
-            new Line("84(f)", 8.75),
-            new Line("125(l)", 15.0),
-            new Line("127(d)", 9.0),
-            new Line("106(n)", 11.25)
+            new Line("12", 10.0, "Station A", "Station B"),
+            new Line("56", 12.5, "Station C", "Station D"),
+            new Line("84", 8.75, "Station E", "Station F"),
+            new Line("125", 15.0, "Station G", "Station H"),
+            new Line("127", 9.0, "Station I", "Station J"),
+            new Line("106", 11.25, "Station K", "Station L")
     );
 
     // inner class representing a line
@@ -52,35 +54,43 @@ public class SubscriptionFormController {
         private final double price;
         private final BooleanProperty selected = new SimpleBooleanProperty(false);
 
-        public Line(String number, double price) {
+        @Getter @Setter
+        private final String stationStart;
+
+        @Getter @Setter
+        private final String stationEnd;
+
+
+        public Line(String number, double price, String stationStart, String stationEnd) {
             this.number = new SimpleStringProperty(number);
             this.price = price;
+            this.stationStart = stationStart;
+            this.stationEnd = stationEnd;
         }
         public String getNumber() { return number.get(); }
         public double getPrice() { return price; }
         public BooleanProperty selectedProperty() { return selected; }
         @Override
-        public String toString() { return getNumber() + " ($" + price + ")"; }
+        public String toString() {
+            return String.format("Line: %s - $%.2f - (From: %s, To: %s)", getNumber(), getPrice(), getStationStart(), getStationEnd());
+        }
     }
 
     public void setSubscription(Subscription s) {
         if (s == null) {
-            // new subscription: reset form
-            clearForm();
-            subscription = new Subscription();
+            this.subscription = new Subscription(); // Initialize a new Subscription if null
         } else {
-            // editing existing subscription: populate selections
-            subscription = s;
-            // parse saved type (comma-separated numbers)
-            String[] nums = s.getType().split(",");
-            LINES.forEach(line ->
-                    line.selectedProperty().set(
-                            java.util.Arrays.asList(nums).contains(line.getNumber())
-                    )
-            );
+            this.subscription = s;
+            // Pre-fill the form with subscription data
             dpStart.setValue(s.getStartDate());
             dpEnd.setValue(s.getEndDate());
-            updateTotal();
+            String[] lines = s.getType().split(",");
+            for (String line : lines) {
+                LINES.stream()
+                        .filter(l -> l.getNumber().equals(line))
+                        .findFirst()
+                        .ifPresent(lineObj -> lineObj.selectedProperty().set(true));
+            }
         }
     }
 
@@ -102,10 +112,26 @@ public class SubscriptionFormController {
                 .mapToDouble(Line::getPrice)
                 .sum();
 
+        // Set the first and last selected stations
+        String stationStart = LINES.stream()
+                .filter(line -> line.selectedProperty().get())
+                .findFirst()
+                .map(Line::getStationStart)
+                .orElse(null);
+
+        String stationEnd = LINES.stream()
+                .filter(line -> line.selectedProperty().get())
+                .reduce((first, second) -> second)
+                .map(Line::getStationEnd)
+                .orElse(null);
+
         subscription.setType(type);
         subscription.setStartDate(dpStart.getValue());
         subscription.setEndDate(dpEnd.getValue());
         subscription.setPrice(total);
+        subscription.setStationStart(stationStart);
+        subscription.setStationEnd(stationEnd);
+
         return subscription;
     }
 
@@ -157,6 +183,19 @@ public class SubscriptionFormController {
                 return;
             }
 
+            // Validate selected lines
+            for (Line line : LINES) {
+                if (line.selectedProperty().get()) {
+                    boolean isLineActive = subscriptionService.isLineActive(line.getNumber());
+                    if (isLineActive) {
+                        new Alert(Alert.AlertType.ERROR,
+                                "Cannot subscribe to line " + line.getNumber() + " as it is still active.",
+                                null).showAndWait();
+                        return;
+                    }
+                }
+            }
+
             Subscription toSave = getSubscription();
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/payment.fxml"));
@@ -185,6 +224,8 @@ public class SubscriptionFormController {
                     .showAndWait();
         }
     }
+
+
 
     public boolean isSaved() {
         return saved;

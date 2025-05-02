@@ -14,13 +14,15 @@ public class SubscriptionService implements  CRUD<Subscription>{
 
     @Override
     public void ajouter(Subscription sub) throws SQLException {
-        String sql = "INSERT INTO subscription (`lines`, start_date, end_date, price, is_Valid) VALUES (?,?,?,?,?)";
+        String sql = "INSERT INTO subscription (`lines`, start_date, end_date, price, station_start, station_end, is_Valid) VALUES (?,?,?,?,?,?,?)";
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, sub.getLines());
             ps.setDate(2, Date.valueOf(sub.getStartDate()));
             ps.setDate(3, Date.valueOf(sub.getEndDate()));
             ps.setDouble(4, sub.getPrice());
-            ps.setBoolean(5, sub.isValid());
+            ps.setString(5, sub.getStationStart());
+            ps.setString(6, sub.getStationEnd());
+            ps.setBoolean(7, sub.isValid());
             int affected = ps.executeUpdate();
             if (affected == 0) {
                 throw new SQLException("Creating subscription failed, no rows affected.");
@@ -94,20 +96,21 @@ public class SubscriptionService implements  CRUD<Subscription>{
 
     @Override
     public void modifier(Subscription sub) throws SQLException {
-        String sql = "UPDATE subscription SET lines=?, start_date=?, end_date=?, price=?, is_Valid=? WHERE id=?";
+        String sql = "UPDATE subscription SET lines=?, start_date=?, end_date=?, price=?, station_start=?, station_end=?, is_Valid=? WHERE id=?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, sub.getLines());
-            ps.setDate(2, Date.valueOf(String.valueOf(sub.getStartDate())));
-            ps.setDate(3, Date.valueOf(String.valueOf(sub.getEndDate())));
+            ps.setDate(2, Date.valueOf(sub.getStartDate()));
+            ps.setDate(3, Date.valueOf(sub.getEndDate()));
             ps.setDouble(4, sub.getPrice());
-            ps.setBoolean(5, sub.isValid());
-            ps.setInt(6, sub.getId());
+            ps.setString(5, sub.getStationStart());
+            ps.setString(6, sub.getStationEnd());
+            ps.setBoolean(7, sub.isValid());
+            ps.setInt(8, sub.getId());
             int affected = ps.executeUpdate();
             if (affected == 0) {
                 throw new SQLException("Updating subscription failed, no rows affected.");
             }
         }
-
     }
 
 
@@ -118,6 +121,8 @@ public class SubscriptionService implements  CRUD<Subscription>{
         s.setStartDate(rs.getDate("start_date").toLocalDate());
         s.setEndDate(rs.getDate("end_date").toLocalDate());
         s.setPrice(rs.getDouble("price"));
+        s.setStationStart(rs.getString("station_start"));
+        s.setStationEnd(rs.getString("station_end"));
         return s;
     }
 
@@ -128,17 +133,25 @@ public class SubscriptionService implements  CRUD<Subscription>{
             conn.setAutoCommit(false);
 
             // 1) insert subscription
-            String sqlSub = "INSERT INTO subscription (`lines`, start_date, end_date, price, is_Valid) VALUES (?,?,?,?,?)";
-            try (PreparedStatement ps = conn.prepareStatement(sqlSub, Statement.RETURN_GENERATED_KEYS)) {
+            String sql = "INSERT INTO subscription (`lines`, start_date, end_date, price, station_start, station_end, is_Valid) VALUES (?,?,?,?,?,?,?)";
+            try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setString(1, sub.getLines());
                 ps.setDate(2, Date.valueOf(sub.getStartDate()));
                 ps.setDate(3, Date.valueOf(sub.getEndDate()));
                 ps.setDouble(4, sub.getPrice());
-                ps.setBoolean(5, sub.isValid());
-                ps.executeUpdate();
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) sub.setId(rs.getInt(1));
-                    else throw new SQLException("Failed to get subscription ID");
+                ps.setString(5, sub.getStationStart());
+                ps.setString(6, sub.getStationEnd());
+                ps.setBoolean(7, sub.isValid());
+                int affected = ps.executeUpdate();
+                if (affected == 0) {
+                    throw new SQLException("Creating subscription failed, no rows affected.");
+                }
+                try (ResultSet keys = ps.getGeneratedKeys()) {
+                    if (keys.next()) {
+                        sub.setId(keys.getInt(1));
+                    } else {
+                        throw new SQLException("Creating subscription failed, no ID obtained.");
+                    }
                 }
             }
 
@@ -152,6 +165,19 @@ public class SubscriptionService implements  CRUD<Subscription>{
         } finally {
             conn.setAutoCommit(oldAuto);
         }
+    }
+
+    public boolean isLineActive(String lineNumber) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM subscription WHERE FIND_IN_SET(?, `lines`) > 0 AND end_date >= CURDATE()";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, lineNumber);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0; // Return true if any active subscription exists
+                }
+            }
+        }
+        return false;
     }
 
 

@@ -75,6 +75,8 @@
                     <TableColumn fx:id="colStart" text="Start Date" minWidth="120" style="-fx-alignment: CENTER-LEFT;"/>
                     <TableColumn fx:id="colEnd" text="End Date" minWidth="120" style="-fx-alignment: CENTER-LEFT;"/>
                     <TableColumn fx:id="colPrice" text="Price" minWidth="100" style="-fx-alignment: CENTER-LEFT;"/>
+                    <TableColumn fx:id="colStationStart" text="Station Start" minWidth="150" style="-fx-alignment: CENTER-LEFT;"/>
+                    <TableColumn fx:id="colStationEnd" text="Station End" minWidth="150" style="-fx-alignment: CENTER-LEFT;"/>
                 </columns>
             </TableView>
         </VBox>

@@ -39,6 +39,10 @@ public class SubscriptionController {
     @FXML private Button btnDelete;
     @FXML private Button btnRefresh;
 
+    @FXML private TableColumn<Subscription, String> colStationStart;
+    @FXML private TableColumn<Subscription, String> colStationEnd;
+
+
     @FXML
     private Label labelActiveCount;
 
@@ -55,6 +59,8 @@ public class SubscriptionController {
         colStart.setCellValueFactory(new PropertyValueFactory<>("startDate"));
         colEnd.setCellValueFactory(new PropertyValueFactory<>("endDate"));
         colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+        colStationStart.setCellValueFactory(new PropertyValueFactory<>("stationStart"));
+        colStationEnd.setCellValueFactory(new PropertyValueFactory<>("stationEnd"));
 
         table.setItems(data);
 

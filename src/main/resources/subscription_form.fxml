@@ -21,7 +21,7 @@
 
         <!-- Lines List -->
         <Label text="Lines" styleClass="form-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <ListView fx:id="listLines" prefHeight="150"
+        <ListView fx:id="listLines" prefHeight="150" prefWidth="310"
                   GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
         <!-- Total Price -->

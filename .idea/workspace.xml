@@ -4,32 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="97c7973e-54a8-402c-9812-fa5eda47bb91" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/controllers/PaymentsListController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/controllers/SubscriptionFormController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/entities/Line.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/css/payment_form.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/css/payments_list.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/css/subscription.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/css/subscription_form.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/subscription_form.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="97c7973e-54a8-402c-9812-fa5eda47bb91" name="Changes" comment="gg">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/Home.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/Home.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/PaymentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/PaymentController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/controllers/SubscriptionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/SubscriptionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/entities/Payment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/entities/Payment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/SubscriptionFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/SubscriptionFormController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/entities/Line.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/entities/Line.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/entities/Subscription.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/entities/Subscription.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/CRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/CRUD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/PaymentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/PaymentService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/services/SubscriptionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/SubscriptionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/test/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/test/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/utils/DB_Context.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/utils/DB_Context.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/Home.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/payments_list.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/Payment.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Payment.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/Subscription.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Subscription.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/payments_list.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/payments_list.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/subscription_form.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/subscription_form.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -129,11 +113,24 @@
       <workItem from="1746103721661" duration="246000" />
       <workItem from="1746104180964" duration="607000" />
       <workItem from="1746139946899" duration="133000" />
-      <workItem from="1746172927096" duration="19884000" />
+      <workItem from="1746172927096" duration="24655000" />
     </task>
+    <task id="LOCAL-00001" summary="gg">
+      <option name="closed" value="true" />
+      <created>1746201190219</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1746201190219</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="gg" />
+    <option name="LAST_COMMIT_MESSAGE" value="gg" />
   </component>
 </project>
