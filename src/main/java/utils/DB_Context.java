@@ -11,33 +11,36 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 
 @Slf4j
-public class db_context{
+public class DB_Context{
     private final Dotenv dotenv = Dotenv.load();
     private final String USER = dotenv.get("DB_USER");
     private final String PASSWORD = dotenv.get("DB_PASSWORD");
     private final String URL = dotenv.get("DB_URL");
 
-    private static volatile db_context instance;
+    private static volatile DB_Context instance;
 
     @Getter
     private Connection conn;
 
-    private db_context() {
+    private DB_Context() {
+
         try {
             conn = DriverManager.getConnection(URL, USER, PASSWORD);
             log.info("Connected to database");
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.error("Unable to connect to DB: " + e.getMessage(), e);
+            throw new IllegalStateException("Database connection failed", e);
         }
+
     }
 
 
-    public static db_context getInstance() {
-        db_context temp = instance;
+    public static DB_Context getInstance() {
+        DB_Context temp = instance;
         if (temp == null) {
-            synchronized (db_context.class) {
+            synchronized (DB_Context.class) {
                 temp = instance;
-                if (temp == null) instance = temp= new db_context();
+                if (temp == null) instance = temp= new DB_Context();
             }
         }
         return temp;

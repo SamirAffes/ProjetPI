@@ -1,0 +1,138 @@
+/* Modern Subscription Form CSS */
+
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+/* Root styling */
+.root {
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-background-color: #f5f7fa;
+    -fx-font-size: 13px;
+}
+
+/* Color variables */
+* {
+    -primary-color: #4361ee;
+    -primary-dark: #3a56d4;
+    -secondary-color: #48bfe3;
+    -danger-color: #ef476f;
+    -success-color: #06d6a0;
+    -warning-color: #ffd166;
+    -dark-gray: #2d3748;
+    -medium-gray: #4a5568;
+    -light-gray: #e2e8f0;
+    -fx-focus-color: -primary-color;
+}
+
+/* Form container */
+.form-container {
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 10, 0.1, 0, 4);
+    -fx-padding: 20;
+    -fx-spacing: 20;
+}
+
+/* Form section title */
+.form-section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -dark-gray;
+    -fx-padding: 0 0 10 0;
+}
+
+/* Form labels */
+.form-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: -dark-gray;
+}
+
+/* Form fields */
+.form-field {
+    -fx-pref-height: 35px;
+    -fx-background-color: #f9fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 8px;
+}
+
+.form-field:focused {
+    -fx-border-color: -primary-color;
+    -fx-background-color: white;
+}
+
+/* DatePicker specific styling */
+.date-picker {
+    -fx-background-color: transparent;
+}
+
+.date-picker .arrow-button {
+    -fx-background-color: #f9fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 0 4px 4px 0;
+}
+
+.date-picker .arrow-button:hover {
+    -fx-background-color: -light-gray;
+}
+
+.date-picker .arrow-button .arrow {
+    -fx-background-color: -medium-gray;
+}
+
+.date-picker .text-field {
+    -fx-background-color: #f9fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 4px 0 0 4px;
+    -fx-padding: 8px;
+}
+
+.date-picker .text-field:focused {
+    -fx-border-color: -primary-color;
+    -fx-background-color: white;
+}
+
+.date-picker-popup {
+    -fx-background-color: white;
+    -fx-border-color: -light-gray;
+}
+
+.date-picker-popup .month-year-pane {
+    -fx-background-color: -primary-color;
+}
+
+.date-picker-popup .month-year-pane .label {
+    -fx-text-fill: white;
+}
+
+.date-picker-popup .day-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -dark-gray;
+}
+
+.date-picker-popup .day-cell:hover {
+    -fx-background-color: -light-gray;
+}
+
+.date-picker-popup .selected {
+    -fx-background-color: -primary-color;
+    -fx-text-fill: white;
+}
+
+/* Separator styling */
+.separator {
+    -fx-background-color: -light-gray;
+    -fx-opacity: 0.8;
+}
+
+.separator .line {
+    -fx-border-color: -light-gray;
+    -fx-border-width: 1px;
+}
+
+/* Grid styling */
+.grid-pane {
+    -fx-hgap: 15;
+    -fx-vgap: 15;
+}

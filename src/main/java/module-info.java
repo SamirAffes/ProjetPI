@@ -12,4 +12,6 @@ module com.projetpi {
     exports controllers;
     exports test;
     opens controllers to javafx.fxml;
+    opens entities to javafx.base;
+
 }

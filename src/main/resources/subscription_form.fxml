@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.SubscriptionFormController"
+      styleClass="form-container" spacing="20"  stylesheets="@css/subscription_form.css">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Select Lines for Subscription" styleClass="form-section-title"/>
+
+    <GridPane hgap="15" vgap="15">
+        <columnConstraints>
+            <ColumnConstraints minWidth="100" prefWidth="120"/>
+            <ColumnConstraints hgrow="ALWAYS" minWidth="200"/>
+        </columnConstraints>
+
+        <!-- Lines List -->
+        <Label text="Lines" styleClass="form-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <ListView fx:id="listLines" prefHeight="150"
+                  GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <!-- Total Price -->
+        <Label text="Total Price" styleClass="form-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <Label fx:id="lblTotalPrice" styleClass="form-field" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <!-- Start Date -->
+        <Label text="Start Date" styleClass="form-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <DatePicker fx:id="dpStart" styleClass="form-field" GridPane.rowIndex="2" GridPane.columnIndex="1"
+                    promptText="Select start date"/>
+
+        <!-- End Date -->
+        <Label text="End Date" styleClass="form-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <DatePicker fx:id="dpEnd" styleClass="form-field" GridPane.rowIndex="3" GridPane.columnIndex="1"
+                    promptText="Select end date"/>
+    </GridPane>
+
+    <Separator/>
+
+</VBox>

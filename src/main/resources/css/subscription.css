@@ -1,0 +1,347 @@
+/* Modern Subscription Management CSS */
+
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+/* Root styling */
+.root {
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-background-color: #f5f7fa;
+    -fx-font-size: 13px;
+}
+
+/* Color variables */
+* {
+    -primary-color: #4361ee;
+    -primary-dark: #3a56d4;
+    -secondary-color: #48bfe3;
+    -danger-color: #ef476f;
+    -success-color: #06d6a0;
+    -warning-color: #ffd166;
+    -dark-gray: #2d3748;
+    -medium-gray: #4a5568;
+    -light-gray: #e2e8f0;
+    -fx-focus-color: -primary-color;
+}
+
+/* App header */
+.app-header {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0.1, 0, 2);
+}
+
+.app-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -dark-gray;
+}
+
+.icon-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+    -fx-font-size: 16px;
+}
+
+.icon-button:hover {
+    -fx-background-color: #f0f2f5;
+    -fx-background-radius: 50%;
+}
+
+/* Stats bar */
+.stats-bar {
+    -fx-background-color: white;
+    -fx-border-color: -light-gray;
+    -fx-border-width: 0 0 1 0;
+}
+
+.stat-box {
+    -fx-min-width: 150px;
+}
+
+.stat-label {
+    -fx-text-fill: -medium-gray;
+    -fx-font-size: 12px;
+}
+
+.stat-value {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -dark-gray;
+}
+
+/* Content area */
+.content-area {
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 10, 0.1, 0, 4);
+}
+
+.section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -dark-gray;
+}
+
+.table-header {
+    -fx-padding: 0 0 15 0;
+}
+
+/* Search field */
+.search-field {
+    -fx-pref-width: 250px;
+    -fx-background-color: #f9fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 8px;
+}
+
+.search-field:focused {
+    -fx-border-color: -primary-color;
+    -fx-background-color: white;
+}
+
+/* FIXED: Modern table with improved visibility */
+.modern-table {
+    -fx-background-color: white;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    /* Reset any properties that might affect visibility */
+    -fx-opacity: 1.0;
+    -fx-text-fill: black;
+}
+
+.modern-table .column-header-background {
+    -fx-background-color: #f8fafc;
+}
+
+
+.modern-table .column-header {
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #e2e8f0;
+}
+
+.modern-table .column-header .label {
+    -fx-text-fill: -dark-gray;
+    -fx-opacity: 1.0;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0;
+}
+
+.modern-table .table-cell {
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10px;
+    -fx-text-fill: -dark-gray;
+    -fx-opacity: 1.0;
+    -fx-border-width: 0;
+}
+
+.modern-table .table-row-cell:odd {
+    -fx-background-color: #f9fafb;
+}
+
+.modern-table .table-row-cell:even {
+    -fx-background-color: white;
+}
+
+.modern-table .table-row-cell:hover {
+    -fx-background-color: #f0f4ff;
+}
+
+/* Ensure selected rows are clearly visible */
+.modern-table .table-row-cell:selected {
+    -fx-background-color: #d4e4ff;
+}
+
+.modern-table .table-row-cell:selected .table-cell {
+    -fx-text-fill: -dark-gray;
+    -fx-font-weight: bold;
+}
+
+.modern-table .table-cell {
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10px;
+    -fx-text-fill: -dark-gray;
+    -fx-opacity: 1.0;
+    -fx-border-width: 0;
+}
+
+.placeholder-label {
+    -fx-text-fill: -medium-gray;
+    -fx-font-size: 14px;
+}
+
+/* Action buttons */
+.action-bar {
+    -fx-background-color: white;
+    -fx-border-color: -light-gray;
+    -fx-border-width: 1 0 0 0;
+}
+
+.primary-button {
+    -fx-background-color: -primary-color;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 16px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.primary-button:hover {
+    -fx-background-color: -primary-dark;
+}
+
+.edit-button {
+    -fx-background-color: -secondary-color;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 16px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.edit-button:hover {
+    -fx-background-color: derive(-secondary-color, -10%);
+}
+
+.delete-button {
+    -fx-background-color: transparent;
+    -fx-border-color: -danger-color;
+    -fx-text-fill: -danger-color;
+    -fx-font-weight: bold;
+    -fx-padding: 9px 15px;
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.delete-button:hover {
+    -fx-background-color: -danger-color;
+    -fx-text-fill: white;
+}
+
+/* Form styling */
+.form-container {
+    -fx-spacing: 20;
+    -fx-padding: 20;
+}
+
+.form-field {
+    -fx-pref-height: 35px;
+    -fx-background-color: #f9fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 8px;
+}
+
+.form-field:focused {
+    -fx-border-color: -primary-color;
+    -fx-background-color: white;
+}
+
+.form-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: -dark-gray;
+}
+
+/* Dialog styling */
+.dialog-pane {
+    -fx-background-color: white;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: -primary-color;
+}
+
+.dialog-pane .header-panel .label {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.dialog-pane .button {
+    -fx-background-radius: 4px;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 16px;
+}
+
+.dialog-pane .button-bar .button:default {
+    -fx-background-color: -primary-color;
+    -fx-text-fill: white;
+}
+
+.dialog-pane .button-bar .button:default:hover {
+    -fx-background-color: -primary-dark;
+}
+
+/* Add these styles to your subscription_form.css file */
+
+/* ListView styling */
+.list-view {
+    -fx-background-color: #f9fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 5px;
+}
+
+.list-view:focused {
+    -fx-border-color: -primary-color;
+}
+
+.list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 8px 5px;
+    -fx-text-fill: -dark-gray;
+}
+
+.list-view .list-cell:hover {
+    -fx-background-color: #f0f4ff;
+}
+
+.list-view .list-cell:selected {
+    -fx-background-color: #d4e4ff;
+}
+
+/* Checkbox styling within ListView */
+.list-cell .check-box {
+    -fx-padding: 0 10px 0 0;
+}
+
+.check-box .box {
+    -fx-background-color: white;
+    -fx-border-color: #cbd5e0;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+}
+
+.check-box:hover .box {
+    -fx-border-color: -primary-color;
+}
+
+.check-box:selected .box {
+    -fx-background-color: -primary-color;
+    -fx-border-color: -primary-color;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: white;
+}
+
+/* Total price label styling */
+#lblTotalPrice {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -primary-color;
+    -fx-background-color: white;
+    -fx-background-radius: 4px;
+    -fx-border-color: -light-gray;
+    -fx-border-radius: 4px;
+    -fx-padding: 8px 10px;
+}

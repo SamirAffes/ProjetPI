@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
+<BorderPane xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.PaymentsListController"
+            prefWidth="600" prefHeight="400"  stylesheets="@css/payments_list.css">
+
+    <!-- set padding properly -->
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <top>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <padding>
+                <Insets top="0" right="0" bottom="10" left="0"/>
+            </padding>
+            <Label text="Payments for Subscription:" style="-fx-font-size: 16px;"/>
+            <Label fx:id="lblSubInfo" style="-fx-font-weight: bold;"/>
+        </HBox>
+    </top>
+
+    <center>
+        <TableView fx:id="table">
+            <columns>
+                <TableColumn fx:id="colDate"   text="Date"      prefWidth="100"/>
+                <TableColumn fx:id="colAmount" text="Amount"    prefWidth="80"/>
+                <TableColumn fx:id="colEmail"  text="Email"     prefWidth="150"/>
+                <TableColumn fx:id="colName"   text="Full Name" prefWidth="120"/>
+                <TableColumn fx:id="colPhone"  text="Phone"     prefWidth="100"/>
+                <TableColumn fx:id="colCardNo" text="Card #"    prefWidth="100"/>
+            </columns>
+        </TableView>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER_RIGHT">
+            <padding>
+                <Insets top="10" right="0" bottom="0" left="0"/>
+            </padding>
+            <Button text="Close" onAction="#handleClose"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

@@ -1,0 +1,112 @@
+/* Modern Payment Form CSS */
+
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+/* Root styling */
+.root {
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-background-color: #f5f7fa;
+    -fx-font-size: 13px;
+}
+
+/* Color variables */
+* {
+    -primary-color: #4361ee;
+    -primary-dark: #3a56d4;
+    -secondary-color: #48bfe3;
+    -danger-color: #ef476f;
+    -success-color: #06d6a0;
+    -warning-color: #ffd166;
+    -dark-gray: #2d3748;
+    -medium-gray: #4a5568;
+    -light-gray: #e2e8f0;
+    -fx-focus-color: -primary-color;
+}
+
+/* Main container */
+VBox {
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 10, 0.1, 0, 4);
+    -fx-padding: 20;
+    -fx-spacing: 15;
+}
+
+/* Form section title */
+.form-section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -dark-gray;
+    -fx-padding: 0 0 10 0;
+}
+
+/* Labels */
+Label {
+    -fx-font-weight: bold;
+    -fx-text-fill: -dark-gray;
+}
+
+/* Amount label - special styling for read-only display */
+#lblAmount {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -primary-color;
+}
+
+/* Text fields */
+TextField, PasswordField {
+    -fx-pref-height: 35px;
+    -fx-background-color: #f9fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 8px;
+}
+
+TextField:focused, PasswordField:focused {
+    -fx-border-color: -primary-color;
+    -fx-background-color: white;
+}
+
+/* Buttons container */
+HBox {
+    -fx-padding: 10 0 0 0;
+}
+
+/* Add style classes for buttons */
+.cancel-button {
+    -fx-background-color: transparent;
+    -fx-border-color: -medium-gray;
+    -fx-text-fill: -medium-gray;
+    -fx-font-weight: bold;
+    -fx-padding: 9px 15px;
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.cancel-button:hover {
+    -fx-background-color: -light-gray;
+    -fx-border-color: -dark-gray;
+    -fx-text-fill: -dark-gray;
+}
+
+.primary-button {
+    -fx-background-color: -primary-color;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 16px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.primary-button:hover {
+    -fx-background-color: -primary-dark;
+}
+
+/* Grid styling */
+GridPane {
+    -fx-hgap: 10;
+    -fx-vgap: 10;
+}

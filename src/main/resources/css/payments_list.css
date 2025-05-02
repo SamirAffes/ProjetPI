@@ -1,0 +1,141 @@
+/* Modern Payments List CSS */
+
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+/* Root styling */
+.root {
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-background-color: #f5f7fa;
+    -fx-font-size: 13px;
+}
+
+/* Color variables */
+* {
+    -primary-color: #4361ee;
+    -primary-dark: #3a56d4;
+    -secondary-color: #48bfe3;
+    -danger-color: #ef476f;
+    -success-color: #06d6a0;
+    -warning-color: #ffd166;
+    -dark-gray: #2d3748;
+    -medium-gray: #4a5568;
+    -light-gray: #e2e8f0;
+    -fx-focus-color: -primary-color;
+}
+
+/* Main container */
+BorderPane {
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 10, 0.1, 0, 4);
+}
+
+/* Header area */
+HBox {
+    -fx-padding: 10 0;
+}
+
+/* Title label */
+HBox Label:first-child {
+    -fx-font-size: 16px;
+    -fx-text-fill: -dark-gray;
+}
+
+/* Subscription info label */
+#lblSubInfo {
+    -fx-font-weight: bold;
+    -fx-text-fill: -primary-color;
+    -fx-font-size: 16px;
+}
+
+/* Table styling */
+TableView {
+    -fx-background-color: white;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-opacity: 1.0;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #f8fafc;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #e2e8f0;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: -dark-gray;
+    -fx-opacity: 1.0;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0;
+}
+
+.table-view .table-cell {
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10px;
+    -fx-text-fill: -dark-gray;
+    -fx-opacity: 1.0;
+    -fx-border-width: 0;
+}
+
+.table-view .table-row-cell:odd {
+    -fx-background-color: #f9fafb;
+}
+
+.table-view .table-row-cell:even {
+    -fx-background-color: white;
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: #f0f4ff;
+}
+
+/* Ensure selected rows are clearly visible */
+.table-view .table-row-cell:selected {
+    -fx-background-color: #d4e4ff;
+}
+
+.table-view .table-row-cell:selected .table-cell {
+    -fx-text-fill: -dark-gray;
+    -fx-font-weight: bold;
+}
+
+/* Close button styling */
+Button {
+    -fx-background-color: transparent;
+    -fx-border-color: -medium-gray;
+    -fx-text-fill: -medium-gray;
+    -fx-font-weight: bold;
+    -fx-padding: 9px 15px;
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-cursor: hand;
+}
+
+Button:hover {
+    -fx-background-color: -light-gray;
+    -fx-border-color: -dark-gray;
+    -fx-text-fill: -dark-gray;
+}
+
+/* Add a second button style for when you need a primary action button */
+.primary-button {
+    -fx-background-color: -primary-color;
+    -fx-border-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 16px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.primary-button:hover {
+    -fx-background-color: -primary-dark;
+}
