@@ -119,16 +119,16 @@ public class OrganisationManagementController {
                     logoView.setImage(logoImage);
                 } else {
                     // Use a default image if the logo file doesn't exist
-                    logoView.setImage(new Image(getClass().getResourceAsStream("/Images/Logos/default_logo.png")));
+                    logoView.setImage(new Image(getClass().getResourceAsStream("/Images/Logos/default_logo.svg")));
                 }
             } catch (Exception e) {
                 log.error("Error loading logo for organization: {}", organisation.getNom(), e);
                 // Use a default image in case of error
-                logoView.setImage(new Image(getClass().getResourceAsStream("/Images/Logos/default_logo.png")));
+                logoView.setImage(new Image(getClass().getResourceAsStream("/Images/Logos/default_logo.svg")));
             }
         } else {
             // Use a default image if no logo is set
-            logoView.setImage(new Image(getClass().getResourceAsStream("/Images/Logos/default_logo.png")));
+            logoView.setImage(new Image(getClass().getResourceAsStream("/Images/Logos/default_logo.svg")));
         }
         
         logoContainer.getChildren().add(logoView);
@@ -214,14 +214,14 @@ public class OrganisationManagementController {
                         Image logoImage = new Image(logoFile.toURI().toString());
                         logoView.setImage(logoImage);
                     } else {
-                        logoView.setImage(new Image(getClass().getResourceAsStream("/Images/Logos/default_logo.png")));
+                        logoView.setImage(new Image(getClass().getResourceAsStream("/Images/Logos/default_logo.svg")));
                     }
                 } catch (Exception e) {
                     log.error("Error loading logo for organization details: {}", organisation.getNom(), e);
-                    logoView.setImage(new Image(getClass().getResourceAsStream("/Images/Logos/default_logo.png")));
+                    logoView.setImage(new Image(getClass().getResourceAsStream("/Images/Logos/default_logo.svg")));
                 }
             } else {
-                logoView.setImage(new Image(getClass().getResourceAsStream("/Images/Logos/default_logo.png")));
+                logoView.setImage(new Image(getClass().getResourceAsStream("/Images/Logos/default_logo.svg")));
             }
             
             // Add organisation details

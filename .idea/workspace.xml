@@ -6,15 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="97c7973e-54a8-402c-9812-fa5eda47bb91" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Images/HERlouages-1024x768.webp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Images/Metro 2.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Images/SNTRI 2.webp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Images/bedis.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Images/bobi weld sasia" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/ConducteurManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/ConducteurManagementController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/MaintenanceManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/MaintenanceManagementController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/Images/Vehicles/e3076200-3423-4077-b874-8e4fc799fbae_Logo SNTRI.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/organisation/conducteurManagement.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/organisation/conducteurManagement.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/OrganisationManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/OrganisationManagementController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/test/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/test/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,10 +27,10 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -60,6 +53,8 @@
   "keyToString": {
     "Application.Main.executor": "Run",
     "Maven.ProjetPI [clean,install].executor": "Run",
+    "Maven.ProjetPI [clean].executor": "Run",
+    "Maven.ProjetPI [install].executor": "Run",
     "Maven.ProjetPI [javafx:run].executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
