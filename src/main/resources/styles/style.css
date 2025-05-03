@@ -1,0 +1,81 @@
+/* Main styles */
+.root {
+    -fx-background-color: #f5f5f5;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* Map Container */
+.map-container {
+    -fx-background-color: #e8e8e8;
+}
+
+/* Search Box */
+.search-box {
+    -fx-background-color: white;
+    -fx-background-radius: 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 5, 0, 0, 2);
+}
+
+.search-field {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 0 10px;
+}
+
+.search-button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-background-radius: 0 20 20 0;
+    -fx-cursor: hand;
+}
+
+.search-button:hover {
+    -fx-background-color: #2980b9;
+}
+
+/* Sign-in Button */
+.sign-in-button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 20px;
+    -fx-cursor: hand;
+}
+
+.sign-in-button:hover {
+    -fx-background-color: #2980b9;
+}
+
+/* Accessibility Button */
+.accessibility-button {
+    -fx-background-color: #9b59b6;
+    -fx-text-fill: white;
+    -fx-background-radius: 50%;
+    -fx-font-size: 18px;
+    -fx-cursor: hand;
+}
+
+.accessibility-button:hover {
+    -fx-background-color: #8e44ad;
+}
+
+/* Sign in / up form*/
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);
+    -fx-padding: 0 30 0 30;
+}
+
+.card:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 1);
+}
+
+.text-field, .password-field {
+    -fx-pref-height: 35;
+    -fx-background-radius: 3;
+}
+
+.form-label {
+    -fx-font-weight: bold;
+}
