@@ -11,8 +11,17 @@ module com.projetpi {
     requires java.desktop;
     requires javafx.swing;
     requires javafx.web; // Added for WebView support
+    requires jakarta.persistence;
+    requires org.hibernate.orm.core;
+    requires org.kordamp.ikonli.fontawesome5;
+    requires org.kordamp.ikonli.javafx;
+
 
     exports controllers;
     exports test;
     opens controllers to javafx.fxml;
+    exports entities;
+    exports utils;
+    opens test to javafx.fxml;
+    opens entities to org.hibernate.orm.core;
 }

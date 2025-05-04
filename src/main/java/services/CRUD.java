@@ -3,9 +3,9 @@ package services;
 import java.util.List;
 
 public interface CRUD<T> {
-    public void ajouter(T t);
-    public void supprimer(T t);
-    public void modifier(T t);
-    public T afficher(int id);
-    public List<T> afficher_tout();
+    void ajouter(T t);
+    void supprimer(T t);
+    void modifier(T t);
+    T afficher(int id);
+    List<T> afficher_tout();
 }

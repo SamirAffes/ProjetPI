@@ -5,13 +5,67 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="97c7973e-54a8-402c-9812-fa5eda47bb91" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/config/EnvLoader.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/controllers/AdminDashboardController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/controllers/AdminLoginController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/controllers/ConducteurManagementController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/controllers/HomeController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/controllers/MaintenanceManagementController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/controllers/OrganisationDashboardController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/controllers/OrganisationLoginController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/controllers/OrganisationManagementController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/controllers/VehiculeManagementController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/entities/Conducteur.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/entities/Maintenance.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/entities/OrgType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/entities/Organisation.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/entities/StatusMaintenance.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/entities/TypeMaintenance.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/entities/Vehicule.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/entities/VehiculeStatut.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/entities/VehiculeType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/services/ConducteurService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/services/MaintenanceService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/services/OrganisationService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/services/VehiculeService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/utils/DatabaseInitializer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/utils/JPAUtil.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/utils/OrganisationContext.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/Drivers/default_driver.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/Logos/86d29bf5-3298-43f3-8b69-3f4d3da62c23_Logo SNTRI.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/Logos/9557b452-2167-48c2-9501-5801395e4668_Logo_-_SNCFT.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/Logos/9612a1b8-2075-4465-9d81-edee906941b7_transtu.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/Logos/SNCFT.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/Logos/SNTRI.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/Logos/b3efaa6c-1f54-4aa0-8885-ff58158aaeef_SNCFT.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/Logos/default_logo.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/Logos/transtu.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/Logos/tunisair_logo_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/Vehicles/4fda895e-f42a-45c8-bbc1-42a9b7e68fb5_certif.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/Vehicles/91d49ffe-7d6f-4ac2-a48c-59336a838c44_Train Rades.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/Vehicles/9ccb291b-7c06-46a2-8ecc-a44ed13d3d3b_metro.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/Vehicles/cba022a9-db2f-4819-9dc0-2eeca7c9231f_kar safra.jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/Vehicles/default_vehicle.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/Vehicles/fbedd123-69bf-4350-a315-7f2ccd8f85ea_kar safra.jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/META-INF/persistence.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/dashboard.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/login.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/organisationManagement.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/organisation/conducteurManagement.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/organisation/dashboard.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/organisation/login.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/organisation/maintenanceManagement.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/organisation/vehiculeManagement.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/hibernate.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/controllers/Home.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/Home.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/services/CRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/CRUD.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/test/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/test/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/utils/DB_Context.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/utils/DB_Context.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/utils/DB_Context.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/utils/db_context.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/Home.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Home.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/styles/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/styles/style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +107,7 @@
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Bechir Ferjani/Desktop/ProjetPI&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Bechir Ferjani/Desktop/ProjetPI/src/main/resources&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -64,6 +118,8 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Bechir Ferjani\Desktop\ProjetPI\src\main\resources" />
+      <recent name="C:\Users\Bechir Ferjani\Desktop\ProjetPI\src\main\java" />
       <recent name="C:\Users\Bechir Ferjani\Desktop\ProjetPI" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -113,6 +169,10 @@
       <workItem from="1746090709825" duration="1254000" />
       <workItem from="1746268195819" duration="864000" />
       <workItem from="1746287367613" duration="2186000" />
+      <workItem from="1746349196509" duration="105000" />
+      <workItem from="1746349551315" duration="4665000" />
+      <workItem from="1746381546036" duration="1904000" />
+      <workItem from="1746383503553" duration="3651000" />
     </task>
     <servers />
   </component>

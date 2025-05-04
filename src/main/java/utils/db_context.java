@@ -1,17 +1,16 @@
 package utils;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import io.github.cdimascio.dotenv.Dotenv;
 
+
+@Slf4j
 public class db_context{
-    private static final Logger logger = LoggerFactory.getLogger(db_context.class);
-    
     private final Dotenv dotenv = Dotenv.load();
     private final String USER = dotenv.get("DB_USER");
     private final String PASSWORD = dotenv.get("DB_PASSWORD");
@@ -20,16 +19,17 @@ public class db_context{
     private static volatile db_context instance;
 
     @Getter
-    private Connection connection;
+    private Connection conn;
 
     private db_context() {
         try {
-            connection = DriverManager.getConnection(URL, USER, PASSWORD);
-            logger.info("Connected to database");
+            conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            log.info("Connected to database");
         } catch (SQLException e) {
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
         }
     }
+
 
     public static db_context getInstance() {
         db_context temp = instance;
@@ -42,7 +42,5 @@ public class db_context{
         return temp;
     }
 
-    public Connection getConn() {
-        return connection;
-    }
+
 }

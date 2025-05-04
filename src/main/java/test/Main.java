@@ -24,10 +24,11 @@ public class Main extends Application {
         Scene scene = new Scene(fxmlLoader.load());
         primaryStage.setTitle("TunTransport");
         primaryStage.setScene(scene);
-        
+
         // Set application to fullscreen mode by default
         primaryStage.setMaximized(true);
-
+        primaryStage.setFullScreen(true);
+        primaryStage.setFullScreenExitHint("");
         
         primaryStage.show();
         Connection con = db_context.getInstance().getConn();
