@@ -39,6 +39,18 @@ public class AdminDashboardController {
     public void initialize() {
         // Set default view
         showDashboard();
+        
+        // Ensure fullscreen is maintained
+        dashboardButton.sceneProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                Stage stage = (Stage) newValue.getWindow();
+                if (stage != null) {
+                    stage.setMaximized(true);
+                    stage.setFullScreen(true);
+                    stage.setFullScreenExitHint("");
+                }
+            }
+        });
     }
     
     @FXML

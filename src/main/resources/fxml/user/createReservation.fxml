@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="800.0" spacing="15.0" styleClass="form-container" stylesheets="@../../styles/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CreateReservationController">
+   <children>
+      <HBox alignment="CENTER">
+         <children>
+            <Label styleClass="form-title" text="Réservation et Paiement">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+      
+      <!-- Reservation Details Section -->
+      <VBox spacing="15.0" styleClass="section-container">
+         <children>
+            <Label styleClass="section-title" text="Détails de la réservation">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="#3498db" iconLiteral="fas-info-circle" iconSize="16" />
+               </graphic>
+            </Label>
+            
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <FontIcon iconColor="#3498db" iconLiteral="fas-route" iconSize="16" />
+                  <Label styleClass="form-section" text="Trajet sélectionné:" />
+                  <Label fx:id="routeLabel" styleClass="highlight-text" text="Tunis → Sousse" />
+               </children>
+            </HBox>
+            
+            <HBox spacing="20.0">
+               <children>
+                  <VBox prefWidth="330.0" spacing="5.0">
+                     <children>
+                        <Label text="Transport" />
+                        <ComboBox fx:id="transportComboBox" prefHeight="40.0" prefWidth="330.0" promptText="Sélectionner un transport" />
+                     </children>
+                  </VBox>
+                  <VBox prefWidth="330.0" spacing="10.0">
+                     <children>
+                        <Label text="Prix total" />
+                        <Label fx:id="priceLabel" styleClass="price-label" text="25.00 DT">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            
+            <HBox alignment="CENTER_LEFT" spacing="20.0">
+               <children>
+                  <VBox prefWidth="200.0" spacing="5.0">
+                     <children>
+                        <Label text="Date de départ" />
+                        <DatePicker fx:id="datePicker" prefHeight="40.0" prefWidth="200.0" promptText="Date" />
+                     </children>
+                  </VBox>
+                  <VBox prefWidth="120.0" spacing="5.0">
+                     <children>
+                        <Label text="Heure" />
+                        <ComboBox fx:id="timeComboBox" prefHeight="40.0" prefWidth="120.0" promptText="Heure" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            
+            <CheckBox fx:id="roundTripCheckBox" mnemonicParsing="false" text="Aller-retour" />
+            
+            <VBox fx:id="returnDateContainer" spacing="10.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="20.0">
+                     <children>
+                        <VBox prefWidth="200.0" spacing="5.0">
+                           <children>
+                              <Label text="Date de retour" />
+                              <DatePicker fx:id="returnDatePicker" prefHeight="40.0" prefWidth="200.0" promptText="Date de retour" />
+                           </children>
+                        </VBox>
+                        <VBox prefWidth="120.0" spacing="5.0">
+                           <children>
+                              <Label text="Heure" />
+                              <ComboBox fx:id="returnTimeComboBox" prefHeight="40.0" prefWidth="120.0" promptText="Heure" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="25.0" top="5.0" />
+               </VBox.margin>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
+      </VBox>
+      
+      <Separator />
+      
+      <!-- Basic Payment Method Section -->
+      <HBox spacing="10.0">
+         <children>
+            <Label styleClass="form-section" text="Mode de paiement:" />
+            <RadioButton fx:id="payWalletRadio" mnemonicParsing="false" selected="true" text="Wallet" />
+            <RadioButton fx:id="payCardRadio" mnemonicParsing="false" text="Carte bancaire" />
+         </children>
+         <padding>
+            <Insets left="15.0" right="15.0" />
+         </padding>
+      </HBox>
+      
+      <!-- Advanced Payment Section -->
+      <VBox fx:id="paymentContainer" spacing="15.0" styleClass="section-container">
+         <children>
+            <Label styleClass="section-title" text="Détails du paiement">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="#3498db" iconLiteral="fas-credit-card" iconSize="16" />
+               </graphic>
+            </Label>
+            
+            <!-- Payment method options -->
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
+               <children>
+                  <Label text="Méthode de paiement:" />
+                  <RadioButton fx:id="creditCardRadio" mnemonicParsing="false" selected="true" text="Carte de crédit">
+                     <graphic>
+                        <FontIcon iconLiteral="fas-credit-card" />
+                     </graphic>
+                  </RadioButton>
+                  <RadioButton fx:id="debitCardRadio" mnemonicParsing="false" text="Carte de débit">
+                     <graphic>
+                        <FontIcon iconLiteral="fas-credit-card" />
+                     </graphic>
+                  </RadioButton>
+                  <RadioButton fx:id="paypalRadio" mnemonicParsing="false" text="PayPal">
+                     <graphic>
+                        <FontIcon iconLiteral="fab-paypal" />
+                     </graphic>
+                  </RadioButton>
+                  <RadioButton fx:id="bankTransferRadio" mnemonicParsing="false" text="Virement bancaire">
+                     <graphic>
+                        <FontIcon iconLiteral="fas-university" />
+                     </graphic>
+                  </RadioButton>
+               </children>
+            </HBox>
+            
+            <!-- Card details fields -->
+            <VBox spacing="10.0">
+               <children>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Numéro de carte" />
+                        <TextField fx:id="cardNumberTextField" promptText="1234 5678 9012 3456" />
+                     </children>
+                  </VBox>
+                  
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Titulaire de la carte" />
+                        <TextField fx:id="cardHolderTextField" promptText="PRÉNOM NOM" />
+                     </children>
+                  </VBox>
+                  
+                  <HBox spacing="15.0">
+                     <children>
+                        <VBox prefWidth="200.0" spacing="5.0">
+                           <children>
+                              <Label text="Date d'expiration (MM/YY)" />
+                              <TextField fx:id="expiryDateTextField" promptText="MM/YY" />
+                           </children>
+                        </VBox>
+                        
+                        <VBox prefWidth="100.0" spacing="5.0">
+                           <children>
+                              <Label text="CVV" />
+                              <TextField fx:id="cvvTextField" promptText="123" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            
+            <!-- Process Payment Button -->
+            <HBox alignment="CENTER">
+               <children>
+                  <Button fx:id="processPaymentButton" defaultButton="true" mnemonicParsing="false" prefHeight="45.0" prefWidth="300.0" styleClass="button-primary" text="Traiter le paiement">
+                     <graphic>
+                        <FontIcon iconLiteral="fas-lock" />
+                     </graphic>
+                  </Button>
+                  <ProgressIndicator fx:id="paymentProgressIndicator" prefHeight="30.0" prefWidth="30.0">
+                     <HBox.margin>
+                        <Insets left="15.0" />
+                     </HBox.margin>
+                  </ProgressIndicator>
+               </children>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
+      </VBox>
+      
+      <!-- Action Buttons -->
+      <HBox alignment="CENTER_RIGHT" spacing="15.0">
+         <children>
+            <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" prefHeight="40.0" prefWidth="120.0" styleClass="button-secondary" text="Annuler" />
+            <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" styleClass="button-primary" text="Confirmer la réservation">
+               <graphic>
+                  <FontIcon iconLiteral="fas-check" />
+               </graphic>
+            </Button>
+         </children>
+         <padding>
+            <Insets top="20.0" />
+         </padding>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+   </padding>
+</VBox> 

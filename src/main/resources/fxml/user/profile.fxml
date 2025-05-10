@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<VBox spacing="20.0" styleClass="content-container" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label styleClass="content-title" text="Mon compte">
+         <font>
+            <Font name="System Bold" size="16.0" />
+         </font>
+      </Label>
+      <HBox spacing="30.0">
+         <children>
+            <VBox spacing="15.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label styleClass="section-title" text="Informations personnelles">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Separator prefWidth="200.0" />
+                     </children>
+                  </VBox>
+                  <HBox spacing="15.0">
+                     <children>
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label text="Nom" />
+                              <TextField fx:id="lastNameField" prefHeight="40.0" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label text="Prénom" />
+                              <TextField fx:id="firstNameField" prefHeight="40.0" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Adresse email" />
+                        <TextField fx:id="emailField" prefHeight="40.0" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Numéro de téléphone" />
+                        <TextField fx:id="phoneField" prefHeight="40.0" />
+                     </children>
+                  </VBox>
+                  <Button fx:id="updateProfileButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" styleClass="button-primary" text="Mettre à jour le profil">
+                     <graphic>
+                        <FontIcon iconLiteral="fas-save" />
+                     </graphic>
+                  </Button>
+               </children>
+            </VBox>
+            <VBox minWidth="350.0" spacing="15.0">
+               <children>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label styleClass="section-title" text="Changer le mot de passe">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Separator prefWidth="200.0" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Mot de passe actuel" />
+                        <PasswordField fx:id="currentPasswordField" prefHeight="40.0" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Nouveau mot de passe" />
+                        <PasswordField fx:id="newPasswordField" prefHeight="40.0" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Confirmer le nouveau mot de passe" />
+                        <PasswordField fx:id="confirmPasswordField" prefHeight="40.0" />
+                     </children>
+                  </VBox>
+                  <Button fx:id="changePasswordButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" styleClass="button-primary" text="Changer le mot de passe">
+                     <graphic>
+                        <FontIcon iconLiteral="fas-key" />
+                     </graphic>
+                  </Button>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</VBox> 

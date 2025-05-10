@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane prefHeight="800.0" prefWidth="1200.0" stylesheets="@../styles/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LoginSelectionController">
+   <center>
+      <VBox alignment="CENTER" maxWidth="800.0" spacing="40.0" styleClass="card" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="TunTransport" textAlignment="CENTER">
+               <font>
+                  <Font size="36.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+            </Label>
+            <Label text="Connexion ou Création de compte" textAlignment="CENTER">
+               <font>
+                  <Font size="22.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="20.0" />
+               </VBox.margin>
+            </Label>
+            
+            <VBox spacing="30.0">
+               <children>
+                  <Label text="Se connecter à un compte existant" textAlignment="CENTER">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  
+                  <HBox alignment="CENTER" spacing="40.0">
+                     <children>
+                        <VBox alignment="CENTER" prefHeight="220.0" prefWidth="180.0" styleClass="login-option-card" onMouseClicked="#onUserLoginClick">
+                           <children>
+                              <FontIcon iconColor="#2196f3" iconLiteral="fas-user" iconSize="70" />
+                              <Label text="Utilisateur" textAlignment="CENTER">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="20.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label text="Connexion au compte utilisateur" textAlignment="CENTER" wrapText="true">
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <padding>
+                              <Insets bottom="25.0" left="20.0" right="20.0" top="25.0" />
+                           </padding>
+                        </VBox>
+                        
+                        <VBox alignment="CENTER" prefHeight="220.0" prefWidth="180.0" styleClass="login-option-card" onMouseClicked="#onOrganisationLoginClick">
+                           <children>
+                              <FontIcon iconColor="#4caf50" iconLiteral="fas-building" iconSize="70" />
+                              <Label text="Organisation" textAlignment="CENTER">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="20.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label text="Connexion au compte organisation" textAlignment="CENTER" wrapText="true">
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <padding>
+                              <Insets bottom="25.0" left="20.0" right="20.0" top="25.0" />
+                           </padding>
+                        </VBox>
+                        
+                        <VBox alignment="CENTER" prefHeight="220.0" prefWidth="180.0" styleClass="login-option-card" onMouseClicked="#onAdminLoginClick">
+                           <children>
+                              <FontIcon iconColor="#ff9800" iconLiteral="fas-user-shield" iconSize="70" />
+                              <Label text="Admin" textAlignment="CENTER">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="20.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label text="Connexion administrateur" textAlignment="CENTER" wrapText="true">
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <padding>
+                              <Insets bottom="25.0" left="20.0" right="20.0" top="25.0" />
+                           </padding>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            
+            <VBox spacing="30.0">
+               <children>
+                  <Label text="Créer un nouveau compte" textAlignment="CENTER">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="10.0" top="20.0" />
+                     </VBox.margin>
+                  </Label>
+                  
+                  <HBox alignment="CENTER" spacing="30.0">
+                     <children>
+                        <VBox alignment="CENTER" prefHeight="220.0" prefWidth="200.0" styleClass="login-option-card" onMouseClicked="#onUserRegisterClick">
+                           <children>
+                              <FontIcon iconColor="#2196f3" iconLiteral="fas-user-plus" iconSize="70" />
+                              <Label text="Nouvel utilisateur" textAlignment="CENTER">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="20.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label text="Créer un compte utilisateur" textAlignment="CENTER" wrapText="true">
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <padding>
+                              <Insets bottom="25.0" left="20.0" right="20.0" top="25.0" />
+                           </padding>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#onBackButtonClick" prefHeight="40.0" prefWidth="180.0" styleClass="button-secondary" text="Retour à l'accueil">
+               <VBox.margin>
+                  <Insets top="30.0" />
+               </VBox.margin>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+         </children>
+         <padding>
+            <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+         </padding>
+      </VBox>
+   </center>
+</BorderPane> 

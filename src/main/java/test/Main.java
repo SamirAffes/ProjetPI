@@ -6,6 +6,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.DatabaseInitializer;
+import utils.RouteDataPopulator;
 import utils.db_context;
 
 import java.sql.Connection;
@@ -20,6 +22,19 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         logger.info("Starting Application");
+        
+        // Initialize database and populate routes
+        try {
+            logger.info("Initializing database schema");
+            DatabaseInitializer.initializeDatabase();
+            
+            // Populate routes if none exist
+            logger.info("Checking for routes and populating if needed");
+            RouteDataPopulator.populateRoutesIfEmpty();
+        } catch (Exception e) {
+            logger.error("Error during database initialization: {}", e.getMessage(), e);
+        }
+        
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Home.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         primaryStage.setTitle("TunTransport");

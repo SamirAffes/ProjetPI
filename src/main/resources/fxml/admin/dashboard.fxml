@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="768.0" prefWidth="1024.0" maxHeight="Infinity" maxWidth="Infinity"   xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AdminDashboardController">
+<BorderPane prefHeight="1080.0" prefWidth="1920.0" maxHeight="Infinity" maxWidth="Infinity" styleClass="background" stylesheets="@../../styles/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AdminDashboardController">
    <left>
       <VBox styleClass="sidebar" stylesheets="@../../styles/style.css" BorderPane.alignment="CENTER">
          <children>

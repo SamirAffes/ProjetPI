@@ -118,6 +118,9 @@ public class OrganisationLoginController {
                 Scene scene = new Scene(root);
                 stage.setTitle("TuniTransport - " + currentOrganisation.getNom());
                 stage.setScene(scene);
+                stage.setMaximized(true);
+                stage.setFullScreen(true);
+                stage.setFullScreenExitHint("");
                 stage.show();
                 
                 log.info("Organisation logged in: {}", currentOrganisation.getNom());
@@ -137,13 +140,16 @@ public class OrganisationLoginController {
             // Effacer l'organisation du contexte global lors du retour à l'accueil
             OrganisationContext.getInstance().clearCurrentOrganisation();
             
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/home.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Home.fxml"));
             Parent root = loader.load();
             
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setTitle("TuniTransport");
             stage.setScene(scene);
+            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
         } catch (IOException e) {
             log.error("Error returning to home view", e);

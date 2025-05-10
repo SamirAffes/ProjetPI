@@ -58,6 +58,8 @@ public class AdminLoginController {
                 stage.setTitle("TuniTransport - Administration");
                 stage.setScene(scene);
                 stage.setMaximized(true);
+                stage.setFullScreen(true);
+                stage.setFullScreenExitHint("");
                 stage.show();
                 
                 log.info("Successful admin login: {}", username);
@@ -74,13 +76,16 @@ public class AdminLoginController {
     @FXML
     public void onBackButtonClick(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/home.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Home.fxml"));
             Parent root = loader.load();
             
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setTitle("TuniTransport");
             stage.setScene(scene);
+            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
             stage.show();
         } catch (IOException e) {
             log.error("Error returning to home view", e);

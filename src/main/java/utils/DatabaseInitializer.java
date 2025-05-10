@@ -1,9 +1,6 @@
 package utils;
 
-import entities.Conducteur;
-import entities.Maintenance;
-import entities.Organisation;
-import entities.Vehicule;
+import entities.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 
@@ -42,7 +39,9 @@ public class DatabaseInitializer {
                 Conducteur.class,
                 Maintenance.class,
                 Organisation.class,
-                Vehicule.class
+                Vehicule.class,
+                Route.class,
+                OrganisationRoute.class
             };
             
             // Register entity classes with the persistence context
@@ -59,6 +58,9 @@ public class DatabaseInitializer {
             
             logger.info("Database schema initialization complete.");
             initialized = true;
+            
+            // Populate sample routes if none exist
+            RouteDataPopulator.populateRoutesIfEmpty();
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error initializing database schema", e);
             throw new RuntimeException("Failed to initialize database", e);
@@ -81,9 +83,11 @@ public class DatabaseInitializer {
             
             // Drop tables in reverse dependency order
             String[] dropTables = {
+                "DROP TABLE IF EXISTS OrganisationRoute",
                 "DROP TABLE IF EXISTS Maintenance",
                 "DROP TABLE IF EXISTS Conducteur",
                 "DROP TABLE IF EXISTS Vehicule",
+                "DROP TABLE IF EXISTS Route",
                 "DROP TABLE IF EXISTS Organisation"
             };
             

@@ -24,6 +24,8 @@ import services.OrganisationService;
 import utils.OrganisationContext;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Home {
 
@@ -76,6 +78,21 @@ public class Home {
     private final double ESPRIT_LATITUDE = 36.8534449;
     private final double ESPRIT_LONGITUDE = 10.2074847;
     private final int ESPRIT_ZOOM = 18;
+
+    // Add a map of city names to their coordinates
+    private static final Map<String, double[]> CITY_COORDINATES = new HashMap<>();
+    static {
+        CITY_COORDINATES.put("Tunis", new double[]{36.8065, 10.1815});
+        CITY_COORDINATES.put("Ariana", new double[]{36.8633, 10.2167});
+        CITY_COORDINATES.put("Béja", new double[]{36.7444, 9.8956});
+        CITY_COORDINATES.put("Ben Arous", new double[]{36.7556, 10.2214});
+        CITY_COORDINATES.put("Manouba", new double[]{36.8006, 10.1195});
+        CITY_COORDINATES.put("Nabeul", new double[]{36.4511, 10.7204});
+        CITY_COORDINATES.put("Sfax", new double[]{34.7406, 10.7594});
+        CITY_COORDINATES.put("Sousse", new double[]{35.8250, 10.6364});
+        CITY_COORDINATES.put("Tataouine", new double[]{32.9375, 10.4472});
+        CITY_COORDINATES.put("Tozeur", new double[]{33.9239, 8.1348});
+    }
 
     @FXML
     public void initialize() {
@@ -141,8 +158,8 @@ public class Home {
             webView = new WebView();
             webEngine = webView.getEngine();
 
-            // Set WebView to be responsive
-            webView.setPrefSize(mapContainer.getPrefWidth(), mapContainer.getPrefHeight());
+            // Set WebView to fill the entire container
+            webView.setPrefSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
             // Add the WebView to the JavaFX pane
             mapContainer.getChildren().add(webView);
@@ -162,6 +179,9 @@ public class Home {
                     showError("Map Loading Error", "Failed to load the map. Please check your internet connection.");
                 } else if (newState == Worker.State.SUCCEEDED) {
                     logger.info("Map loaded successfully");
+                    
+                    // Set initial location
+                    panToLocation(DEFAULT_LATITUDE, DEFAULT_LONGITUDE, DEFAULT_ZOOM);
                 }
             });
 
@@ -175,7 +195,7 @@ public class Home {
                 webView.setPrefHeight(newVal.doubleValue());
                 resizeMap();
             });
-            setCurrentLocationPin(ESPRIT_LATITUDE, ESPRIT_LONGITUDE);
+            
             logger.info("Map initialized successfully");
         } catch (Exception e) {
             logger.error("Failed to initialize map", e);
@@ -206,12 +226,26 @@ public class Home {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
             <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+            <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+            <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
             <style>
                 html, body, #map {
                     height: 100%%;
                     width: 100%%;
                     margin: 0;
                     padding: 0;
+                }
+                .leaflet-routing-container {
+                    background-color: white;
+                    padding: 10px;
+                    border-radius: 5px;
+                    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+                    max-width: 320px;
+                    max-height: 300px;
+                    overflow-y: auto;
+                }
+                .leaflet-routing-alt {
+                    max-height: none;
                 }
             </style>
         </head>
@@ -220,6 +254,7 @@ public class Home {
             <script>
                 var map = L.map('map').setView([%f, %f], %d);
                 var currentLocationMarker = null;
+                var routeControl = null;
     
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     maxZoom: 19,
@@ -234,7 +269,8 @@ public class Home {
                 // Function to add a marker
                 function addMarker(lat, lng, title) {
                     L.marker([lat, lng]).addTo(map)
-                        .bindPopup(title);
+                        .bindPopup(title)
+                        .openPopup();
                 }
                 
                 // Function to set current location marker
@@ -288,6 +324,85 @@ public class Home {
                         map.removeLayer(currentLocationMarker);
                         currentLocationMarker = null;
                     }
+                    
+                    // Also clear any route if it exists
+                    if (routeControl) {
+                        map.removeControl(routeControl);
+                        routeControl = null;
+                    }
+                }
+                
+                // Function to draw a route with waypoints between two points
+                function drawRouteWithWaypoints(originLat, originLng, destLat, destLng) {
+                    // Clear previous route if exists
+                    if (routeControl) {
+                        map.removeControl(routeControl);
+                    }
+                    
+                    // Generate intermediate waypoints for a more realistic route
+                    var waypoints = generateWaypoints(originLat, originLng, destLat, destLng);
+                    
+                    // Create waypoints array for routing machine
+                    var routingWaypoints = [
+                        L.latLng(originLat, originLng),
+                        ...waypoints.map(wp => L.latLng(wp.lat, wp.lng)),
+                        L.latLng(destLat, destLng)
+                    ];
+                    
+                    // Add the route using Leaflet Routing Machine
+                    routeControl = L.Routing.control({
+                        waypoints: routingWaypoints,
+                        routeWhileDragging: false,
+                        showAlternatives: false,
+                        fitSelectedRoutes: true,
+                        lineOptions: {
+                            styles: [
+                                {color: '#4285F4', opacity: 0.8, weight: 6},
+                                {color: '#ffffff', opacity: 0.3, weight: 4}
+                            ]
+                        },
+                        createMarker: function() { return null; }, // We'll add our own markers
+                        addWaypoints: false,
+                        draggableWaypoints: false
+                    }).addTo(map);
+                }
+                
+                // Generate realistic waypoints between origin and destination
+                function generateWaypoints(originLat, originLng, destLat, destLng) {
+                    var waypoints = [];
+                    var numWaypoints = getRandomInt(2, 5); // Random number of waypoints
+                    var directLine = {
+                        x: destLat - originLat,
+                        y: destLng - originLng
+                    };
+                    var distance = Math.sqrt(directLine.x * directLine.x + directLine.y * directLine.y);
+                    
+                    // Generate waypoints along the path with some randomness
+                    for (var i = 1; i <= numWaypoints; i++) {
+                        var ratio = i / (numWaypoints + 1);
+                        
+                        // Add some randomness to the waypoint position
+                        var perpendicular = {
+                            x: -directLine.y / distance,
+                            y: directLine.x / distance
+                        };
+                        
+                        var randomOffset = (Math.random() - 0.5) * 0.05; // Random offset perpendicular to direct path
+                        
+                        var waypoint = {
+                            lat: originLat + directLine.x * ratio + perpendicular.x * randomOffset,
+                            lng: originLng + directLine.y * ratio + perpendicular.y * randomOffset
+                        };
+                        
+                        waypoints.push(waypoint);
+                    }
+                    
+                    return waypoints;
+                }
+                
+                // Helper function to get random integer between min and max (inclusive)
+                function getRandomInt(min, max) {
+                    return Math.floor(Math.random() * (max - min + 1)) + min;
                 }
             </script>
         </body>
@@ -306,7 +421,7 @@ public class Home {
     // Method to add a marker
     public void addMarker(double lat, double lng, String title) {
         if (webEngine != null && webEngine.getLoadWorker().getState() == Worker.State.SUCCEEDED) {
-            webEngine.executeScript(String.format("addMarker(%f, %f, '%s')", lat, lng, title));
+            webEngine.executeScript(String.format("addMarker(%f, %f, '%s')", lat, lng, title.replace("'", "\\'")));
         }
     }
 
@@ -315,16 +430,103 @@ public class Home {
         String query = searchField.getText();
         if (query != null && !query.isEmpty()) {
             logger.info("Search requested: {}", query);
-            // TODO: Implement search functionality
-            showInfo("Search", "Searching for: " + query);
+            
+            // Parse the query to extract origin and destination
+            String[] parts = query.split("\\s+(?:to|vers|à|a|->|→)\\s+", 2);
+            
+            if (parts.length == 2) {
+                String origin = parts[0].trim();
+                String destination = parts[1].trim();
+                
+                logger.info("Parsed search: from {} to {}", origin, destination);
+                
+                // Check if we have coordinates for these locations
+                if (hasCoordinatesForLocation(origin) && hasCoordinatesForLocation(destination)) {
+                    // Get coordinates
+                    double[] originCoords = getCoordinatesForLocation(origin);
+                    double[] destCoords = getCoordinatesForLocation(destination);
+                    
+                    // Clear any existing markers
+                    clearCurrentLocation();
+                    
+                    // Add markers for origin and destination
+                    addMarker(originCoords[0], originCoords[1], "Départ: " + origin);
+                    addMarker(destCoords[0], destCoords[1], "Arrivée: " + destination);
+                    
+                    // Draw route between the points
+                    drawRouteBetweenPoints(originCoords[0], originCoords[1], destCoords[0], destCoords[1]);
+                    
+                    // Show info with success message
+                    showInfo("Itinéraire trouvé", "Itinéraire de " + origin + " à " + destination + " affiché sur la carte.");
+                } else {
+                    // Show error if locations not found
+                    showError("Recherche", "Impossible de trouver les coordonnées pour " + 
+                              (hasCoordinatesForLocation(origin) ? destination : origin));
+                }
+            } else {
+                // If we can't parse as origin/destination, just show info
+                showInfo("Recherche", "Recherche pour: " + query);
+            }
+        }
+    }
+    
+    // Helper method to check if we have coordinates for a location
+    private boolean hasCoordinatesForLocation(String location) {
+        // Normalize location name (lowercase, remove accents)
+        String normalizedLocation = location.toLowerCase()
+            .replaceAll("é", "e")
+            .replaceAll("è", "e")
+            .replaceAll("ê", "e")
+            .replaceAll("à", "a")
+            .replaceAll("ù", "u");
+        
+        // Check against known city names (case insensitive)
+        for (String city : CITY_COORDINATES.keySet()) {
+            if (city.toLowerCase().contains(normalizedLocation) || 
+                normalizedLocation.contains(city.toLowerCase())) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    // Helper method to get coordinates for a location
+    private double[] getCoordinatesForLocation(String location) {
+        // Normalize location name
+        String normalizedLocation = location.toLowerCase()
+            .replaceAll("é", "e")
+            .replaceAll("è", "e")
+            .replaceAll("ê", "e")
+            .replaceAll("à", "a")
+            .replaceAll("ù", "u");
+        
+        // Find matching city
+        for (String city : CITY_COORDINATES.keySet()) {
+            if (city.toLowerCase().contains(normalizedLocation) || 
+                normalizedLocation.contains(city.toLowerCase())) {
+                return CITY_COORDINATES.get(city);
+            }
+        }
+        
+        // Default to Tunis if not found
+        return new double[]{DEFAULT_LATITUDE, DEFAULT_LONGITUDE};
+    }
+    
+    // Add a method to draw a route between two points
+    private void drawRouteBetweenPoints(double originLat, double originLng, double destLat, double destLng) {
+        if (webEngine != null && webEngine.getLoadWorker().getState() == Worker.State.SUCCEEDED) {
+            webEngine.executeScript(String.format(
+                "drawRouteWithWaypoints(%f, %f, %f, %f)", 
+                originLat, originLng, destLat, destLng));
         }
     }
 
     @FXML
     public void onSignInButtonClick() {
         logger.info("Sign in button clicked");
-        // Show sign-in form
-        signInForm.setVisible(true);
+        // Show login selection screen instead of direct sign-in form
+        showLoginTypeDialog();
     }
 
 
@@ -343,20 +545,90 @@ public class Home {
             showError("Login Error", "Password cannot be empty");
             return;
         }
-        if (username .equals("admin") && password.equals("admin")) {
+        
+        // First, check if admin credentials
+        if (username.equals("admin") && password.equals("admin")) {
+            // Admin login
             navigateToAdminDashboard();
-        } else if (username.equals("org") && password.equals("org")) {
-            navigateToOrganisationDashboard(3);
         } else {
-            showError("Login Error", "Invalid username or password");
-            return;
+            // Check if it's an organisation
+            try {
+                for (entities.Organisation org : organisationService.afficher_tout()) {
+                    if (org.getNom().equalsIgnoreCase(username) && password.equals(username)) {
+                        navigateToOrganisationDashboard(org.getId());
+                        hideSignInForm();
+                        signInButton.setText("Profile");
+                        return;
+                    }
+                }
+                
+                // If not admin or organization, check if it's a user
+                services.UserService userService = new services.UserService();
+                entities.User user = userService.findByUsername(username);
+                
+                if (user != null && user.getPassword().equals(password)) {
+                    // User found, navigate to user dashboard
+                    navigateToUserDashboard(user);
+                } else {
+                    // Show login type selection dialog
+                    showLoginTypeDialog();
+                }
+            } catch (Exception e) {
+                logger.error("Error during login process", e);
+                showError("Login Error", "An error occurred during login. Please try again.");
+            }
         }
-
-        // TODO: Implement actual authentication
+    }
+    
+    private void showLoginTypeDialog() {
         hideSignInForm();
-
-        // Update sign in button text to show logged in state
-        signInButton.setText("Profile");
+        
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login_selection.fxml"));
+            Parent root = loader.load();
+            
+            Stage stage = (Stage) signInButton.getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setTitle("TunTransport - Login");
+            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
+            stage.show();
+        } catch (IOException e) {
+            logger.error("Failed to load login selection screen", e);
+            showError("Navigation Error", "Failed to load login page. Please try again.");
+        }
+    }
+    
+    private void navigateToUserDashboard(entities.User user) {
+        try {
+            // Store user in global context
+            utils.UserContext.getInstance().setCurrentUser(user);
+            
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/user/dashboard.fxml"));
+            Parent userDashboard = loader.load();
+            
+            // Get controller and set user
+            controllers.UserDashboardController controller = loader.getController();
+            controller.setUser(user);
+            
+            Stage stage = (Stage) signInForm.getScene().getWindow();
+            Scene scene = new Scene(userDashboard);
+            stage.setScene(scene);
+            stage.setTitle("User Dashboard");
+            
+            // Apply fullscreen *after* setting the new scene
+            stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.setFullScreenExitHint("");
+            stage.show();
+            
+            logger.info("User logged in: {}", user.getUsername());
+        } catch (IOException e) {
+            logger.error("Failed to load user dashboard", e);
+            showError("Navigation Error", "Failed to load user dashboard. Please try again.");
+        }
     }
 
     private void navigateToAdminDashboard() {
