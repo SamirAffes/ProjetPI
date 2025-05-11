@@ -1,28 +1,20 @@
-module com.projetpi {
+module tn.esprit.testpifx {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.graphics;
-    requires static lombok;
-    requires org.slf4j;
     requires java.sql;
-    requires ch.qos.logback.core;
-    requires ch.qos.logback.classic;
-    requires java.dotenv;
-    requires java.desktop;
-    requires javafx.swing;
-    requires javafx.web; // Added for WebView support
-    requires jakarta.persistence;
-    requires org.hibernate.orm.core;
-    requires org.kordamp.ikonli.fontawesome5;
-    requires org.kordamp.ikonli.javafx;
-    requires jbcrypt;
+    requires org.slf4j;
 
+    opens tn.esprit.testpifx to javafx.fxml;
+    opens tn.esprit.testpifx.controllers to javafx.fxml;
+    opens tn.esprit.testpifx.models to javafx.base;
+    opens tn.esprit.testpifx.services to javafx.base;
 
-    exports controllers;
-    exports test;
-    opens controllers to javafx.fxml;
-    exports entities;
-    exports utils;
-    opens test to javafx.fxml;
-    opens entities to org.hibernate.orm.core;
+    exports tn.esprit.testpifx;
+    exports tn.esprit.testpifx.controllers;
+    exports tn.esprit.testpifx.models;
+    exports tn.esprit.testpifx.services;
+    exports tn.esprit.testpifx.repositories;
+    exports tn.esprit.testpifx.utils;
+    uses tn.esprit.testpifx.services.UserService;
 }
