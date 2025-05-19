@@ -4,6 +4,7 @@ import entities.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
+import org.mindrot.jbcrypt.BCrypt;
 import utils.JPAUtil;
 
 import java.util.List;
@@ -12,6 +13,8 @@ public class UserService implements CRUD<User> {
 
     @Override
     public void ajouter(User user) {
+        String hashedpw = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        user.setPassword(hashedpw);
         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         
@@ -53,6 +56,8 @@ public class UserService implements CRUD<User> {
 
     @Override
     public void modifier(User user) {
+        String hashedpw = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        user.setPassword(hashedpw);
         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         
@@ -144,6 +149,9 @@ public class UserService implements CRUD<User> {
     
     public boolean authenticate(String username, String password) {
         User user = findByUsername(username);
-        return user != null && user.getPassword().equals(password);
+        if (user != null) {
+            return BCrypt.checkpw(password, user.getPassword());
+        }
+        return false;
     }
 }

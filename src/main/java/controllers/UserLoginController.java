@@ -60,7 +60,7 @@ public class UserLoginController {
         // Check if user exists and password is correct
         User user = userService.findByUsername(username);
         
-        if (user != null && user.getPassword().equals(password)) {
+        if (user != null && userService.authenticate(username, password)) {
             try {
                 // Store user in global context
                 UserContext.getInstance().setCurrentUser(user);
