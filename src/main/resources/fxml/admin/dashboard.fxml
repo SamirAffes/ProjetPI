@@ -8,9 +8,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="1080.0" prefWidth="1920.0" maxHeight="Infinity" maxWidth="Infinity" styleClass="background" stylesheets="@../../styles/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AdminDashboardController">
+<BorderPane prefHeight="1080.0" prefWidth="1920.0" maxHeight="Infinity" maxWidth="Infinity" styleClass="background" stylesheets="@../../styles/modern-style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AdminDashboardController">
    <left>
-      <VBox styleClass="sidebar" stylesheets="@../../styles/style.css" BorderPane.alignment="CENTER">
+      <VBox styleClass="sidebar" stylesheets="@../../styles/modern-style.css" BorderPane.alignment="CENTER">
          <children>
             <Label styleClass="sidebar-title" text="TuniTransport" textFill="WHITE">
                <font>
@@ -33,7 +33,7 @@
    <center>
       <StackPane fx:id="contentArea" BorderPane.alignment="CENTER">
          <children>
-            <VBox fx:id="dashboardView" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/style.css">
+            <VBox fx:id="dashboardView" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/modern-style.css">
                <children>
                   <Label styleClass="dashboard-title" text="TuniTransport">
                      <font>
@@ -50,7 +50,7 @@
                   </Label>
                </children>
             </VBox>
-            <VBox fx:id="organisationsView" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/style.css" visible="false">
+            <VBox fx:id="organisationsView" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/modern-style.css" visible="false">
                <children>
                   <Label styleClass="dashboard-title" text="Gestion des Organisations">
                      <font>

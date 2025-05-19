@@ -17,9 +17,11 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import utils.RouteDataPopulator;
+import utils.OrganisationContext;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 @Slf4j
 public class OrganisationDashboardController {
@@ -147,11 +149,49 @@ public class OrganisationDashboardController {
         maintenancesView.setVisible(false);
         routesView.setVisible(true);
         setActiveButton(routesButton);
+        
+        // Ensure the organisation is passed to the route controller when tab is shown
+        try {
+            RouteManagementController routeController = 
+                (RouteManagementController) routeManagementContent.getProperties().get("fx:controller");
+            
+            // If we don't have a local organisation but there's one in the context, use that
+            Organisation orgToUse = organisation;
+            if (orgToUse == null) {
+                orgToUse = OrganisationContext.getInstance().getCurrentOrganisation();
+                if (orgToUse != null) {
+                    log.info("Using organisation from OrganisationContext: {}", orgToUse.getNom());
+                    // Update the local reference too
+                    this.organisation = orgToUse;
+                }
+            }
+            
+            if (routeController != null && orgToUse != null) {
+                // Check if we need to set the organisation again
+                routeController.setOrganisation(orgToUse);
+                // Refresh data in case it's stale
+                routeController.refreshData();
+                log.info("Organisation passed to RouteManagementController when showing routes tab");
+            } else if (routeController == null) {
+                log.warn("RouteManagementController is null when showing routes tab");
+                
+                // Try to reinitialize the subcontrollers
+                passOrganisationToSubcontrollers();
+            } else if (orgToUse == null) {
+                log.warn("Organisation is null when showing routes tab");
+            }
+        } catch (Exception e) {
+            log.error("Error setting organisation in RouteManagementController when showing routes tab", e);
+        }
     }
     
     @FXML
     public void logout(ActionEvent event) {
         try {
+            // Clear any organization context data
+            OrganisationContext.getInstance().setCurrentOrganisation(null);
+            
+            // Load the home screen
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Home.fxml"));
             Parent root = loader.load();
             
@@ -164,6 +204,13 @@ public class OrganisationDashboardController {
             log.info("Organisation logged out: {}", organisation.getNom());
         } catch (IOException e) {
             log.error("Error returning to home view", e);
+            
+            // Show error alert
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setHeaderText(null);
+            alert.setContentText("Une erreur est survenue lors de la déconnexion: " + e.getMessage());
+            alert.showAndWait();
         }
     }
     
@@ -238,6 +285,11 @@ public class OrganisationDashboardController {
     }
     
     private void passOrganisationToSubcontrollers() {
+        if (organisation == null) {
+            log.warn("Cannot pass null organisation to subcontrollers");
+            return;
+        }
+        
         try {
             // La méthode standard pour obtenir le contrôleur d'un élément fx:include
             VehiculeManagementController vehiculeController = 
@@ -267,13 +319,46 @@ public class OrganisationDashboardController {
                 log.warn("MaintenanceManagementController est null - impossible de passer l'organisation");
             }
             
-            RouteManagementController routeController = 
-                (RouteManagementController) routeManagementContent.getProperties().get("fx:controller");
-            if (routeController != null) {
-                routeController.setOrganisation(organisation);
-                log.info("Organisation passée à RouteManagementController");
+            // Make sure we pass the organisation to the RouteManagementController
+            if (routeManagementContent != null) {
+                RouteManagementController routeController = 
+                    (RouteManagementController) routeManagementContent.getProperties().get("fx:controller");
+                
+                if (routeController != null) {
+                    routeController.setOrganisation(organisation);
+                    log.info("Organisation passée à RouteManagementController");
+                } else {
+                    log.warn("RouteManagementController est null - tentative alternative d'initialisation");
+                    
+                    // Alternative initialization method - load the controller directly
+                    try {
+                        // Get the FXML file URL
+                        URL fxmlUrl = getClass().getResource("/fxml/organisation/routeManagement.fxml");
+                        if (fxmlUrl != null) {
+                            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+                            Parent root = loader.load(); // This will load but not add to the scene
+                            
+                            // Get the controller and set the organisation
+                            RouteManagementController altController = loader.getController();
+                            if (altController != null) {
+                                altController.setOrganisation(organisation);
+                                
+                                // Store the controller in the routeManagementContent properties
+                                routeManagementContent.getProperties().put("fx:controller", altController);
+                                
+                                log.info("RouteManagementController initialisé avec succès par méthode alternative");
+                            } else {
+                                log.error("Impossible d'obtenir le contrôleur alternativement");
+                            }
+                        } else {
+                            log.error("Impossible de trouver le fichier FXML pour routeManagement");
+                        }
+                    } catch (Exception ex) {
+                        log.error("Erreur lors de l'initialisation alternative du RouteManagementController", ex);
+                    }
+                }
             } else {
-                log.warn("RouteManagementController est null - impossible de passer l'organisation");
+                log.warn("routeManagementContent est null - impossible d'accéder au RouteManagementController");
             }
         } catch (Exception e) {
             log.error("Erreur lors de la transmission de l'organisation aux sous-contrôleurs", e);

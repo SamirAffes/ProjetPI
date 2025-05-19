@@ -13,16 +13,26 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
+<?import utils.AutoCompleteTextField?>
 
 <BorderPane styleClass="content-container" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.SearchViewController">
    <top>
       <VBox spacing="15.0">
          <children>
-            <Label styleClass="content-title" text="Rechercher un trajet">
-               <font>
-                  <Font name="System Bold" size="16.0" />
-               </font>
-            </Label>
+            <HBox alignment="CENTER_LEFT" spacing="20.0">
+               <children>
+                  <Label styleClass="content-title" text="Rechercher un trajet">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Label>
+                  <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                     <children>
+                        <fx:include source="../components/weatherWidget.fxml" />
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
             <VBox spacing="15.0" styleClass="search-form">
                <children>
                   <HBox alignment="CENTER_LEFT" spacing="20.0">
@@ -40,13 +50,13 @@
                         <VBox prefWidth="300.0" spacing="5.0">
                            <children>
                               <Label text="Ville de départ" />
-                              <ComboBox fx:id="departureComboBox" prefHeight="40.0" prefWidth="300.0" promptText="Sélectionner une ville" />
+                              <AutoCompleteTextField fx:id="departureTextField" prefHeight="40.0" prefWidth="300.0" promptText="Saisir ou sélectionner une ville" />
                            </children>
                         </VBox>
                         <VBox prefWidth="300.0" spacing="5.0">
                            <children>
                               <Label text="Ville d'arrivée" />
-                              <ComboBox fx:id="arrivalComboBox" prefHeight="40.0" prefWidth="300.0" promptText="Sélectionner une ville" />
+                              <AutoCompleteTextField fx:id="arrivalTextField" prefHeight="40.0" prefWidth="300.0" promptText="Saisir ou sélectionner une ville" />
                            </children>
                         </VBox>
                      </children>
@@ -97,7 +107,7 @@
          </BorderPane.margin>
       </VBox>
    </top>
-   
+
    <center>
       <BorderPane>
          <center>
@@ -122,7 +132,7 @@
          </BorderPane.margin>
       </BorderPane>
    </center>
-   
+
    <bottom>
       <VBox spacing="10.0">
          <children>
@@ -137,13 +147,13 @@
                   <Label text="Aucun résultat disponible. Veuillez effectuer une recherche." />
                </children>
             </VBox>
-            
+
             <!-- Itineraries Container -->
             <VBox fx:id="itinerariesContainer" spacing="15.0" styleClass="itineraries-container" />
          </children>
       </VBox>
    </bottom>
-   
+
    <padding>
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
    </padding>

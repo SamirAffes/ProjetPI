@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" styleClass="background" stylesheets="@../../styles/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.OrganisationLoginController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" styleClass="background" stylesheets="@../../styles/modern-style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.OrganisationLoginController">
    <center>
       <VBox alignment="CENTER" maxWidth="400.0" spacing="15.0" styleClass="card" BorderPane.alignment="CENTER">
          <children>
@@ -24,14 +24,14 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            
+
             <!-- Logo placeholder -->
             <VBox fx:id="logoContainer" alignment="CENTER" prefHeight="100.0" prefWidth="100.0">
                <children>
                   <ImageView fx:id="orgLogoView" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
                </children>
             </VBox>
-            
+
             <Label styleClass="form-label" text="Nom d'organisation">
                <VBox.margin>
                   <Insets top="10.0" />

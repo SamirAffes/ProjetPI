@@ -26,6 +26,12 @@ public class EditRouteDialogController implements Initializable {
     @FXML private Button saveButton;
     @FXML private Button cancelButton;
     
+    // New fields
+    @FXML private TextField priceField;
+    @FXML private TextField durationField;
+    @FXML private CheckBox wifiServiceCheckbox;
+    @FXML private CheckBox accessibilityCheckbox;
+    
     private OrganisationRoute organisationRoute;
     private Route route;
     private OrganisationRouteService organisationRouteService;
@@ -66,6 +72,15 @@ public class EditRouteDialogController implements Initializable {
         if (route != null) {
             String routeInfo = route.getOrigin() + " → " + route.getDestination();
             routeInfoLabel.setText(routeInfo);
+            
+            // Set price and duration from Route entity
+            if (priceField != null) {
+                priceField.setText(String.valueOf(route.getBasePrice()));
+            }
+            
+            if (durationField != null) {
+                durationField.setText(String.valueOf(route.getEstimatedDuration()));
+            }
         }
     }
     
@@ -84,6 +99,17 @@ public class EditRouteDialogController implements Initializable {
             arrivalTimeField.setText(organisationRoute.getArrivalTime());
             notesArea.setText(organisationRoute.getNotes());
             activeCheckbox.setSelected(organisationRoute.isActive());
+            
+            // Set additional service features
+            if (wifiServiceCheckbox != null) {
+                wifiServiceCheckbox.setSelected(organisationRoute.getWifiAvailable() != null ? 
+                    organisationRoute.getWifiAvailable() : false);
+            }
+            
+            if (accessibilityCheckbox != null) {
+                accessibilityCheckbox.setSelected(organisationRoute.getAccessible() != null ? 
+                    organisationRoute.getAccessible() : false);
+            }
         }
     }
     
@@ -101,11 +127,47 @@ public class EditRouteDialogController implements Initializable {
             organisationRoute.setArrivalTime(arrivalTimeField.getText());
             organisationRoute.setNotes(notesArea.getText());
             organisationRoute.setActive(activeCheckbox.isSelected());
-                
+            
+            // Save additional service features
+            if (wifiServiceCheckbox != null) {
+                organisationRoute.setWifiAvailable(wifiServiceCheckbox.isSelected());
+            }
+            
+            if (accessibilityCheckbox != null) {
+                organisationRoute.setAccessible(accessibilityCheckbox.isSelected());
+            }
+            
+            // Save custom price if provided
+            if (priceField != null && !priceField.getText().isEmpty()) {
+                try {
+                    double customPrice = Double.parseDouble(priceField.getText());
+                    organisationRoute.setCustomPrice(customPrice);
+                } catch (NumberFormatException e) {
+                    log.warn("Invalid price format, using default route price");
+                }
+            }
+            
+            // Save custom duration if provided
+            if (durationField != null && !durationField.getText().isEmpty()) {
+                try {
+                    int customDuration = Integer.parseInt(durationField.getText());
+                    organisationRoute.setCustomDuration(customDuration);
+                    // Also set routeDuration to match to avoid database constraints issues
+                    organisationRoute.setRouteDuration(customDuration);
+                } catch (NumberFormatException e) {
+                    log.warn("Invalid duration format, using default route duration");
+                    // Always ensure routeDuration has a value to satisfy NOT NULL constraint
+                    organisationRoute.setRouteDuration(0);
+                }
+            } else {
+                // Always ensure routeDuration has a value to satisfy NOT NULL constraint
+                organisationRoute.setRouteDuration(0);
+            }
+            
             organisationRouteService.modifier(organisationRoute);
             
             log.info("Updated organisation route {}", organisationRoute.getId());
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "L'itinéraire a été modifié avec succès");
+            utils.NotificationManager.showSuccess("Succès", "L'itinéraire a été modifié avec succès");
             closeDialog();
             
         } catch (Exception e) {
@@ -118,7 +180,7 @@ public class EditRouteDialogController implements Initializable {
         StringBuilder errors = new StringBuilder();
         
         if (internalCodeField.getText().isEmpty()) {
-            errors.append("- Le code interne est requis\n");
+            errors.append("- Le code de ligne est requis\n");
         }
         
         if (vehicleTypeComboBox.getValue() == null) {
@@ -135,6 +197,30 @@ public class EditRouteDialogController implements Initializable {
             errors.append("- L'heure d'arrivée est requise\n");
         } else if (!arrivalTimeField.getText().matches("^([01]?[0-9]|2[0-3]):[0-5][0-9]$")) {
             errors.append("- Format d'heure d'arrivée invalide (HH:MM)\n");
+        }
+        
+        // Validate price if provided
+        if (priceField != null && !priceField.getText().isEmpty()) {
+            try {
+                double price = Double.parseDouble(priceField.getText());
+                if (price < 0) {
+                    errors.append("- Le prix ne peut pas être négatif\n");
+                }
+            } catch (NumberFormatException e) {
+                errors.append("- Format de prix invalide (doit être un nombre)\n");
+            }
+        }
+        
+        // Validate duration if provided
+        if (durationField != null && !durationField.getText().isEmpty()) {
+            try {
+                int duration = Integer.parseInt(durationField.getText());
+                if (duration <= 0) {
+                    errors.append("- La durée doit être supérieure à 0\n");
+                }
+            } catch (NumberFormatException e) {
+                errors.append("- Format de durée invalide (doit être un nombre entier)\n");
+            }
         }
         
         if (errors.length() > 0) {

@@ -17,16 +17,21 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="800.0" spacing="15.0" styleClass="form-container" stylesheets="@../../styles/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CreateReservationController">
    <children>
-      <HBox alignment="CENTER">
+      <HBox alignment="CENTER_LEFT">
          <children>
             <Label styleClass="form-title" text="Réservation et Paiement">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
+            <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+               <children>
+                  <fx:include source="../components/weatherWidget.fxml" />
+               </children>
+            </HBox>
          </children>
       </HBox>
-      
+
       <!-- Reservation Details Section -->
       <VBox spacing="15.0" styleClass="section-container">
          <children>
@@ -38,7 +43,7 @@
                   <FontIcon iconColor="#3498db" iconLiteral="fas-info-circle" iconSize="16" />
                </graphic>
             </Label>
-            
+
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                <children>
                   <FontIcon iconColor="#3498db" iconLiteral="fas-route" iconSize="16" />
@@ -46,7 +51,7 @@
                   <Label fx:id="routeLabel" styleClass="highlight-text" text="Tunis → Sousse" />
                </children>
             </HBox>
-            
+
             <HBox spacing="20.0">
                <children>
                   <VBox prefWidth="330.0" spacing="5.0">
@@ -67,7 +72,7 @@
                   </VBox>
                </children>
             </HBox>
-            
+
             <HBox alignment="CENTER_LEFT" spacing="20.0">
                <children>
                   <VBox prefWidth="200.0" spacing="5.0">
@@ -84,9 +89,9 @@
                   </VBox>
                </children>
             </HBox>
-            
+
             <CheckBox fx:id="roundTripCheckBox" mnemonicParsing="false" text="Aller-retour" />
-            
+
             <VBox fx:id="returnDateContainer" spacing="10.0">
                <children>
                   <HBox alignment="CENTER_LEFT" spacing="20.0">
@@ -115,9 +120,9 @@
             <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
          </padding>
       </VBox>
-      
+
       <Separator />
-      
+
       <!-- Basic Payment Method Section -->
       <HBox spacing="10.0">
          <children>
@@ -129,7 +134,7 @@
             <Insets left="15.0" right="15.0" />
          </padding>
       </HBox>
-      
+
       <!-- Advanced Payment Section -->
       <VBox fx:id="paymentContainer" spacing="15.0" styleClass="section-container">
          <children>
@@ -141,7 +146,7 @@
                   <FontIcon iconColor="#3498db" iconLiteral="fas-credit-card" iconSize="16" />
                </graphic>
             </Label>
-            
+
             <!-- Payment method options -->
             <HBox alignment="CENTER_LEFT" spacing="15.0">
                <children>
@@ -168,7 +173,7 @@
                   </RadioButton>
                </children>
             </HBox>
-            
+
             <!-- Card details fields -->
             <VBox spacing="10.0">
                <children>
@@ -178,14 +183,14 @@
                         <TextField fx:id="cardNumberTextField" promptText="1234 5678 9012 3456" />
                      </children>
                   </VBox>
-                  
+
                   <VBox spacing="5.0">
                      <children>
                         <Label text="Titulaire de la carte" />
                         <TextField fx:id="cardHolderTextField" promptText="PRÉNOM NOM" />
                      </children>
                   </VBox>
-                  
+
                   <HBox spacing="15.0">
                      <children>
                         <VBox prefWidth="200.0" spacing="5.0">
@@ -194,7 +199,7 @@
                               <TextField fx:id="expiryDateTextField" promptText="MM/YY" />
                            </children>
                         </VBox>
-                        
+
                         <VBox prefWidth="100.0" spacing="5.0">
                            <children>
                               <Label text="CVV" />
@@ -205,7 +210,7 @@
                   </HBox>
                </children>
             </VBox>
-            
+
             <!-- Process Payment Button -->
             <HBox alignment="CENTER">
                <children>
@@ -229,7 +234,7 @@
             <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
          </padding>
       </VBox>
-      
+
       <!-- Action Buttons -->
       <HBox alignment="CENTER_RIGHT" spacing="15.0">
          <children>
