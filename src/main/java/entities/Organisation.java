@@ -29,6 +29,7 @@ public class Organisation {
     private OrgType type;
     private int nombreConducteurs;
     private int tailleFlotte;
+    private String password;
     @ElementCollection
     private List<Integer> conducteurs;
     @ElementCollection
@@ -36,4 +37,3 @@ public class Organisation {
 
 
 }
-

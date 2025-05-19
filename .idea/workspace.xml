@@ -6,16 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="97c7973e-54a8-402c-9812-fa5eda47bb91" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/AdminReclamationsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/AdminReclamationsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/UserDashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/UserDashboardController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/UserReclamationsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/UserReclamationsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/Home.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Home.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/admin/dashboard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/dashboard.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/admin/reclamations.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/reclamations.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/user/createReservation.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/createReservation.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/user/homeContent.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/homeContent.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/user/reclamations.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/reclamations.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/styles/reclamation.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/styles/reclamation.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/OrganisationLoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/OrganisationLoginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/OrganisationManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/OrganisationManagementController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/entities/Organisation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/entities/Organisation.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

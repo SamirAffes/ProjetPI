@@ -13,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import org.mindrot.jbcrypt.BCrypt;
 import services.OrganisationService;
 import utils.OrganisationContext;
 
@@ -36,10 +37,10 @@ public class OrganisationLoginController {
 
     @FXML
     private Label errorLabel;
-    
+
     @FXML
     private ImageView orgLogoView;
-    
+
     @FXML
     private VBox logoContainer;
 
@@ -49,18 +50,18 @@ public class OrganisationLoginController {
     @FXML
     public void onUsernameEntered() {
         String orgName = usernameField.getText().trim();
-        
+
         if (!orgName.isEmpty()) {
             // Search for an organization with this name
             Organisation foundOrg = findOrganisationByName(orgName);
-            
+
             if (foundOrg != null) {
                 // Store the found organization
                 this.currentOrganisation = foundOrg;
-                
+
                 // Display the organization's logo
                 displayOrganisationLogo(foundOrg);
-                
+
                 // Move focus to password field
                 passwordField.requestFocus();
             } else {
@@ -84,7 +85,7 @@ public class OrganisationLoginController {
             showError("Veuillez saisir le nom de l'organisation.");
             return;
         }
-        
+
         if (password.isEmpty()) {
             showError("Veuillez saisir le mot de passe.");
             return;
@@ -94,26 +95,26 @@ public class OrganisationLoginController {
         if (currentOrganisation == null) {
             currentOrganisation = findOrganisationByName(orgName);
         }
-        
+
         if (currentOrganisation == null) {
             showContactAdminAlert();
             return;
         }
-        
-        // Simple authentication: password should match the organization name
-        if (password.equals(orgName)) {
+
+        // Verify the password against the stored password
+        if (currentOrganisation.getPassword() != null && BCrypt.checkpw(password, currentOrganisation.getPassword())) {
             try {
                 // Stocker l'organisation dans le contexte global
                 OrganisationContext.getInstance().setCurrentOrganisation(currentOrganisation);
                 log.info("Organisation définie dans le contexte global: {}", currentOrganisation.getNom());
-                
+
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/organisation/dashboard.fxml"));
                 Parent root = loader.load();
-                
+
                 // Pass the organization to the dashboard controller
                 OrganisationDashboardController controller = loader.getController();
                 controller.setOrganisation(currentOrganisation);
-                
+
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 Scene scene = new Scene(root);
                 stage.setTitle("TuniTransport - " + currentOrganisation.getNom());
@@ -122,7 +123,7 @@ public class OrganisationLoginController {
                 stage.setFullScreen(true);
                 stage.setFullScreenExitHint("");
                 stage.show();
-                
+
                 log.info("Organisation logged in: {}", currentOrganisation.getNom());
             } catch (IOException e) {
                 log.error("Error loading organisation dashboard", e);
@@ -139,10 +140,10 @@ public class OrganisationLoginController {
         try {
             // Effacer l'organisation du contexte global lors du retour à l'accueil
             OrganisationContext.getInstance().clearCurrentOrganisation();
-            
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Home.fxml"));
             Parent root = loader.load();
-            
+
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setTitle("TuniTransport");
@@ -156,7 +157,7 @@ public class OrganisationLoginController {
             showError("Impossible de retourner à la page d'accueil.");
         }
     }
-    
+
     private Organisation findOrganisationByName(String name) {
         for (Organisation org : organisationService.afficher_tout()) {
             if (org.getNom().equalsIgnoreCase(name)) {
@@ -165,7 +166,7 @@ public class OrganisationLoginController {
         }
         return null;
     }
-    
+
     private void displayOrganisationLogo(Organisation organisation) {
         if (organisation != null && organisation.getLogo() != null && !organisation.getLogo().isEmpty()) {
             try {
@@ -179,7 +180,7 @@ public class OrganisationLoginController {
                 log.error("Error loading organisation logo", e);
             }
         }
-        
+
         // Use default logo if organization has no logo or error occurred
         try {
             orgLogoView.setImage(new Image(getClass().getResourceAsStream("/Images/Logos/default_logo.png")));
@@ -187,7 +188,7 @@ public class OrganisationLoginController {
             log.error("Error loading default logo", e);
         }
     }
-    
+
     private void showContactAdminAlert() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Organisation non trouvée");
@@ -195,7 +196,7 @@ public class OrganisationLoginController {
         alert.setContentText("Aucune organisation trouvée avec ce nom. Veuillez contacter l'administrateur à contact@tunitransport.com pour vous inscrire à la plateforme.");
         alert.showAndWait();
     }
-    
+
     private void showError(String message) {
         errorLabel.setText(message);
         errorLabel.setVisible(true);
