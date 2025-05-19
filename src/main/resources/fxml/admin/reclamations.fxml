@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.*?>
+
+<VBox spacing="20" styleClass="content-container" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AdminReclamationsController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+    
+    <!-- Header with title and filter -->
+    <HBox spacing="15" alignment="CENTER_LEFT">
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <FontIcon iconColor="#3498db" iconLiteral="fas-comments" iconSize="24"/>
+            <Label text="Gestion des réclamations" styleClass="view-title"/>
+        </HBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <ComboBox fx:id="statusFilter" promptText="Filtrer par statut" prefWidth="200"/>
+    </HBox>
+    
+    <!-- Statistics Cards -->
+    <HBox spacing="15">
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card">
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <FontIcon iconColor="#f1c40f" iconLiteral="fas-clock" iconSize="24"/>
+                <VBox>
+                    <Label text="En attente" styleClass="stat-label"/>
+                    <Label fx:id="pendingCountLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+            </HBox>
+        </VBox>
+        
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card">
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <FontIcon iconColor="#3498db" iconLiteral="fas-sync" iconSize="24"/>
+                <VBox>
+                    <Label text="En cours" styleClass="stat-label"/>
+                    <Label fx:id="inProgressCountLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+            </HBox>
+        </VBox>
+        
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card">
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <FontIcon iconColor="#2ecc71" iconLiteral="fas-check-circle" iconSize="24"/>
+                <VBox>
+                    <Label text="Résolues" styleClass="stat-label"/>
+                    <Label fx:id="resolvedCountLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </HBox>
+    
+    <!-- Reclamations List -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+        <VBox fx:id="reclamationsContainer" spacing="15"/>
+    </ScrollPane>
+</VBox>

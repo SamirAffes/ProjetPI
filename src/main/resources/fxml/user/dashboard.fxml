@@ -66,6 +66,17 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
+                  <Button fx:id="reclamationsButton" alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#onReclamationsButtonClick" prefWidth="250.0" styleClass="sidebar-button" text="Mes réclamations">
+                     <graphic>
+                        <FontIcon iconColor="#e67e22" iconLiteral="fas-comment-dots" iconSize="20" />
+                     </graphic>
+                     <padding>
+                        <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                     </padding>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
                </children>
                <padding>
                   <Insets left="15.0" right="15.0" />

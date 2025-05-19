@@ -19,9 +19,11 @@ public class AdminDashboardController {
     
     @FXML
     private Button dashboardButton;
+      @FXML
+    private Button organisationsButton;
     
     @FXML
-    private Button organisationsButton;
+    private Button reclamationsButton;
     
     @FXML
     private Button logoutButton;
@@ -34,6 +36,9 @@ public class AdminDashboardController {
     
     @FXML
     private VBox organisationsView;
+    
+    @FXML
+    private VBox reclamationsView;
     
     @FXML
     public void initialize() {
@@ -52,19 +57,27 @@ public class AdminDashboardController {
             }
         });
     }
-    
-    @FXML
+      @FXML
     public void showDashboard() {
         dashboardView.setVisible(true);
         organisationsView.setVisible(false);
+        reclamationsView.setVisible(false);
         setActiveButton(dashboardButton);
     }
-    
-    @FXML
+      @FXML
     public void showOrganisations() {
         dashboardView.setVisible(false);
         organisationsView.setVisible(true);
+        reclamationsView.setVisible(false);
         setActiveButton(organisationsButton);
+    }
+    
+    @FXML
+    public void showReclamations() {
+        dashboardView.setVisible(false);
+        organisationsView.setVisible(false);
+        reclamationsView.setVisible(true);
+        setActiveButton(reclamationsButton);
     }
     
     @FXML
@@ -87,11 +100,11 @@ public class AdminDashboardController {
             log.error("Error returning to home view", e);
         }
     }
-    
-    private void setActiveButton(Button button) {
+      private void setActiveButton(Button button) {
         // Reset styles
         dashboardButton.getStyleClass().remove("active");
         organisationsButton.getStyleClass().remove("active");
+        reclamationsButton.getStyleClass().remove("active");
         
         // Set active style
         button.getStyleClass().add("active");

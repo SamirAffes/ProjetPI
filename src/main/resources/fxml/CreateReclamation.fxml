@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="10" styleClass="content-container" xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.CreateReclamationController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Create New Complaint" styleClass="title-label"/>
+
+    <TextField fx:id="titleField" promptText="Title" styleClass="text-field"/>
+
+    <ComboBox fx:id="typeComboBox" promptText="Select Type" styleClass="combo-box" maxWidth="Infinity"/>
+
+    <TextArea fx:id="descriptionArea" promptText="Description" styleClass="text-area" wrapText="true" prefRowCount="5"/>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Cancel" onAction="#handleCancel" styleClass="button-secondary"/>
+        <Button text="Submit" onAction="#handleSubmit" styleClass="button-primary"/>
+    </HBox>
+</VBox>

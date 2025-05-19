@@ -23,6 +23,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import services.ReclamationService;
 import services.ReservationService;
 import services.ReservationServiceImpl;
 import utils.UserContext;
@@ -69,12 +70,15 @@ public class UserDashboardController {
     
     @FXML
     private Button reservationsButton;
-    
-    @FXML
+      @FXML
     private Button profileButton;
+
+    @FXML
+    private Button reclamationsButton;
 
     private User currentUser;
     private final ReservationService reservationService = new ReservationServiceImpl();
+    private final ReclamationService reclamationService = new ReclamationService();
     
     // Store reservation statistics
     private int totalReservations = 0;
@@ -701,5 +705,12 @@ public class UserDashboardController {
         
         card.getChildren().addAll(header, details, actionButtons);
         return card;
+    }
+
+    @FXML
+    public void onReclamationsButtonClick() {
+        dashboardTitle.setText("Mes réclamations");
+        setActiveButton(reclamationsButton);
+        loadContent("/fxml/user/reclamations.fxml");
     }
 }

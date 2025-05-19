@@ -16,6 +16,8 @@ module com.projetpi {
     requires org.kordamp.ikonli.fontawesome5;
     requires org.kordamp.ikonli.javafx;
     requires jbcrypt;
+    requires jakarta.mail;
+    requires org.eclipse.angus.mail;
 
 
     exports controllers;

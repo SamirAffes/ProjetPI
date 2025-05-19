@@ -1,0 +1,65 @@
+.reclamation-card {
+    -fx-background-color: white;
+    -fx-padding: 15;
+    -fx-spacing: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 3);
+    -fx-background-radius: 5;
+}
+
+.card-title {
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+}
+
+.status-label {
+    -fx-padding: 5 10;
+    -fx-background-radius: 15;
+    -fx-text-fill: white;
+}
+
+.status-pending {
+    -fx-background-color: #f0ad4e;
+}
+
+.status-in_progress {
+    -fx-background-color: #5bc0de;
+}
+
+.status-resolved {
+    -fx-background-color: #5cb85c;
+}
+
+.status-rejected {
+    -fx-background-color: #d9534f;
+}
+
+.date-label {
+    -fx-text-fill: #666;
+    -fx-font-size: 12;
+}
+
+.response-label {
+    -fx-font-weight: bold;
+}
+
+.user-label {
+    -fx-text-fill: #666;
+}
+
+.button-primary {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+}
+
+.button-primary:hover {
+    -fx-background-color: #0056b3;
+}
+
+.button-secondary {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+}
+
+.button-secondary:hover {
+    -fx-background-color: #545b62;
+}
