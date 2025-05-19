@@ -28,6 +28,10 @@ public class Main extends Application {
             logger.info("Initializing database schema");
             DatabaseInitializer.initializeDatabase();
             
+            // Apply schema updates for new columns
+            logger.info("Updating database schema for new entity fields");
+            utils.DatabaseSchemaUpdater.updateSchema();
+            
             // Populate routes if none exist
             logger.info("Checking for routes and populating if needed");
             RouteDataPopulator.populateRoutesIfEmpty();

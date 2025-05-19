@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -11,9 +12,9 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.OrganisationDashboardController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" styleClass="background" stylesheets="@../../styles/modern-style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.OrganisationDashboardController">
    <left>
-      <VBox prefHeight="200.0" prefWidth="220.0" styleClass="sidebar" stylesheets="@../../styles/style.css" BorderPane.alignment="CENTER">
+      <VBox prefHeight="200.0" prefWidth="220.0" styleClass="sidebar" stylesheets="@../../styles/modern-style.css" BorderPane.alignment="CENTER">
          <children>
             <Label styleClass="sidebar-title" text="TuniTransport" textFill="WHITE">
                <font>
@@ -23,37 +24,91 @@
                   <Insets bottom="20.0" top="10.0" />
                </VBox.margin>
             </Label>
-            <Button fx:id="dashboardButton" mnemonicParsing="false" onAction="#showDashboard" prefWidth="200.0" styleClass="sidebar-button" text="Dashboard" textFill="WHITE">
-               <graphic>
-                  <FontIcon iconLiteral="fas-tachometer-alt" />
-               </graphic>
-            </Button>
-            <Button fx:id="vehiculesButton" layoutX="10.0" layoutY="47.0" mnemonicParsing="false" onAction="#showVehicules" prefWidth="200.0" styleClass="sidebar-button" text="Gérer Véhicules" textFill="WHITE">
-               <graphic>
-                  <FontIcon iconLiteral="fas-car" />
-               </graphic>
-            </Button>
-            <Button fx:id="conducteursButton" layoutX="10.0" layoutY="77.0" mnemonicParsing="false" onAction="#showConducteurs" prefWidth="200.0" styleClass="sidebar-button" text="Gérer Conducteurs" textFill="WHITE">
-               <graphic>
-                  <FontIcon iconLiteral="fas-user" />
-               </graphic>
-            </Button>
-            <Button fx:id="maintenancesButton" layoutX="10.0" layoutY="107.0" mnemonicParsing="false" onAction="#showMaintenances" prefWidth="200.0" styleClass="sidebar-button" text="Gérer Maintenances" textFill="WHITE">
-               <graphic>
-                  <FontIcon iconLiteral="fas-tools" />
-               </graphic>
-            </Button>
-            <Button fx:id="routesButton" mnemonicParsing="false" onAction="#showRoutes" prefWidth="200.0" styleClass="sidebar-button" text="Gérer Itinéraires" textFill="WHITE">
-               <graphic>
-                  <FontIcon iconLiteral="fas-route" />
-               </graphic>
-            </Button>
+            <Separator prefWidth="200.0" />
+            <VBox spacing="10.0">
+               <children>
+                  <Label styleClass="sidebar-section" text="MENU PRINCIPAL">
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Button fx:id="dashboardButton" alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#showDashboard" prefWidth="200.0" styleClass="sidebar-button" text="Tableau de bord" textFill="WHITE">
+                     <graphic>
+                        <FontIcon iconColor="#4dabf7" iconLiteral="fas-tachometer-alt" iconSize="20" />
+                     </graphic>
+                     <padding>
+                        <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                     </padding>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="vehiculesButton" alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#showVehicules" prefWidth="200.0" styleClass="sidebar-button" text="Gérer Véhicules" textFill="WHITE">
+                     <graphic>
+                        <FontIcon iconColor="#f39c12" iconLiteral="fas-car" iconSize="20" />
+                     </graphic>
+                     <padding>
+                        <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                     </padding>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="conducteursButton" alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#showConducteurs" prefWidth="200.0" styleClass="sidebar-button" text="Gérer Conducteurs" textFill="WHITE">
+                     <graphic>
+                        <FontIcon iconColor="#9b59b6" iconLiteral="fas-user" iconSize="20" />
+                     </graphic>
+                     <padding>
+                        <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                     </padding>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="maintenancesButton" alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#showMaintenances" prefWidth="200.0" styleClass="sidebar-button" text="Gérer Maintenances" textFill="WHITE">
+                     <graphic>
+                        <FontIcon iconColor="#e74c3c" iconLiteral="fas-tools" iconSize="20" />
+                     </graphic>
+                     <padding>
+                        <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                     </padding>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="routesButton" alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#showRoutes" prefWidth="200.0" styleClass="sidebar-button" text="Gérer Itinéraires" textFill="WHITE">
+                     <graphic>
+                        <FontIcon iconColor="#2ecc71" iconLiteral="fas-route" iconSize="20" />
+                     </graphic>
+                     <padding>
+                        <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                     </padding>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets left="15.0" right="15.0" />
+               </padding>
+            </VBox>
+            <Separator prefWidth="200.0">
+               <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin>
+            </Separator>
             <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
                <children>
-                  <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#logout" prefWidth="200.0" styleClass="sidebar-button" text="Déconnexion" textFill="WHITE">
+                  <Button fx:id="logoutButton" alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#logout" prefWidth="200.0" styleClass="sidebar-button" text="Déconnexion" textFill="WHITE">
                      <graphic>
-                        <FontIcon iconLiteral="fas-sign-out-alt" />
+                        <FontIcon iconColor="#e74c3c" iconLiteral="fas-sign-out-alt" iconSize="20" />
                      </graphic>
+                     <padding>
+                        <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                     </padding>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
                   </Button>
                </children>
             </VBox>
@@ -63,110 +118,340 @@
    <center>
       <StackPane fx:id="contentArea" BorderPane.alignment="CENTER">
          <children>
-            <VBox fx:id="dashboardView" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/style.css">
+            <VBox fx:id="dashboardView" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/modern-style.css">
                <children>
-                  <Label fx:id="organisationNameLabel" styleClass="dashboard-title">
-                     <font>
-                        <Font size="36.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets top="50.0" />
-                     </VBox.margin>
-                  </Label>
-                  <ImageView fx:id="orgLogoView" fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
-                     <VBox.margin>
-                        <Insets bottom="20.0" top="20.0" />
-                     </VBox.margin>
-                  </ImageView>
-                  <Label text="Bienvenue dans votre espace de gestion">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                  </Label>
-                  <Label text="Utilisez le menu pour accéder à vos véhicules, conducteurs, maintenances et itinéraires">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets top="10.0" />
-                     </VBox.margin>
-                  </Label>
-                  
-                  <!-- Admin tools section -->
-                  <VBox alignment="CENTER" spacing="10.0" styleClass="admin-tools-section">
-                     <VBox.margin>
-                        <Insets top="50.0" />
-                     </VBox.margin>
+                  <!-- Welcome Banner with Date -->
+                  <HBox alignment="CENTER_LEFT" styleClass="welcome-banner">
                      <children>
-                        <Label text="Outils d'administration" styleClass="section-title">
+                        <VBox>
+                           <children>
+                              <Label fx:id="organisationNameLabel" styleClass="welcome-title">
+                                 <font>
+                                    <Font name="System Bold" size="28.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="currentDateLabel" styleClass="date-label" text="Lundi, 1 Janvier 2023">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <HBox alignment="CENTER_RIGHT" spacing="15.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <ImageView fx:id="orgLogoView" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" />
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="20.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets bottom="20.0" />
+                     </VBox.margin>
+                  </HBox>
+
+                  <!-- Stats Cards Row -->
+                  <HBox alignment="CENTER_LEFT" spacing="20.0">
+                     <children>
+                        <!-- Vehicles Card -->
+                        <VBox alignment="CENTER_LEFT" prefHeight="120.0" prefWidth="200.0" styleClass="dashboard-stats-card">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" spacing="15.0">
+                                 <children>
+                                    <StackPane styleClass="icon-circle" style="-fx-background-color: rgba(243, 156, 18, 0.2);">
+                                       <children>
+                                          <FontIcon iconColor="#f39c12" iconLiteral="fas-car" iconSize="24" />
+                                       </children>
+                                    </StackPane>
+                                    <VBox>
+                                       <children>
+                                          <Label text="Véhicules" styleClass="stats-title">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="vehiclesCountLabel" styleClass="stats-value" text="0">
+                                             <font>
+                                                <Font name="System Bold" size="28.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                              <Button mnemonicParsing="false" onAction="#showVehicules" styleClass="transparent-button" text="Gérer les véhicules">
+                                 <graphic>
+                                    <FontIcon iconLiteral="fas-arrow-right" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin>
+                              </Button>
+                           </children>
+                           <padding>
+                              <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                           </padding>
+                        </VBox>
+
+                        <!-- Drivers Card -->
+                        <VBox alignment="CENTER_LEFT" prefHeight="120.0" prefWidth="200.0" styleClass="dashboard-stats-card">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" spacing="15.0">
+                                 <children>
+                                    <StackPane styleClass="icon-circle" style="-fx-background-color: rgba(155, 89, 182, 0.2);">
+                                       <children>
+                                          <FontIcon iconColor="#9b59b6" iconLiteral="fas-user" iconSize="24" />
+                                       </children>
+                                    </StackPane>
+                                    <VBox>
+                                       <children>
+                                          <Label text="Conducteurs" styleClass="stats-title">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="driversCountLabel" styleClass="stats-value" text="0">
+                                             <font>
+                                                <Font name="System Bold" size="28.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                              <Button mnemonicParsing="false" onAction="#showConducteurs" styleClass="transparent-button" text="Gérer les conducteurs">
+                                 <graphic>
+                                    <FontIcon iconLiteral="fas-arrow-right" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin>
+                              </Button>
+                           </children>
+                           <padding>
+                              <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                           </padding>
+                        </VBox>
+
+                        <!-- Routes Card -->
+                        <VBox alignment="CENTER_LEFT" prefHeight="120.0" prefWidth="200.0" styleClass="dashboard-stats-card">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" spacing="15.0">
+                                 <children>
+                                    <StackPane styleClass="icon-circle" style="-fx-background-color: rgba(46, 204, 113, 0.2);">
+                                       <children>
+                                          <FontIcon iconColor="#2ecc71" iconLiteral="fas-route" iconSize="24" />
+                                       </children>
+                                    </StackPane>
+                                    <VBox>
+                                       <children>
+                                          <Label text="Itinéraires" styleClass="stats-title">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="routesCountLabel" styleClass="stats-value" text="0">
+                                             <font>
+                                                <Font name="System Bold" size="28.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                              <Button mnemonicParsing="false" onAction="#showRoutes" styleClass="transparent-button" text="Gérer les itinéraires">
+                                 <graphic>
+                                    <FontIcon iconLiteral="fas-arrow-right" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin>
+                              </Button>
+                           </children>
+                           <padding>
+                              <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                           </padding>
+                        </VBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="20.0" />
+                     </VBox.margin>
+                  </HBox>
+
+                  <!-- Admin tools section -->
+                  <VBox spacing="15.0" styleClass="dashboard-panel">
+                     <children>
+                        <Label text="Outils d'administration" styleClass="panel-title">
                            <font>
-                              <Font name="System Bold" size="16.0" />
+                              <Font name="System Bold" size="18.0" />
                            </font>
+                           <graphic>
+                              <FontIcon iconColor="#4dabf7" iconLiteral="fas-tools" iconSize="18" />
+                           </graphic>
                         </Label>
-                        <HBox alignment="CENTER" spacing="20.0">
+                        <Label text="Utilisez ces outils pour gérer votre organisation" styleClass="panel-subtitle">
+                           <VBox.margin>
+                              <Insets bottom="10.0" />
+                           </VBox.margin>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
                            <children>
                               <Button mnemonicParsing="false" onAction="#populateRoutes" styleClass="button-primary" text="Générer des itinéraires">
                                  <graphic>
                                     <FontIcon iconLiteral="fas-database" />
                                  </graphic>
+                                 <padding>
+                                    <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
+                                 </padding>
+                              </Button>
+                              <Button mnemonicParsing="false" styleClass="button-secondary" text="Exporter les données">
+                                 <graphic>
+                                    <FontIcon iconLiteral="fas-file-export" />
+                                 </graphic>
+                                 <padding>
+                                    <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
+                                 </padding>
                               </Button>
                            </children>
                         </HBox>
                      </children>
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
                   </VBox>
                </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
             </VBox>
-            <VBox fx:id="vehiculesView" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/style.css" visible="false">
+            <VBox fx:id="vehiculesView" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/modern-style.css" visible="false">
                <children>
-                  <Label styleClass="dashboard-title" text="Gestion des Véhicules">
-                     <font>
-                        <Font size="24.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets bottom="20.0" top="20.0" />
-                     </VBox.margin>
-                  </Label>
+                  <HBox alignment="CENTER_LEFT" styleClass="welcome-banner">
+                     <children>
+                        <Label styleClass="content-title" text="Gestion des Véhicules">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="#f39c12" iconLiteral="fas-car" iconSize="20" />
+                           </graphic>
+                        </Label>
+                        <HBox alignment="CENTER_RIGHT" spacing="15.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Button mnemonicParsing="false" styleClass="button-primary" text="Ajouter un véhicule">
+                                 <graphic>
+                                    <FontIcon iconLiteral="fas-plus" />
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" />
+                     </padding>
+                  </HBox>
                   <fx:include fx:id="vehiculeManagementContent" source="vehiculeManagement.fxml" />
                </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
             </VBox>
-            <VBox fx:id="conducteursView" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/style.css" visible="false">
+            <VBox fx:id="conducteursView" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/modern-style.css" visible="false">
                <children>
-                  <Label styleClass="dashboard-title" text="Gestion des Conducteurs">
-                     <font>
-                        <Font size="24.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets bottom="20.0" top="20.0" />
-                     </VBox.margin>
-                  </Label>
+                  <HBox alignment="CENTER_LEFT" styleClass="welcome-banner">
+                     <children>
+                        <Label styleClass="content-title" text="Gestion des Conducteurs">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="#9b59b6" iconLiteral="fas-user" iconSize="20" />
+                           </graphic>
+                        </Label>
+                        <HBox alignment="CENTER_RIGHT" spacing="15.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Button mnemonicParsing="false" styleClass="button-primary" text="Ajouter un conducteur">
+                                 <graphic>
+                                    <FontIcon iconLiteral="fas-plus" />
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" />
+                     </padding>
+                  </HBox>
                   <fx:include fx:id="conducteurManagementContent" source="conducteurManagement.fxml" />
                </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
             </VBox>
-            <VBox fx:id="maintenancesView" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/style.css" visible="false">
+            <VBox fx:id="maintenancesView" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/modern-style.css" visible="false">
                <children>
-                  <Label styleClass="dashboard-title" text="Gestion des Maintenances">
-                     <font>
-                        <Font size="24.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets bottom="20.0" top="20.0" />
-                     </VBox.margin>
-                  </Label>
+                  <HBox alignment="CENTER_LEFT" styleClass="welcome-banner">
+                     <children>
+                        <Label styleClass="content-title" text="Gestion des Maintenances">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="#e74c3c" iconLiteral="fas-tools" iconSize="20" />
+                           </graphic>
+                        </Label>
+                        <HBox alignment="CENTER_RIGHT" spacing="15.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Button mnemonicParsing="false" styleClass="button-primary" text="Ajouter une maintenance">
+                                 <graphic>
+                                    <FontIcon iconLiteral="fas-plus" />
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" />
+                     </padding>
+                  </HBox>
                   <fx:include fx:id="maintenanceManagementContent" source="maintenanceManagement.fxml" />
                </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
             </VBox>
-            <VBox fx:id="routesView" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/style.css" visible="false">
+            <VBox fx:id="routesView" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/modern-style.css" visible="false">
                <children>
-                  <Label styleClass="dashboard-title" text="Gestion des Itinéraires">
-                     <font>
-                        <Font size="24.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets bottom="20.0" top="20.0" />
-                     </VBox.margin>
-                  </Label>
+                  <HBox alignment="CENTER_LEFT" styleClass="welcome-banner">
+                     <children>
+                        <Label styleClass="content-title" text="Gestion des Itinéraires">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="#2ecc71" iconLiteral="fas-route" iconSize="20" />
+                           </graphic>
+                        </Label>
+                        <HBox alignment="CENTER_RIGHT" spacing="15.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Button mnemonicParsing="false" styleClass="button-primary" text="Ajouter un itinéraire">
+                                 <graphic>
+                                    <FontIcon iconLiteral="fas-plus" />
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" />
+                     </padding>
+                  </HBox>
                   <fx:include fx:id="routeManagementContent" source="routeManagement.fxml" />
                </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
             </VBox>
          </children>
       </StackPane>

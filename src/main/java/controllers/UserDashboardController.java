@@ -8,6 +8,7 @@ import entities.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -24,6 +25,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import services.ReclamationService;
+import org.kordamp.ikonli.javafx.FontIcon;
 import services.ReservationService;
 import services.ReservationServiceImpl;
 import utils.UserContext;
@@ -57,20 +59,21 @@ public class UserDashboardController {
 
     @FXML
     private HBox popularRoutesContainer;
-    
+
     @FXML
     private Button createReservationButton;
-    
+
     // Buttons for visual indication of current page
     @FXML
     private Button dashboardButton;
-    
+
     @FXML
     private Button searchButton;
-    
+
     @FXML
     private Button reservationsButton;
-      @FXML
+
+    @FXML
     private Button profileButton;
 
     @FXML
@@ -79,7 +82,7 @@ public class UserDashboardController {
     private User currentUser;
     private final ReservationService reservationService = new ReservationServiceImpl();
     private final ReclamationService reclamationService = new ReclamationService();
-    
+
     // Store reservation statistics
     private int totalReservations = 0;
     private int completedReservations = 0;
@@ -187,18 +190,250 @@ public class UserDashboardController {
             
             // Update the reservation statistics in the loaded content
             updateReservationStats(content);
-            
+
+            // Set current date in the welcome banner
+            Label dateLabel = (Label) content.lookup("#currentDateLabel");
+            if (dateLabel != null) {
+                // Format current date as "Day, DD Month YYYY"
+                java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy", java.util.Locale.FRENCH);
+                String formattedDate = java.time.LocalDate.now().format(formatter);
+                // Capitalize first letter
+                formattedDate = formattedDate.substring(0, 1).toUpperCase() + formattedDate.substring(1);
+                dateLabel.setText(formattedDate);
+            }
+
             // Add action to the create reservation button in the loaded content
             Button createButton = (Button) content.lookup("#createReservationButton");
             if (createButton != null) {
                 createButton.setOnAction(event -> onCreateReservationButtonClick());
             }
-            
+
+            // Connect quick action buttons to their respective functions
+            setupQuickActionButtons(content);
+
+            // Populate upcoming reservations if container exists
+            populateUpcomingReservations(content);
+
         } catch (IOException e) {
             log.error("Error loading home content: {}", e.getMessage(), e);
         }
     }
-    
+
+    /**
+     * Sets up the quick action buttons in the dashboard
+     */
+    private void setupQuickActionButtons(Parent content) {
+        // Find all action buttons by their parent container
+        HBox actionButtonsRow1 = (HBox) content.lookup(".dashboard-panel .action-button").getParent();
+        if (actionButtonsRow1 != null) {
+            // Get the first row of buttons
+            for (Node node : actionButtonsRow1.getChildren()) {
+                if (node instanceof Button) {
+                    Button button = (Button)node;
+                    // Find the label inside the button's graphic
+                    HBox hbox = (HBox) button.getGraphic();
+                    if (hbox != null) {
+                        for (Node child : hbox.getChildren()) {
+                            if (child instanceof Label) {
+                                Label label = (Label) child;
+                                String text = label.getText();
+
+                                // Set actions based on button text
+                                if ("Rechercher".equals(text)) {
+                                    button.setOnAction(event -> onSearchButtonClick());
+                                } else if ("Réserver".equals(text)) {
+                                    button.setOnAction(event -> onCreateReservationButtonClick());
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Find the second row of buttons
+        HBox actionButtonsRow2 = (HBox) content.lookup(".dashboard-panel .action-button").getParent().getParent().getChildrenUnmodifiable().get(2);
+        if (actionButtonsRow2 instanceof HBox) {
+            for (Node node : ((HBox) actionButtonsRow2).getChildren()) {
+                if (node instanceof Button) {
+                    Button button = (Button) node;
+                    // Find the label inside the button's graphic
+                    HBox hbox = (HBox) button.getGraphic();
+                    if (hbox != null) {
+                        for (Node child : hbox.getChildren()) {
+                            if (child instanceof Label) {
+                                Label label = (Label) child;
+                                String text = label.getText();
+
+                                // Set actions based on button text
+                                if ("Historique".equals(text)) {
+                                    button.setOnAction(event -> onReservationsButtonClick());
+                                } else if ("Profil".equals(text)) {
+                                    button.setOnAction(event -> onProfileButtonClick());
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Populates the upcoming reservations section with real data if available
+     */
+    private void populateUpcomingReservations(Parent content) {
+        VBox upcomingContainer = (VBox) content.lookup("#upcomingReservationsContainer");
+        if (upcomingContainer != null) {
+            try {
+                // Get user's upcoming reservations
+                List<Reservation> upcomingReservations = reservationService.getReservationsByUserIdAndStatus(
+                        currentUser.getId(), "PENDING");
+
+                // If we have real reservations, clear the sample ones
+                if (!upcomingReservations.isEmpty()) {
+                    upcomingContainer.getChildren().clear();
+
+                    // Add real reservations (limit to 3 for space)
+                    int count = 0;
+                    for (Reservation reservation : upcomingReservations) {
+                        upcomingContainer.getChildren().add(createUpcomingReservationItem(reservation));
+                        count++;
+                        if (count >= 3) break;
+                    }
+                }
+
+                // Add "See all" button action
+                Button seeAllButton = (Button) content.lookup(".dashboard-panel .transparent-button");
+                if (seeAllButton != null) {
+                    seeAllButton.setOnAction(event -> onReservationsButtonClick());
+                }
+
+            } catch (Exception e) {
+                log.error("Error loading upcoming reservations: {}", e.getMessage(), e);
+            }
+        }
+    }
+
+    /**
+     * Creates a styled upcoming reservation item for the dashboard
+     */
+    private HBox createUpcomingReservationItem(Reservation reservation) {
+        HBox item = new HBox();
+        item.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        item.getStyleClass().add("upcoming-reservation-item");
+        item.setPadding(new Insets(10));
+        item.setSpacing(15);
+
+        // Date container
+        VBox dateContainer = new VBox();
+        dateContainer.setAlignment(javafx.geometry.Pos.CENTER);
+        dateContainer.getStyleClass().add("reservation-date-container");
+
+        // Format date
+        LocalDateTime dateTime = reservation.getDateTime();
+        String month = dateTime.getMonth().toString().substring(0, 3);
+        String day = String.valueOf(dateTime.getDayOfMonth());
+
+        Label monthLabel = new Label(month);
+        monthLabel.getStyleClass().add("reservation-date-month");
+
+        Label dayLabel = new Label(day);
+        dayLabel.getStyleClass().add("reservation-date-day");
+
+        dateContainer.getChildren().addAll(monthLabel, dayLabel);
+
+        // Details container
+        VBox detailsContainer = new VBox();
+        HBox.setHgrow(detailsContainer, javafx.scene.layout.Priority.ALWAYS);
+
+        // Route info
+        String origin = reservation.getRoute() != null ? reservation.getRoute().getOrigin() : "Départ";
+        String destination = reservation.getRoute() != null ? reservation.getRoute().getDestination() : "Arrivée";
+        Label routeLabel = new Label(origin + " → " + destination);
+        routeLabel.getStyleClass().add("reservation-route");
+
+        // Time and transport info
+        HBox infoContainer = new HBox();
+        infoContainer.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        infoContainer.setSpacing(15);
+
+        // Time info
+        HBox timeInfo = new HBox();
+        timeInfo.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        timeInfo.setSpacing(5);
+
+        FontIcon clockIcon = new FontIcon();
+        clockIcon.setIconLiteral("fas-clock");
+        clockIcon.setIconSize(12);
+        clockIcon.setIconColor(javafx.scene.paint.Color.web("#7f8c8d"));
+
+        String time = dateTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+        Label timeLabel = new Label(time);
+        timeLabel.getStyleClass().add("reservation-detail");
+
+        timeInfo.getChildren().addAll(clockIcon, timeLabel);
+
+        // Transport info
+        HBox transportInfo = new HBox();
+        transportInfo.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        transportInfo.setSpacing(5);
+
+        FontIcon transportIcon = new FontIcon();
+        String transportType = reservation.getTransport() != null ?
+                reservation.getTransport().getType() : "Bus";
+
+        // Set appropriate icon based on transport type
+        switch (transportType.toLowerCase()) {
+            case "train":
+                transportIcon.setIconLiteral("fas-train");
+                break;
+            case "métro":
+            case "metro":
+                transportIcon.setIconLiteral("fas-subway");
+                break;
+            case "avion":
+            case "plane":
+                transportIcon.setIconLiteral("fas-plane");
+                break;
+            default:
+                transportIcon.setIconLiteral("fas-bus");
+        }
+
+        transportIcon.setIconSize(12);
+        transportIcon.setIconColor(javafx.scene.paint.Color.web("#7f8c8d"));
+
+        Label transportLabel = new Label(transportType);
+        transportLabel.getStyleClass().add("reservation-detail");
+
+        transportInfo.getChildren().addAll(transportIcon, transportLabel);
+
+        // Status label
+        Label statusLabel = new Label(reservation.getStatus());
+        if ("PENDING".equalsIgnoreCase(reservation.getStatus())) {
+            statusLabel.setText("En attente");
+            statusLabel.getStyleClass().add("reservation-status-pending");
+        } else if ("CONFIRMED".equalsIgnoreCase(reservation.getStatus())) {
+            statusLabel.setText("Confirmé");
+            statusLabel.getStyleClass().add("reservation-status-confirmed");
+        }
+
+        infoContainer.getChildren().addAll(timeInfo, transportInfo, statusLabel);
+
+        detailsContainer.getChildren().addAll(routeLabel, infoContainer);
+
+        // Details button
+        Button detailsButton = new Button("Détails");
+        detailsButton.getStyleClass().add("detail-button");
+
+        // Add all components to the item
+        item.getChildren().addAll(dateContainer, detailsContainer, detailsButton);
+
+        return item;
+    }
+
     private void updateReservationStats(Parent content) {
         // Find the labels in the loaded content
         Label reservationsCount = (Label) content.lookup("#reservationsCountLabel");

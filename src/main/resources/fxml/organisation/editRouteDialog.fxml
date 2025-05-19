@@ -12,60 +12,114 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="500.0" spacing="15.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EditRouteDialogController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="550.0" spacing="15.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EditRouteDialogController">
    <children>
-      <Label text="Modifier un itinéraire">
-         <font>
-            <Font name="System Bold" size="16.0" />
-         </font>
-      </Label>
-      <Label text="Itinéraire:" />
-      <Label fx:id="routeInfoLabel" style="-fx-font-weight: bold;" text="[Origine] → [Destination]" />
-      <Separator />
       <HBox alignment="CENTER_LEFT" spacing="10.0">
          <children>
-            <Label prefWidth="150.0" text="Code interne:" />
-            <TextField fx:id="internalCodeField" prefWidth="300.0" promptText="ex: B-TUN-SOU" />
+            <FontIcon iconLiteral="fas-edit" iconSize="24" />
+            <Label text="Modifier l'itinéraire">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
          </children>
       </HBox>
+      
+      <HBox alignment="CENTER_LEFT" spacing="10.0">
+         <children>
+            <Label text="Itinéraire:" textFill="#2c3e50">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label fx:id="routeInfoLabel" style="-fx-font-weight: bold;" text="[Origine] → [Destination]" textFill="#2c3e50">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+      
+      <Separator />
+      
+      <HBox alignment="CENTER_LEFT" spacing="10.0">
+         <children>
+            <Label prefWidth="150.0" text="Code de ligne:" />
+            <TextField fx:id="internalCodeField" prefWidth="300.0" promptText="ex: B123, T45, M6" />
+         </children>
+      </HBox>
+      
       <HBox alignment="CENTER_LEFT" spacing="10.0">
          <children>
             <Label prefWidth="150.0" text="Type de véhicule:" />
             <ComboBox fx:id="vehicleTypeComboBox" prefWidth="300.0" promptText="Sélectionner un type" />
          </children>
       </HBox>
+      
       <HBox alignment="CENTER_LEFT" spacing="10.0">
          <children>
-            <Label prefWidth="150.0" text="Fréquence par jour:" />
+            <Label prefWidth="150.0" text="Fréquence journalière:" />
             <Spinner fx:id="frequencySpinner" prefWidth="100.0" />
             <Label text="voyages/jour" />
          </children>
       </HBox>
+      
       <HBox alignment="CENTER_LEFT" spacing="10.0">
          <children>
             <Label prefWidth="150.0" text="Heure de départ:" />
             <TextField fx:id="departureTimeField" prefWidth="100.0" promptText="HH:MM" />
          </children>
       </HBox>
+      
       <HBox alignment="CENTER_LEFT" spacing="10.0">
          <children>
             <Label prefWidth="150.0" text="Heure d'arrivée:" />
             <TextField fx:id="arrivalTimeField" prefWidth="100.0" promptText="HH:MM" />
          </children>
       </HBox>
-      <Label text="Notes:" />
-      <TextArea fx:id="notesArea" prefHeight="100.0" prefWidth="200.0" promptText="Informations supplémentaires sur cet itinéraire" />
+      
       <HBox alignment="CENTER_LEFT" spacing="10.0">
          <children>
-            <CheckBox fx:id="activeCheckbox" mnemonicParsing="false" text="Itinéraire actif" />
+            <Label prefWidth="150.0" text="Tarif standard (DT):" />
+            <TextField fx:id="priceField" prefWidth="100.0" promptText="Ex: 15.5" />
          </children>
       </HBox>
+      
+      <HBox alignment="CENTER_LEFT" spacing="10.0">
+         <children>
+            <Label prefWidth="150.0" text="Durée du trajet:" />
+            <TextField fx:id="durationField" prefWidth="100.0" promptText="Ex: 120" />
+            <Label text="minutes" />
+         </children>
+      </HBox>
+      
+      <Label text="Notes opérationnelles:" />
+      <TextArea fx:id="notesArea" prefHeight="100.0" prefWidth="200.0" promptText="Informations pour les chauffeurs/conducteurs et le personnel" wrapText="true" />
+      
+      <HBox alignment="CENTER_LEFT" spacing="20.0">
+         <children>
+            <CheckBox fx:id="activeCheckbox" mnemonicParsing="false" text="Itinéraire actif" />
+            <CheckBox fx:id="wifiServiceCheckbox" mnemonicParsing="false" text="WiFi à bord" />
+            <CheckBox fx:id="accessibilityCheckbox" mnemonicParsing="false" text="Accessibilité PMR" />
+         </children>
+      </HBox>
+      
       <Separator />
+      
       <HBox alignment="CENTER_RIGHT" spacing="10.0">
          <children>
-            <Button fx:id="cancelButton" mnemonicParsing="false" text="Annuler" />
-            <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" styleClass="button-primary" text="Enregistrer" />
+            <Button fx:id="cancelButton" mnemonicParsing="false" text="Annuler">
+               <graphic>
+                  <FontIcon iconLiteral="fas-times" />
+               </graphic>
+            </Button>
+            <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" style="-fx-background-color: #2ecc71;" styleClass="button-primary" text="Enregistrer" textFill="WHITE">
+               <graphic>
+                  <FontIcon iconLiteral="fas-check" />
+               </graphic>
+            </Button>
          </children>
       </HBox>
    </children>

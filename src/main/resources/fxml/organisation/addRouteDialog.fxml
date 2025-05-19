@@ -7,69 +7,275 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="500.0" spacing="15.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AddRouteDialogController">
+<AnchorPane prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AddRouteDialogController">
    <children>
-      <Label text="Ajouter un itinéraire à votre organisation">
-         <font>
-            <Font name="System Bold" size="16.0" />
-         </font>
-      </Label>
-      <Label text="Itinéraire:" />
-      <Label fx:id="routeInfoLabel" style="-fx-font-weight: bold;" text="[Origine] → [Destination]" />
-      <Separator />
-      <HBox alignment="CENTER_LEFT" spacing="10.0">
+      <VBox layoutX="14.0" layoutY="14.0" prefHeight="463.0" prefWidth="513.0" spacing="10.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
          <children>
-            <Label prefWidth="150.0" text="Code interne:" />
-            <TextField fx:id="internalCodeField" prefWidth="300.0" promptText="ex: B-TUN-SOU" />
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <FontIcon iconLiteral="fas-route" iconSize="24" />
+                  <Label text="Ajouter un itinéraire à votre organisation" textFill="#2c3e50">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Label text="Itinéraire sélectionné:" textFill="#2c3e50">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="routeInfoLabel" style="-fx-font-weight: bold;" text="Origine → Destination" textFill="#2c3e50">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <Separator prefWidth="200.0" />
+            
+            <TabPane prefHeight="450.0" prefWidth="572.0" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab text="Détails opérationnels">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0">
+                       <children>
+                          <GridPane hgap="10.0" layoutX="10.0" layoutY="10.0" vgap="5.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                            <children>
+                              <Label text="Code de ligne" />
+                              <TextField fx:id="internalCodeField" promptText="Ex: B123, T45, M6" GridPane.columnIndex="1" />
+                              
+                              <Label text="Type de véhicule" GridPane.rowIndex="1" />
+                              <ComboBox fx:id="vehicleTypeComboBox" prefWidth="150.0" promptText="Sélectionner" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              
+                              <Label text="Fréquence journalière" GridPane.rowIndex="2" />
+                              <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                <children>
+                                  <Spinner fx:id="frequencySpinner" prefWidth="100.0" />
+                                  <Label text="voyages par jour" />
+                                </children>
+                              </HBox>
+                              
+                              <Label text="Heure de départ" GridPane.rowIndex="3" />
+                              <TextField fx:id="departureTimeField" promptText="Ex: 08:00" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              
+                              <Label text="Heure d'arrivée" GridPane.rowIndex="4" />
+                              <TextField fx:id="arrivalTimeField" promptText="Ex: 10:00" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              
+                              <Label text="Notes" GridPane.rowIndex="5" />
+                              <TextArea fx:id="notesArea" prefHeight="60.0" promptText="Notes opérationnelles pour vos chauffeurs/conducteurs" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              
+                              <Label text="Statut" GridPane.rowIndex="6" />
+                              <CheckBox fx:id="activeCheckbox" mnemonicParsing="false" selected="true" text="Ligne active" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                            </children>
+                            <columnConstraints>
+                              <javafx.scene.layout.ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="10.0" prefWidth="120.0" />
+                              <javafx.scene.layout.ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="400.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                              <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="80.0" vgrow="SOMETIMES" />
+                              <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
+                          </GridPane>
+                       </children>
+                    </AnchorPane>
+                  </content>
+                </Tab>
+                
+                <Tab text="Stations et quais">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0">
+                       <children>
+                          <GridPane hgap="10.0" layoutX="10.0" layoutY="10.0" vgap="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                            <children>
+                              <Label text="Station de départ" />
+                              <ComboBox fx:id="departureStationComboBox" prefWidth="400.0" promptText="Sélectionner une station" GridPane.columnIndex="1" />
+                              
+                              <Label text="Station d'arrivée" GridPane.rowIndex="1" />
+                              <ComboBox fx:id="arrivalStationComboBox" prefWidth="400.0" promptText="Sélectionner une station" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              
+                              <Label text="Quai/Porte/Terminal" GridPane.rowIndex="2" />
+                              <TextField fx:id="platformInfoField" promptText="Ex: Quai 3, Porte A, Terminal 2" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              
+                              <Label text="Capacité du véhicule" GridPane.rowIndex="3" />
+                              <TextField fx:id="vehicleCapacityField" promptText="Ex: 50 passagers, 30 sièges" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              
+                              <Label text="Numéro(s) de quai" GridPane.rowIndex="4" />
+                              <TextField fx:id="platformNumberField" promptText="Ex: 1-3, 5, 7A" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                            </children>
+                            <columnConstraints>
+                              <javafx.scene.layout.ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="10.0" prefWidth="120.0" />
+                              <javafx.scene.layout.ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="400.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                              <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
+                          </GridPane>
+                       </children>
+                    </AnchorPane>
+                  </content>
+                </Tab>
+                
+                <Tab text="Horaires">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0">
+                       <children>
+                          <VBox layoutX="10.0" layoutY="10.0" spacing="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                             <children>
+                                <GridPane hgap="10.0" vgap="10.0">
+                                   <children>
+                                      <Label text="Horaires en semaine" />
+                                      <TextField fx:id="weekdayScheduleField" promptText="Ex: 06:00-22:00" GridPane.columnIndex="1" />
+                                      
+                                      <Label text="Horaires samedi" GridPane.rowIndex="1" />
+                                      <TextField fx:id="saturdayScheduleField" promptText="Ex: 08:00-20:00" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                      
+                                      <Label text="Horaires dimanche" GridPane.rowIndex="2" />
+                                      <TextField fx:id="sundayScheduleField" promptText="Ex: 09:00-18:00" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                      
+                                      <Label text="Jours fériés" GridPane.rowIndex="3" />
+                                      <TextField fx:id="holidayScheduleField" promptText="Ex: 09:00-18:00 ou Fermé" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                      
+                                      <Label text="Premier départ" GridPane.rowIndex="4" />
+                                      <TextField fx:id="firstDepartureField" promptText="Ex: 06:00" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                      
+                                      <Label text="Dernier départ" GridPane.rowIndex="5" />
+                                      <TextField fx:id="lastDepartureField" promptText="Ex: 22:00" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                      
+                                      <Label text="Intervalle" GridPane.rowIndex="6" />
+                                      <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                        <children>
+                                          <TextField fx:id="intervalField" prefWidth="60.0" promptText="15" />
+                                          <Label text="minutes entre chaque départ" />
+                                        </children>
+                                      </HBox>
+                                   </children>
+                                   <columnConstraints>
+                                      <javafx.scene.layout.ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="10.0" prefWidth="120.0" />
+                                      <javafx.scene.layout.ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="400.0" />
+                                   </columnConstraints>
+                                   <rowConstraints>
+                                      <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                   </rowConstraints>
+                                </GridPane>
+                                
+                                <Label text="Jours de fonctionnement:" />
+                                <HBox spacing="10.0">
+                                   <children>
+                                      <CheckBox fx:id="mondayCheckbox" mnemonicParsing="false" selected="true" text="Lundi" />
+                                      <CheckBox fx:id="tuesdayCheckbox" mnemonicParsing="false" selected="true" text="Mardi" />
+                                      <CheckBox fx:id="wednesdayCheckbox" mnemonicParsing="false" selected="true" text="Mercredi" />
+                                      <CheckBox fx:id="thursdayCheckbox" mnemonicParsing="false" selected="true" text="Jeudi" />
+                                      <CheckBox fx:id="fridayCheckbox" mnemonicParsing="false" selected="true" text="Vendredi" />
+                                      <CheckBox fx:id="saturdayCheckbox" mnemonicParsing="false" selected="true" text="Samedi" />
+                                      <CheckBox fx:id="sundayCheckbox" mnemonicParsing="false" selected="true" text="Dimanche" />
+                                   </children>
+                                </HBox>
+                             </children>
+                          </VBox>
+                       </children>
+                    </AnchorPane>
+                  </content>
+                </Tab>
+                
+                <Tab text="Tarifs et Services">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0">
+                       <children>
+                          <GridPane hgap="10.0" layoutX="10.0" layoutY="10.0" vgap="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                            <children>
+                              <Label text="Tarif standard (DT)" />
+                              <TextField fx:id="routePriceField" promptText="Ex: 15.5" GridPane.columnIndex="1" />
+                              
+                              <Label text="Tarif réduit (DT)" GridPane.rowIndex="1" />
+                              <TextField fx:id="reducedPriceField" promptText="Ex: 7.5" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              
+                              <Label text="Durée du trajet" GridPane.rowIndex="2" />
+                              <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                <children>
+                                  <TextField fx:id="routeDurationField" prefWidth="60.0" promptText="120" />
+                                  <Label text="minutes" />
+                                </children>
+                              </HBox>
+                              
+                              <Label text="Services à bord" GridPane.rowIndex="3" />
+                              <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                <children>
+                                  <CheckBox fx:id="wifiServiceCheckbox" mnemonicParsing="false" text="WiFi" />
+                                  <CheckBox fx:id="acServiceCheckbox" mnemonicParsing="false" text="Climatisation" />
+                                  <CheckBox fx:id="foodServiceCheckbox" mnemonicParsing="false" text="Service de restauration" />
+                                  <CheckBox fx:id="accessibilityCheckbox" mnemonicParsing="false" text="Accessibilité PMR" />
+                                </children>
+                              </VBox>
+                              
+                              <Label text="Catégorie de service" GridPane.rowIndex="4" />
+                              <ComboBox fx:id="serviceClassComboBox" promptText="Sélectionner" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                            </children>
+                            <columnConstraints>
+                              <javafx.scene.layout.ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="10.0" prefWidth="120.0" />
+                              <javafx.scene.layout.ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="400.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                              <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="120.0" vgrow="SOMETIMES" />
+                              <javafx.scene.layout.RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
+                          </GridPane>
+                       </children>
+                    </AnchorPane>
+                  </content>
+                </Tab>
+              </tabs>
+            </TabPane>
          </children>
-      </HBox>
-      <HBox alignment="CENTER_LEFT" spacing="10.0">
+      </VBox>
+      <HBox alignment="CENTER_RIGHT" layoutX="14.0" layoutY="436.0" spacing="10.0" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0">
          <children>
-            <Label prefWidth="150.0" text="Type de véhicule:" />
-            <ComboBox fx:id="vehicleTypeComboBox" prefWidth="300.0" promptText="Sélectionner un type" />
-         </children>
-      </HBox>
-      <HBox alignment="CENTER_LEFT" spacing="10.0">
-         <children>
-            <Label prefWidth="150.0" text="Fréquence par jour:" />
-            <Spinner fx:id="frequencySpinner" prefWidth="100.0" />
-            <Label text="voyages/jour" />
-         </children>
-      </HBox>
-      <HBox alignment="CENTER_LEFT" spacing="10.0">
-         <children>
-            <Label prefWidth="150.0" text="Heure de départ:" />
-            <TextField fx:id="departureTimeField" prefWidth="100.0" promptText="HH:MM" />
-         </children>
-      </HBox>
-      <HBox alignment="CENTER_LEFT" spacing="10.0">
-         <children>
-            <Label prefWidth="150.0" text="Heure d'arrivée:" />
-            <TextField fx:id="arrivalTimeField" prefWidth="100.0" promptText="HH:MM" />
-         </children>
-      </HBox>
-      <Label text="Notes:" />
-      <TextArea fx:id="notesArea" prefHeight="100.0" prefWidth="200.0" promptText="Informations supplémentaires sur cet itinéraire" />
-      <HBox alignment="CENTER_LEFT" spacing="10.0">
-         <children>
-            <CheckBox fx:id="activeCheckbox" mnemonicParsing="false" selected="true" text="Itinéraire actif" />
-         </children>
-      </HBox>
-      <Separator />
-      <HBox alignment="CENTER_RIGHT" spacing="10.0">
-         <children>
-            <Button fx:id="cancelButton" mnemonicParsing="false" text="Annuler" />
-            <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" styleClass="button-primary" text="Enregistrer" />
+            <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" text="Annuler">
+               <graphic>
+                  <FontIcon iconLiteral="fas-times" />
+               </graphic>
+            </Button>
+            <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" style="-fx-background-color: #2ecc71;" text="Enregistrer" textFill="WHITE">
+               <graphic>
+                  <FontIcon iconLiteral="fas-check" />
+               </graphic>
+            </Button>
          </children>
       </HBox>
    </children>
    <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
    </padding>
-</VBox> 
+</AnchorPane> 

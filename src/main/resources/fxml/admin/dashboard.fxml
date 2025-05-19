@@ -8,9 +8,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="1080.0" prefWidth="1920.0" maxHeight="Infinity" maxWidth="Infinity" styleClass="background" stylesheets="@../../styles/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AdminDashboardController">
+<BorderPane prefHeight="1080.0" prefWidth="1920.0" maxHeight="Infinity" maxWidth="Infinity" styleClass="background" stylesheets="@../../styles/modern-style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AdminDashboardController">
    <left>
-      <VBox styleClass="sidebar" stylesheets="@../../styles/style.css" BorderPane.alignment="CENTER">
+      <VBox styleClass="sidebar" stylesheets="@../../styles/modern-style.css" BorderPane.alignment="CENTER">
          <children>
             <Label styleClass="sidebar-title" text="TuniTransport" textFill="WHITE">
                <font>
@@ -22,7 +22,6 @@
             </Label>
             <Button fx:id="dashboardButton" mnemonicParsing="false" onAction="#showDashboard" prefWidth="200.0" styleClass="sidebar-button" text="Dashboard" textFill="WHITE" />
             <Button fx:id="organisationsButton" layoutX="10.0" layoutY="47.0" mnemonicParsing="false" onAction="#showOrganisations" prefWidth="200.0" styleClass="sidebar-button" text="Gérer Organisations" textFill="WHITE" />
-            <Button fx:id="reclamationsButton" layoutX="10.0" layoutY="87.0" mnemonicParsing="false" onAction="#showReclamations" prefWidth="200.0" styleClass="sidebar-button" text="Réclamations" textFill="WHITE" />
             <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
                <children>
                   <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#logout" prefWidth="200.0" styleClass="sidebar-button" text="Déconnexion" textFill="WHITE" />
@@ -34,7 +33,7 @@
    <center>
       <StackPane fx:id="contentArea" BorderPane.alignment="CENTER">
          <children>
-            <VBox fx:id="dashboardView" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/style.css">
+            <VBox fx:id="dashboardView" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/modern-style.css">
                <children>
                   <Label styleClass="dashboard-title" text="TuniTransport">
                      <font>
@@ -51,12 +50,21 @@
                   </Label>
                </children>
             </VBox>
-            <VBox fx:id="organisationsView" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/style.css" visible="false">
-               <fx:include source="organisationManagement.fxml" />
+            <VBox fx:id="organisationsView" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/modern-style.css" visible="false">
+               <children>
+                  <Label styleClass="dashboard-title" text="Gestion des Organisations">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="20.0" top="20.0" />
+                     </VBox.margin>
+                  </Label>
+                  <fx:include fx:id="organisationManagementContent" source="organisationManagement.fxml" />
+
+               </children>
             </VBox>
-            <VBox fx:id="reclamationsView" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/style.css" visible="false">
-               <fx:include source="reclamations.fxml" />
-            </VBox>
+<!--             TODO : vous pouvez ajouter d'autres vues ici-->
          </children>
       </StackPane>
    </center>

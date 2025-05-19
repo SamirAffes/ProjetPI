@@ -1,12 +1,15 @@
 package utils;
 
 import entities.Organisation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Classe utilitaire pour stocker et accéder à l'organisation actuelle dans l'application.
  * Cette classe utilise le pattern Singleton pour garantir un accès global à l'objet Organisation.
  */
 public class OrganisationContext {
+    private static final Logger log = LoggerFactory.getLogger(OrganisationContext.class);
     
     private static OrganisationContext instance;
     private Organisation currentOrganisation;
@@ -33,6 +36,11 @@ public class OrganisationContext {
      * @param organisation L'organisation à définir comme courante
      */
     public void setCurrentOrganisation(Organisation organisation) {
+        if (organisation != null) {
+            log.info("Setting current organisation to: {}", organisation.getNom());
+        } else {
+            log.info("Setting current organisation to null");
+        }
         this.currentOrganisation = organisation;
     }
     
@@ -42,6 +50,9 @@ public class OrganisationContext {
      * @return L'organisation courante
      */
     public Organisation getCurrentOrganisation() {
+        if (currentOrganisation == null) {
+            log.warn("Attempting to get current organisation, but it is null");
+        }
         return currentOrganisation;
     }
     
@@ -51,7 +62,12 @@ public class OrganisationContext {
      * @return L'ID de l'organisation courante ou 0 si aucune organisation n'est définie
      */
     public int getCurrentOrganisationId() {
-        return currentOrganisation != null ? currentOrganisation.getId() : 0;
+        if (currentOrganisation != null) {
+            return currentOrganisation.getId();
+        } else {
+            log.warn("Attempting to get current organisation ID, but organisation is null");
+            return 0;
+        }
     }
     
     /**
@@ -67,6 +83,7 @@ public class OrganisationContext {
      * Efface l'organisation actuelle (par exemple lors de la déconnexion)
      */
     public void clearCurrentOrganisation() {
+        log.info("Clearing current organisation");
         this.currentOrganisation = null;
     }
 }
