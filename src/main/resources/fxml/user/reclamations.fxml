@@ -6,39 +6,54 @@
 <?import org.kordamp.ikonli.javafx.*?>
 
 <ScrollPane fitToWidth="true" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
-            fx:controller="controllers.UserReclamationsController">
-    <VBox spacing="20">
+            fx:controller="controllers.UserReclamationsController" stylesheets="@../../styles/reclamation.css">
+    <VBox spacing="20" styleClass="content-container">
         <padding>
             <Insets top="20" right="20" bottom="20" left="20"/>
         </padding>
-        
-        <!-- Header with stats -->
-        <HBox spacing="20" styleClass="stats-container">
-            <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+
+        <!-- Header with title -->
+        <HBox spacing="15" alignment="CENTER_LEFT">
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <FontIcon iconColor="#3498db" iconLiteral="fas-comments" iconSize="24"/>
+                <Label text="Mes réclamations" styleClass="view-title"/>
+            </HBox>
+            <Region HBox.hgrow="ALWAYS"/>
+        </HBox>
+
+        <!-- Statistics Cards -->
+        <HBox spacing="15">
+            <VBox HBox.hgrow="ALWAYS" styleClass="stat-card">
                 <HBox alignment="CENTER_LEFT" spacing="10">
                     <FontIcon iconColor="#3498db" iconLiteral="fas-clipboard-list" iconSize="24"/>
-                    <Label text="Total des réclamations"/>
+                    <VBox>
+                        <Label text="Total" styleClass="stat-label"/>
+                        <Label fx:id="totalReclamationsLabel" text="0" styleClass="stat-value"/>
+                    </VBox>
                 </HBox>
-                <Label fx:id="totalReclamationsLabel" styleClass="stat-number" text="0"/>
             </VBox>
-            
-            <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+
+            <VBox HBox.hgrow="ALWAYS" styleClass="stat-card">
                 <HBox alignment="CENTER_LEFT" spacing="10">
                     <FontIcon iconColor="#f1c40f" iconLiteral="fas-clock" iconSize="24"/>
-                    <Label text="En attente"/>
+                    <VBox>
+                        <Label text="En attente" styleClass="stat-label"/>
+                        <Label fx:id="pendingReclamationsLabel" text="0" styleClass="stat-value"/>
+                    </VBox>
                 </HBox>
-                <Label fx:id="pendingReclamationsLabel" styleClass="stat-number" text="0"/>
             </VBox>
-            
-            <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+
+            <VBox HBox.hgrow="ALWAYS" styleClass="stat-card">
                 <HBox alignment="CENTER_LEFT" spacing="10">
                     <FontIcon iconColor="#2ecc71" iconLiteral="fas-check-circle" iconSize="24"/>
-                    <Label text="Résolues"/>
+                    <VBox>
+                        <Label text="Résolues" styleClass="stat-label"/>
+                        <Label fx:id="resolvedReclamationsLabel" text="0" styleClass="stat-value"/>
+                    </VBox>
                 </HBox>
-                <Label fx:id="resolvedReclamationsLabel" styleClass="stat-number" text="0"/>
             </VBox>
         </HBox>
-        
+
         <!-- New reclamation button -->
         <HBox alignment="CENTER_RIGHT">
             <Button fx:id="newReclamationButton" onAction="#handleNewReclamation" styleClass="button-primary">
@@ -51,27 +66,61 @@
                 <text>Nouvelle réclamation</text>
             </Button>
         </HBox>
-        
+
         <!-- Filter options -->
         <HBox spacing="10" alignment="CENTER_LEFT">
             <ComboBox fx:id="statusFilter" promptText="Filtrer par statut" prefWidth="200"/>
+            <Button onAction="#resetFilter" styleClass="button-secondary">
+                <graphic>
+                    <FontIcon iconColor="WHITE" iconLiteral="fas-undo" iconSize="12"/>
+                </graphic>
+                <text>Réinitialiser</text>
+            </Button>
             <Region HBox.hgrow="ALWAYS"/>
         </HBox>
-        
+
         <!-- Reclamations list -->
-        <TabPane>
+        <TabPane VBox.vgrow="ALWAYS" styleClass="reclamation-tabs">
             <tabs>
                 <Tab text="Toutes">
-                    <VBox fx:id="allReclamationsContainer" spacing="10"/>
+                    <VBox>
+                        <VBox fx:id="allReclamationsContainer" spacing="15"/>
+                        <VBox fx:id="allEmptyPlaceholder" alignment="CENTER" visible="false" spacing="20" styleClass="empty-placeholder">
+                            <FontIcon iconColor="#cccccc" iconLiteral="fas-inbox" iconSize="48"/>
+                            <Label text="Aucune réclamation trouvée" styleClass="placeholder-text"/>
+                            <Label text="Vos réclamations apparaîtront ici" styleClass="placeholder-subtext"/>
+                        </VBox>
+                    </VBox>
                 </Tab>
                 <Tab text="En attente">
-                    <VBox fx:id="pendingReclamationsContainer" spacing="10"/>
+                    <VBox>
+                        <VBox fx:id="pendingReclamationsContainer" spacing="15"/>
+                        <VBox fx:id="pendingEmptyPlaceholder" alignment="CENTER" visible="false" spacing="20" styleClass="empty-placeholder">
+                            <FontIcon iconColor="#cccccc" iconLiteral="fas-inbox" iconSize="48"/>
+                            <Label text="Aucune réclamation en attente" styleClass="placeholder-text"/>
+                            <Label text="Vos réclamations en attente apparaîtront ici" styleClass="placeholder-subtext"/>
+                        </VBox>
+                    </VBox>
                 </Tab>
                 <Tab text="En cours">
-                    <VBox fx:id="inProgressReclamationsContainer" spacing="10"/>
+                    <VBox>
+                        <VBox fx:id="inProgressReclamationsContainer" spacing="15"/>
+                        <VBox fx:id="inProgressEmptyPlaceholder" alignment="CENTER" visible="false" spacing="20" styleClass="empty-placeholder">
+                            <FontIcon iconColor="#cccccc" iconLiteral="fas-sync" iconSize="48"/>
+                            <Label text="Aucune réclamation en cours" styleClass="placeholder-text"/>
+                            <Label text="Vos réclamations en cours apparaîtront ici" styleClass="placeholder-subtext"/>
+                        </VBox>
+                    </VBox>
                 </Tab>
                 <Tab text="Résolues">
-                    <VBox fx:id="resolvedReclamationsContainer" spacing="10"/>
+                    <VBox>
+                        <VBox fx:id="resolvedReclamationsContainer" spacing="15"/>
+                        <VBox fx:id="resolvedEmptyPlaceholder" alignment="CENTER" visible="false" spacing="20" styleClass="empty-placeholder">
+                            <FontIcon iconColor="#cccccc" iconLiteral="fas-check-circle" iconSize="48"/>
+                            <Label text="Aucune réclamation résolue" styleClass="placeholder-text"/>
+                            <Label text="Vos réclamations résolues apparaîtront ici" styleClass="placeholder-subtext"/>
+                        </VBox>
+                    </VBox>
                 </Tab>
             </tabs>
         </TabPane>

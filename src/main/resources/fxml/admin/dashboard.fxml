@@ -22,6 +22,7 @@
             </Label>
             <Button fx:id="dashboardButton" mnemonicParsing="false" onAction="#showDashboard" prefWidth="200.0" styleClass="sidebar-button" text="Dashboard" textFill="WHITE" />
             <Button fx:id="organisationsButton" layoutX="10.0" layoutY="47.0" mnemonicParsing="false" onAction="#showOrganisations" prefWidth="200.0" styleClass="sidebar-button" text="Gérer Organisations" textFill="WHITE" />
+            <Button fx:id="reclamationsButton" layoutX="10.0" layoutY="77.0" mnemonicParsing="false" onAction="#showReclamations" prefWidth="200.0" styleClass="sidebar-button" text="Gérer Réclamations" textFill="WHITE" />
             <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
                <children>
                   <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#logout" prefWidth="200.0" styleClass="sidebar-button" text="Déconnexion" textFill="WHITE" />
@@ -61,7 +62,19 @@
                      </VBox.margin>
                   </Label>
                   <fx:include fx:id="organisationManagementContent" source="organisationManagement.fxml" />
-
+               </children>
+            </VBox>
+            <VBox fx:id="reclamationsView" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="background" stylesheets="@../../styles/modern-style.css" visible="false">
+               <children>
+                  <Label styleClass="dashboard-title" text="Gestion des Réclamations">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="20.0" top="20.0" />
+                     </VBox.margin>
+                  </Label>
+                  <fx:include fx:id="reclamationsContent" source="reclamations.fxml" />
                </children>
             </VBox>
 <!--             TODO : vous pouvez ajouter d'autres vues ici-->

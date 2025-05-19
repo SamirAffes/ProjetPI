@@ -45,11 +45,6 @@
             </Label>
 
             <HBox alignment="CENTER_LEFT" spacing="10.0">
-               <children>
-                  <FontIcon iconColor="#3498db" iconLiteral="fas-route" iconSize="16" />
-                  <Label styleClass="form-section" text="Trajet sélectionné:" />
-                  <Label fx:id="routeLabel" styleClass="highlight-text" text="Tunis → Sousse" />
-               </children>
             </HBox>
 
             <HBox spacing="20.0">

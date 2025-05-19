@@ -5,48 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="97c7973e-54a8-402c-9812-fa5eda47bb91" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/controllers/WeatherWidgetController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/entities/Station.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/entities/Weather.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/services/StationService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/services/WeatherService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/utils/AutoCompleteTextField.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/utils/DatabaseSchemaUpdater.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/utils/NotificationManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/fxml/components/weatherWidget.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/styles/modern-style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/AddRouteDialogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/AddRouteDialogController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/CreateReservationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/CreateReservationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/EditRouteDialogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/EditRouteDialogController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/OrganisationDashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/OrganisationDashboardController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/RouteManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/RouteManagementController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/SearchViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/SearchViewController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/AdminReclamationsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/AdminReclamationsController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/controllers/UserDashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/UserDashboardController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/entities/OrganisationRoute.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/entities/OrganisationRoute.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/OrganisationRouteService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/OrganisationRouteService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/RouteService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/RouteService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/test/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/test/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/utils/DatabaseInitializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/utils/DatabaseInitializer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/utils/OrganisationContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/utils/OrganisationContext.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/utils/RouteDataPopulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/utils/RouteDataPopulator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/UserReclamationsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/UserReclamationsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/Home.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Home.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/admin/dashboard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/dashboard.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/admin/login.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/login.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/login_selection.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/login_selection.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/organisation/addRouteDialog.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/organisation/addRouteDialog.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/organisation/dashboard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/organisation/dashboard.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/organisation/editRouteDialog.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/organisation/editRouteDialog.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/organisation/login.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/organisation/login.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/organisation/routeManagement.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/organisation/routeManagement.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/admin/reclamations.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/reclamations.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/user/createReservation.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/createReservation.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/user/dashboard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/dashboard.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/user/homeContent.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/homeContent.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/user/login.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/login.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/user/register.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/register.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/user/search.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/search.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/user/reclamations.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/reclamations.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/styles/reclamation.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/styles/reclamation.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,7 +54,7 @@
     "Application.Main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "Merging main",
+    "git-widget-placeholder": "main",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/Bechir Ferjani/Desktop/ProjetPI/src/main/resources",

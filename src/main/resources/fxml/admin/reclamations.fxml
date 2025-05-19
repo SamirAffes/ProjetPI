@@ -5,11 +5,11 @@
 <?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.*?>
 
-<VBox spacing="20" styleClass="content-container" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AdminReclamationsController">
+<VBox spacing="20" styleClass="content-container" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17" fx:controller="controllers.AdminReclamationsController" stylesheets="@../../styles/reclamation.css">
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
-    
+
     <!-- Header with title and filter -->
     <HBox spacing="15" alignment="CENTER_LEFT">
         <HBox alignment="CENTER_LEFT" spacing="10">
@@ -19,7 +19,7 @@
         <Region HBox.hgrow="ALWAYS"/>
         <ComboBox fx:id="statusFilter" promptText="Filtrer par statut" prefWidth="200"/>
     </HBox>
-    
+
     <!-- Statistics Cards -->
     <HBox spacing="15">
         <VBox HBox.hgrow="ALWAYS" styleClass="stat-card">
@@ -31,7 +31,7 @@
                 </VBox>
             </HBox>
         </VBox>
-        
+
         <VBox HBox.hgrow="ALWAYS" styleClass="stat-card">
             <HBox alignment="CENTER_LEFT" spacing="10">
                 <FontIcon iconColor="#3498db" iconLiteral="fas-sync" iconSize="24"/>
@@ -41,7 +41,7 @@
                 </VBox>
             </HBox>
         </VBox>
-        
+
         <VBox HBox.hgrow="ALWAYS" styleClass="stat-card">
             <HBox alignment="CENTER_LEFT" spacing="10">
                 <FontIcon iconColor="#2ecc71" iconLiteral="fas-check-circle" iconSize="24"/>
@@ -52,9 +52,16 @@
             </HBox>
         </VBox>
     </HBox>
-    
+
     <!-- Reclamations List -->
     <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
-        <VBox fx:id="reclamationsContainer" spacing="15"/>
+        <VBox>
+            <VBox fx:id="reclamationsContainer" spacing="15"/>
+            <VBox fx:id="emptyPlaceholder" alignment="CENTER" visible="false" spacing="20" styleClass="empty-placeholder">
+                <FontIcon iconColor="#cccccc" iconLiteral="fas-inbox" iconSize="48"/>
+                <Label text="Aucune réclamation trouvée" styleClass="placeholder-text"/>
+                <Label text="Les réclamations des utilisateurs apparaîtront ici" styleClass="placeholder-subtext"/>
+            </VBox>
+        </VBox>
     </ScrollPane>
 </VBox>

@@ -12,6 +12,7 @@ import java.util.List;
 
 public class AdminReclamationsController {
     @FXML private VBox reclamationsContainer;
+    @FXML private VBox emptyPlaceholder;
     @FXML private ComboBox<Reclamation.ReclamationStatus> statusFilter;
     @FXML private Label pendingCountLabel;
     @FXML private Label inProgressCountLabel;
@@ -37,11 +38,19 @@ public class AdminReclamationsController {
         List<Reclamation> reclamations = reclamationService.getAllReclamations();
 
         Reclamation.ReclamationStatus selectedStatus = statusFilter.getValue();
+        int displayedCount = 0;
+
         for (Reclamation reclamation : reclamations) {
             if (selectedStatus == null || reclamation.getStatus() == selectedStatus) {
                 reclamationsContainer.getChildren().add(createReclamationCard(reclamation));
+                displayedCount++;
             }
         }
+
+        // Show/hide placeholder based on whether there are reclamations to display
+        boolean isEmpty = displayedCount == 0;
+        emptyPlaceholder.setVisible(isEmpty);
+        emptyPlaceholder.setManaged(isEmpty);
 
         // Update statistics after loading reclamations
         updateStatistics();

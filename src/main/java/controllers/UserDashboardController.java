@@ -94,26 +94,26 @@ public class UserDashboardController {
         if (currentUser == null) {
             currentUser = UserContext.getInstance().getCurrentUser();
         }
-        
+
         if (currentUser != null) {
             // Update welcome message
             if (welcomeLabel != null) {
                 welcomeLabel.setText("Bienvenue, " + currentUser.getFullName());
             }
-            
+
             // Load reservation statistics
             loadReservationStats();
-            
+
             // Load the home content by default
             loadHomeContent();
-            
+
             // Set dashboard button as active
             setActiveButton(dashboardButton);
         } else {
             log.error("No user found in dashboard controller");
         }
     }
-    
+
     public void setUser(User user) {
         this.currentUser = user;
         if (welcomeLabel != null) {
@@ -122,7 +122,7 @@ public class UserDashboardController {
             loadHomeContent();
         }
     }
-    
+
     private void loadReservationStats() {
         try {
             // Load user's reservation data
@@ -138,30 +138,31 @@ public class UserDashboardController {
             pendingReservations = 0;
         }
     }
-    
+
     private void setActiveButton(Button activeButton) {
         // Remove active class from all buttons
         dashboardButton.getStyleClass().remove("active");
         searchButton.getStyleClass().remove("active");
         reservationsButton.getStyleClass().remove("active");
         profileButton.getStyleClass().remove("active");
-        
+        reclamationsButton.getStyleClass().remove("active");
+
         // Add active class to the selected button
         activeButton.getStyleClass().add("active");
     }
-    
+
     private void loadContent(String fxmlFile) {
         try {
             // Clear existing content
             contentArea.getChildren().clear();
-            
+
             // Load the new content
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
             Parent content = loader.load();
-            
+
             // Add the new content to the content area
             contentArea.getChildren().add(content);
-            
+
             // Initialize specific content based on the loaded file
             if (fxmlFile.contains("search.fxml")) {
                 initializeSearchView(content);
@@ -170,24 +171,24 @@ public class UserDashboardController {
             } else if (fxmlFile.contains("profile.fxml")) {
                 initializeProfileView(content);
             }
-            
+
         } catch (IOException e) {
             log.error("Error loading content: {}", e.getMessage(), e);
         }
     }
-    
+
     private void loadHomeContent() {
         try {
             // Clear existing content
             contentArea.getChildren().clear();
-            
+
             // Load the home content
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/user/homeContent.fxml"));
             Parent content = loader.load();
-            
+
             // Add the new content to the content area
             contentArea.getChildren().add(content);
-            
+
             // Update the reservation statistics in the loaded content
             updateReservationStats(content);
 
@@ -439,7 +440,7 @@ public class UserDashboardController {
         Label reservationsCount = (Label) content.lookup("#reservationsCountLabel");
         Label completedCount = (Label) content.lookup("#completedReservationsLabel");
         Label pendingCount = (Label) content.lookup("#pendingReservationsLabel");
-        
+
         // Update the labels with the reservation statistics
         if (reservationsCount != null) reservationsCount.setText(String.valueOf(totalReservations));
         if (completedCount != null) completedCount.setText(String.valueOf(completedReservations));
@@ -474,7 +475,7 @@ public class UserDashboardController {
         setActiveButton(profileButton);
         loadContent("/fxml/user/profile.fxml");
     }
-    
+
     @FXML
     public void onCreateReservationButtonClick() {
         // Redirect to search view for reservation creation
@@ -489,28 +490,28 @@ public class UserDashboardController {
         try {
             // Clear user from context
             UserContext.getInstance().clearCurrentUser();
-            
+
             // Get the current stage
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            
+
             // Remember fullscreen state
             boolean wasFullScreen = stage.isFullScreen();
             boolean wasMaximized = stage.isMaximized();
-            
+
             // Return to home page
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Home.fxml"));
             Parent root = loader.load();
-            
+
             Scene scene = new Scene(root);
             stage.setTitle("TunTransport");
             stage.setScene(scene);
-            
+
             // Restore fullscreen state
             stage.setMaximized(wasMaximized);
             stage.setFullScreen(wasFullScreen);
-            
+
             stage.show();
-            
+
             log.info("User logged out");
         } catch (IOException e) {
             log.error("Error returning to home view", e);
@@ -529,7 +530,13 @@ public class UserDashboardController {
         VBox upcomingReservationsContainer = (VBox) reservationsView.lookup("#upcomingReservationsContainer");
         VBox completedReservationsContainer = (VBox) reservationsView.lookup("#completedReservationsContainer");
         VBox cancelledReservationsContainer = (VBox) reservationsView.lookup("#cancelledReservationsContainer");
-        
+
+        // Check if containers exist
+        if (allReservationsContainer == null) {
+            log.error("allReservationsContainer not found in the FXML. The FXML might be using a different controller.");
+            return; // Exit early to avoid NullPointerException
+        }
+
         // Add sort options
         if (sortComboBox != null) {
             sortComboBox.getItems().addAll(
@@ -540,52 +547,56 @@ public class UserDashboardController {
             );
             sortComboBox.setValue("Date (plus récent)");
         }
-        
+
         // Clear containers
-        if (allReservationsContainer != null) allReservationsContainer.getChildren().clear();
+        allReservationsContainer.getChildren().clear();
         if (upcomingReservationsContainer != null) upcomingReservationsContainer.getChildren().clear();
         if (completedReservationsContainer != null) completedReservationsContainer.getChildren().clear();
         if (cancelledReservationsContainer != null) cancelledReservationsContainer.getChildren().clear();
-        
+
         try {
             // Debug logging
             log.info("Current user ID: {}", currentUser.getId());
-            
+
             // Get user's reservations from service
             List<Reservation> userReservations = reservationService.getReservationsByUserId(currentUser.getId());
             log.info("Retrieved {} reservations for user", userReservations.size());
-            
+
             // Debug output for reservations
             for (Reservation res : userReservations) {
                 log.info("Reservation ID: {}, Status: {}, Date: {}", 
                         res.getId(), res.getStatus(), res.getDateTime());
             }
-            
+
             if (userReservations.isEmpty()) {
                 log.info("No reservations found for user, showing empty message");
-                
+
                 // Add some dummy data for testing if no reservations found
                 log.info("Adding sample reservations for testing");
                 allReservationsContainer.getChildren().add(createSampleReservationCard("Tunis", "Sousse", "PENDING"));
                 allReservationsContainer.getChildren().add(createSampleReservationCard("Monastir", "Sfax", "COMPLETED"));
-                
-                upcomingReservationsContainer.getChildren().add(createSampleReservationCard("Tunis", "Sousse", "PENDING"));
-                completedReservationsContainer.getChildren().add(createSampleReservationCard("Monastir", "Sfax", "COMPLETED"));
-                
+
+                if (upcomingReservationsContainer != null) {
+                    upcomingReservationsContainer.getChildren().add(createSampleReservationCard("Tunis", "Sousse", "PENDING"));
+                }
+                if (completedReservationsContainer != null) {
+                    completedReservationsContainer.getChildren().add(createSampleReservationCard("Monastir", "Sfax", "COMPLETED"));
+                }
+
                 return;
             }
-            
+
             // Categorize reservations
             List<Reservation> upcoming = new ArrayList<>();
             List<Reservation> completed = new ArrayList<>();
             List<Reservation> cancelled = new ArrayList<>();
-            
+
             for (Reservation reservation : userReservations) {
                 // Add to all reservations tab
                 if (allReservationsContainer != null) {
                     allReservationsContainer.getChildren().add(createReservationCard(reservation));
                 }
-                
+
                 // Categorize by status
                 String status = reservation.getStatus().toString().toUpperCase();
                 if (status.equals("PENDING") || status.equals("CONFIRMED")) {
@@ -596,7 +607,7 @@ public class UserDashboardController {
                     cancelled.add(reservation);
                 }
             }
-            
+
             // Populate each tab
             if (upcomingReservationsContainer != null) {
                 if (upcoming.isEmpty()) {
@@ -607,7 +618,7 @@ public class UserDashboardController {
                     }
                 }
             }
-            
+
             if (completedReservationsContainer != null) {
                 if (completed.isEmpty()) {
                     completedReservationsContainer.getChildren().add(new Label("Aucune réservation terminée"));
@@ -617,7 +628,7 @@ public class UserDashboardController {
                     }
                 }
             }
-            
+
             if (cancelledReservationsContainer != null) {
                 if (cancelled.isEmpty()) {
                     cancelledReservationsContainer.getChildren().add(new Label("Aucune réservation annulée"));
@@ -627,14 +638,14 @@ public class UserDashboardController {
                     }
                 }
             }
-            
+
         } catch (Exception e) {
             log.error("Error loading reservations: {}", e.getMessage(), e);
-            
+
             // Show error message in tabs
             Label errorLabel = new Label("Erreur lors du chargement des réservations");
             errorLabel.setStyle("-fx-text-fill: #e74c3c;");
-            
+
             if (allReservationsContainer != null) 
                 allReservationsContainer.getChildren().add(errorLabel);
         }
@@ -644,66 +655,77 @@ public class UserDashboardController {
         VBox card = new VBox(10);
         card.getStyleClass().add("card");
         card.setPrefWidth(Double.MAX_VALUE);
-        
+
         HBox header = new HBox(10);
         header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-        
+
         // Get route information
         String departure = "Ville de départ";
         String arrival = "Ville d'arrivée";
-        
+
         if (reservation.getRoute() != null) {
             departure = reservation.getRoute().getOrigin();
             arrival = reservation.getRoute().getDestination();
         }
-        
+
         Label routeLabel = new Label(departure + " → " + arrival);
         routeLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16px;");
-        
+
         // Status with color coding
         String status = reservation.getStatus();
-        String statusStyle = switch (status.toUpperCase()) {
-            case "PENDING" -> "-fx-background-color: #f39c12; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;";
-            case "CONFIRMED" -> "-fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;";
-            case "COMPLETED" -> "-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;";
-            case "CANCELED" -> "-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;";
-            default -> "-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;";
-        };
-        
+        String statusStyle;
+        switch (status.toUpperCase()) {
+            case "PENDING":
+                statusStyle = "-fx-background-color: #f39c12; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;";
+                break;
+            case "CONFIRMED":
+                statusStyle = "-fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;";
+                break;
+            case "COMPLETED":
+                statusStyle = "-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;";
+                break;
+            case "CANCELED":
+                statusStyle = "-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;";
+                break;
+            default:
+                statusStyle = "-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;";
+                break;
+        }
+
         Label statusLabel = new Label(status);
         statusLabel.setStyle(statusStyle);
         statusLabel.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
         HBox.setHgrow(statusLabel, javafx.scene.layout.Priority.ALWAYS);
-        
+
         header.getChildren().addAll(routeLabel, statusLabel);
-        
+
         // Build details
         VBox details = new VBox(5);
-        
+
         // Date information
         String departureDate = "Date non spécifiée";
         if (reservation.getDateTime() != null) {
             departureDate = reservation.getDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
         }
-        
+
         Label departureDateLabel = new Label("Départ: " + departureDate);
-        
+
         // Return date if round trip
         String returnInfo = "";
         if (reservation.isRoundTrip() && reservation.getReturnDateTime() != null) {
             returnInfo = "Retour: " + reservation.getReturnDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
         }
-        
+
         Label returnDateLabel = new Label(returnInfo);
-        
+
         // Transport information
         String transportInfo = "Transport: Non spécifié";
         if (reservation.getTransport() != null) {
             transportInfo = "Transport: " + reservation.getTransport().getType() + " (" + reservation.getTransport().getName() + ")";
         }
-        
+
         Label transportLabel = new Label(transportInfo);
-        
+
         // Payment information
         String paymentInfo = "Prix: " + reservation.getPrice() + " DT";
         if (reservation.isPaid()) {
@@ -711,19 +733,19 @@ public class UserDashboardController {
         } else {
             paymentInfo += " (Non payé)";
         }
-        
+
         Label paymentLabel = new Label(paymentInfo);
-        
+
         details.getChildren().addAll(departureDateLabel);
         if (!returnInfo.isEmpty()) {
             details.getChildren().add(returnDateLabel);
         }
         details.getChildren().addAll(transportLabel, paymentLabel);
-        
+
         // Action buttons
         HBox actionButtons = new HBox(10);
         actionButtons.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
-        
+
         // Only show buttons for non-completed reservations
         if (!status.equalsIgnoreCase("COMPLETED") && !status.equalsIgnoreCase("CANCELED")) {
             Button cancelButton = new Button("Annuler");
@@ -732,18 +754,18 @@ public class UserDashboardController {
                 // Handle cancellation logic
                 cancelReservation(reservation.getId());
             });
-            
+
             Button detailsButton = new Button("Détails");
             detailsButton.getStyleClass().add("detail-button");
-            
+
             actionButtons.getChildren().addAll(detailsButton, cancelButton);
         } else {
             Button detailsButton = new Button("Détails");
             detailsButton.getStyleClass().add("detail-button");
-            
+
             actionButtons.getChildren().add(detailsButton);
         }
-        
+
         card.getChildren().addAll(header, details, actionButtons);
         return card;
     }
@@ -771,12 +793,12 @@ public class UserDashboardController {
         TextField phoneField = (TextField) profileView.lookup("#phoneField");
         Button updateProfileButton = (Button) profileView.lookup("#updateProfileButton");
         Button changePasswordButton = (Button) profileView.lookup("#changePasswordButton");
-        
+
         // Fill fields with user data
         if (lastNameField != null && currentUser.getFullName() != null) {
             String fullName = currentUser.getFullName();
             String[] nameParts = fullName.split(" ", 2);
-            
+
             if (nameParts.length > 1) {
                 lastNameField.setText(nameParts[1]);
                 firstNameField.setText(nameParts[0]);
@@ -785,20 +807,20 @@ public class UserDashboardController {
                 firstNameField.setText("");
             }
         }
-        
+
         if (emailField != null && currentUser.getEmail() != null) {
             emailField.setText(currentUser.getEmail());
         }
-        
+
         if (phoneField != null && currentUser.getPhoneNumber() != null) {
             phoneField.setText(currentUser.getPhoneNumber());
         }
-        
+
         // Set up update profile button
         if (updateProfileButton != null) {
             updateProfileButton.setOnAction(event -> updateUserProfile(profileView));
         }
-        
+
         // Set up change password button
         if (changePasswordButton != null) {
             changePasswordButton.setOnAction(event -> changeUserPassword(profileView));
@@ -810,28 +832,28 @@ public class UserDashboardController {
         TextField firstNameField = (TextField) profileView.lookup("#firstNameField");
         TextField emailField = (TextField) profileView.lookup("#emailField");
         TextField phoneField = (TextField) profileView.lookup("#phoneField");
-        
+
         // Update user object
         if (firstNameField != null && lastNameField != null) {
             String firstName = firstNameField.getText().trim();
             String lastName = lastNameField.getText().trim();
             String fullName = firstName;
-            
+
             if (!lastName.isEmpty()) {
                 fullName += " " + lastName;
             }
-            
+
             currentUser.setFullName(fullName);
         }
-        
+
         if (emailField != null && !emailField.getText().isBlank()) {
             currentUser.setEmail(emailField.getText());
         }
-        
+
         if (phoneField != null && !phoneField.getText().isBlank()) {
             currentUser.setPhoneNumber(phoneField.getText());
         }
-        
+
         // In a real app, you would call a service to update the user in the database
         // For now, just show a success message using an alert
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -845,23 +867,23 @@ public class UserDashboardController {
         PasswordField currentPasswordField = (PasswordField) profileView.lookup("#currentPasswordField");
         PasswordField newPasswordField = (PasswordField) profileView.lookup("#newPasswordField");
         PasswordField confirmPasswordField = (PasswordField) profileView.lookup("#confirmPasswordField");
-        
+
         // Validate inputs
         if (currentPasswordField.getText().isBlank()) {
             showError("Veuillez entrer votre mot de passe actuel.");
             return;
         }
-        
+
         if (newPasswordField.getText().isBlank()) {
             showError("Veuillez entrer un nouveau mot de passe.");
             return;
         }
-        
+
         if (!newPasswordField.getText().equals(confirmPasswordField.getText())) {
             showError("Les mots de passe ne correspondent pas.");
             return;
         }
-        
+
         // In a real app, validate current password against database
         // For now, show success message
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -869,7 +891,7 @@ public class UserDashboardController {
         alert.setHeaderText(null);
         alert.setContentText("Votre mot de passe a été changé avec succès.");
         alert.showAndWait();
-        
+
         // Clear password fields
         currentPasswordField.clear();
         newPasswordField.clear();
@@ -889,55 +911,66 @@ public class UserDashboardController {
         VBox card = new VBox(10);
         card.getStyleClass().add("card");
         card.setPrefWidth(Double.MAX_VALUE);
-        
+
         HBox header = new HBox(10);
         header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-        
+
         Label routeLabel = new Label(departure + " → " + arrival);
         routeLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16px;");
-        
-        String statusStyle = switch (status.toUpperCase()) {
-            case "PENDING" -> "-fx-background-color: #f39c12; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;";
-            case "CONFIRMED" -> "-fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;";
-            case "COMPLETED" -> "-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;";
-            case "CANCELED" -> "-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;";
-            default -> "-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;";
-        };
-        
+
+        String statusStyle;
+        switch (status.toUpperCase()) {
+            case "PENDING":
+                statusStyle = "-fx-background-color: #f39c12; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;";
+                break;
+            case "CONFIRMED":
+                statusStyle = "-fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;";
+                break;
+            case "COMPLETED":
+                statusStyle = "-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;";
+                break;
+            case "CANCELED":
+                statusStyle = "-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;";
+                break;
+            default:
+                statusStyle = "-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;";
+                break;
+        }
+
         Label statusLabel = new Label(status);
         statusLabel.setStyle(statusStyle);
         statusLabel.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
         HBox.setHgrow(statusLabel, javafx.scene.layout.Priority.ALWAYS);
-        
+
         header.getChildren().addAll(routeLabel, statusLabel);
-        
+
         VBox details = new VBox(5);
-        
+
         LocalDateTime sampleDate = LocalDateTime.now().plusDays(status.equals("COMPLETED") ? -5 : 3);
         Label departureDateLabel = new Label("Départ: " + sampleDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         Label transportLabel = new Label("Transport: Bus (Standard)");
         Label paymentLabel = new Label("Prix: 35.0 DT (Non payé)");
-        
+
         details.getChildren().addAll(departureDateLabel, transportLabel, paymentLabel);
-        
+
         HBox actionButtons = new HBox(10);
         actionButtons.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
-        
+
         if (!status.equalsIgnoreCase("COMPLETED") && !status.equalsIgnoreCase("CANCELED")) {
             Button cancelButton = new Button("Annuler");
             cancelButton.getStyleClass().add("delete-button");
-            
+
             Button detailsButton = new Button("Détails");
             detailsButton.getStyleClass().add("detail-button");
-            
+
             actionButtons.getChildren().addAll(detailsButton, cancelButton);
         } else {
             Button detailsButton = new Button("Détails");
             detailsButton.getStyleClass().add("detail-button");
-            
+
             actionButtons.getChildren().add(detailsButton);
         }
-        
+
         card.getChildren().addAll(header, details, actionButtons);
         return card;
     }

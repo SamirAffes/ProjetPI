@@ -25,6 +25,10 @@ public class UserReclamationsController {
     @FXML private VBox pendingReclamationsContainer;
     @FXML private VBox inProgressReclamationsContainer;
     @FXML private VBox resolvedReclamationsContainer;
+    @FXML private VBox allEmptyPlaceholder;
+    @FXML private VBox pendingEmptyPlaceholder;
+    @FXML private VBox inProgressEmptyPlaceholder;
+    @FXML private VBox resolvedEmptyPlaceholder;
     @FXML private Label totalReclamationsLabel;
     @FXML private Label pendingReclamationsLabel;
     @FXML private Label resolvedReclamationsLabel;
@@ -35,6 +39,21 @@ public class UserReclamationsController {
 
     @FXML
     public void initialize() {
+        // Initialize status filter dropdown
+        statusFilter.setEditable(false); // Make ComboBox non-editable to prevent deleting options
+        statusFilter.getItems().add("Tous");
+        for (Reclamation.ReclamationStatus status : Reclamation.ReclamationStatus.values()) {
+            statusFilter.getItems().add(status.toString());
+        }
+        statusFilter.setValue("Tous");
+
+        // Add listener for status filter changes
+        statusFilter.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                loadReclamations();
+            }
+        });
+
         loadReclamations();
     }
 
@@ -66,15 +85,39 @@ public class UserReclamationsController {
         User currentUser = UserContext.getInstance().getCurrentUser();
         List<Reclamation> reclamations = reclamationService.getUserReclamations(currentUser);
 
+        // Apply filter if a specific status is selected
+        String selectedStatus = statusFilter.getValue();
+        if (selectedStatus != null && !selectedStatus.equals("Tous")) {
+            reclamations = reclamations.stream()
+                .filter(r -> r.getStatus().toString().equals(selectedStatus))
+                .collect(java.util.stream.Collectors.toList());
+        }
+
         int totalCount = 0;
         int pendingCount = 0;
+        int inProgressCount = 0;
         int resolvedCount = 0;
 
         for (Reclamation reclamation : reclamations) {
+            // Only create the card once and reuse it
             VBox card = createReclamationCard(reclamation);
+
+            // Count by status regardless of filter
+            switch (reclamation.getStatus()) {
+                case PENDING:
+                    pendingCount++;
+                    break;
+                case IN_PROGRESS:
+                    inProgressCount++;
+                    break;
+                case RESOLVED:
+                    resolvedCount++;
+                    break;
+            }
+
             totalCount++;
 
-            // Add to all reclamations container
+            // Add to all reclamations container if no filter or if it matches the filter
             if (allReclamationsContainer != null) {
                 allReclamationsContainer.getChildren().add(card);
             }
@@ -82,29 +125,57 @@ public class UserReclamationsController {
             // Add to specific container based on status
             switch (reclamation.getStatus()) {
                 case PENDING:
-                    pendingCount++;
                     if (pendingReclamationsContainer != null) {
+                        // Clone the card for each container to avoid parent issues
                         pendingReclamationsContainer.getChildren().add(createReclamationCard(reclamation));
                     }
                     break;
                 case IN_PROGRESS:
                     if (inProgressReclamationsContainer != null) {
+                        // Clone the card for each container to avoid parent issues
                         inProgressReclamationsContainer.getChildren().add(createReclamationCard(reclamation));
                     }
                     break;
                 case RESOLVED:
-                    resolvedCount++;
                     if (resolvedReclamationsContainer != null) {
+                        // Clone the card for each container to avoid parent issues
                         resolvedReclamationsContainer.getChildren().add(createReclamationCard(reclamation));
                     }
                     break;
             }
         }
 
+        // Show/hide empty placeholders based on whether there are reclamations
+        // For the "All" tab, check if there are any reclamations after filtering
+        if (allEmptyPlaceholder != null) {
+            allEmptyPlaceholder.setVisible(allReclamationsContainer.getChildren().isEmpty());
+        }
+
+        // For specific status tabs, check if there are any reclamations with that status
+        // These should be shown/hidden based on the actual count, not the filtered count
+        if (pendingEmptyPlaceholder != null) {
+            pendingEmptyPlaceholder.setVisible(pendingReclamationsContainer.getChildren().isEmpty());
+        }
+        if (inProgressEmptyPlaceholder != null) {
+            inProgressEmptyPlaceholder.setVisible(inProgressReclamationsContainer.getChildren().isEmpty());
+        }
+        if (resolvedEmptyPlaceholder != null) {
+            resolvedEmptyPlaceholder.setVisible(resolvedReclamationsContainer.getChildren().isEmpty());
+        }
+
         // Update statistics labels
         if (totalReclamationsLabel != null) totalReclamationsLabel.setText(String.valueOf(totalCount));
         if (pendingReclamationsLabel != null) pendingReclamationsLabel.setText(String.valueOf(pendingCount));
         if (resolvedReclamationsLabel != null) resolvedReclamationsLabel.setText(String.valueOf(resolvedCount));
+    }
+
+    /**
+     * Resets the status filter to "Tous" and reloads all reclamations
+     */
+    @FXML
+    private void resetFilter() {
+        statusFilter.setValue("Tous");
+        loadReclamations();
     }
 
     private VBox createReclamationCard(Reclamation reclamation) {

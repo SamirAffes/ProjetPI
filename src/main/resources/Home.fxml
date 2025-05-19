@@ -24,10 +24,7 @@
             <HBox alignment="TOP_CENTER" maxHeight="60.0" prefHeight="60.0" StackPane.alignment="TOP_CENTER">
                <children>
                   <HBox alignment="CENTER" maxWidth="700.0" prefHeight="40.0" prefWidth="700.0" styleClass="search-box">
-                     <children>
-                        <TextField fx:id="searchField" prefHeight="40.0" prefWidth="650.0" promptText="Rechercher des lieux ou des itinéraires (ex: Tunis vers Sousse)..." styleClass="search-field" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="searchButton" mnemonicParsing="false" onAction="#onSearchButtonClick" prefHeight="40.0" prefWidth="50.0" styleClass="search-button" text="🔍" />
-                     </children>
+
                   </HBox>
                </children>
                <padding>
