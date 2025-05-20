@@ -5,10 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="97c7973e-54a8-402c-9812-fa5eda47bb91" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/OrganisationLoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/OrganisationLoginController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/OrganisationManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/OrganisationManagementController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/entities/Organisation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/entities/Organisation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/CreateReservationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/CreateReservationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/ReservationsViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/ReservationsViewController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/SearchViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/SearchViewController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/entities/Weather.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/entities/Weather.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/services/RouteService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/RouteService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/services/WeatherService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/WeatherService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/components/weatherWidget.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/components/weatherWidget.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/organisation/routeManagement.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/organisation/routeManagement.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/styles/modern-style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/styles/modern-style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,6 +36,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;medaminelouhichi&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/SamirAffes/ProjetPI.git&quot;,
+    &quot;accountId&quot;: &quot;90fb5e81-aa8d-4e71-9bd4-c528583f6cdd&quot;
+  }
+}</component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -47,7 +68,8 @@
     "Application.Main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "medamine",
+    "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/Bechir Ferjani/Desktop/ProjetPI/src/main/resources",
@@ -56,6 +78,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.github.copilot.settings.ApplicationConfigurable",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -117,10 +140,18 @@
       <workItem from="1746381546036" duration="1904000" />
       <workItem from="1746383503553" duration="3651000" />
       <workItem from="1747662914465" duration="6499000" />
+      <workItem from="1747680868913" duration="5802000" />
+      <workItem from="1747733353033" duration="1586000" />
+      <workItem from="1747734967566" duration="1034000" />
+      <workItem from="1747738213340" duration="5442000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

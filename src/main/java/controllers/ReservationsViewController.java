@@ -505,10 +505,10 @@ public class ReservationsViewController implements Initializable {
         Label emergencyLabel = new Label("AFFICHAGE D'URGENCE");
         emergencyLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: red; -fx-background-color: #ffeeee; -fx-padding: 5;");
         
-        // Create hardcoded cards for each tab
-        VBox pendingCard = createEmergencyCard("Tunis", "Sousse", "PENDING", 3);
-        VBox completedCard = createEmergencyCard("Monastir", "Sfax", "COMPLETED", -5);
-        VBox cancelledCard = createEmergencyCard("Tunis", "Gabès", "CANCELLED", -10);
+        // Create generic emergency cards for each tab
+        VBox pendingCard = createEmergencyCard("Départ", "Destination", "PENDING", 3);
+        VBox completedCard = createEmergencyCard("Départ", "Destination", "COMPLETED", -5);
+        VBox cancelledCard = createEmergencyCard("Départ", "Destination", "CANCELLED", -10);
         
         // Add to All tab
         if (allReservationsContainer != null) {
@@ -517,9 +517,9 @@ public class ReservationsViewController implements Initializable {
             
             allReservationsContainer.getChildren().add(allEmergencyLabel);
             allReservationsContainer.getChildren().addAll(
-                createEmergencyCard("Tunis", "Sousse", "PENDING", 3),
-                createEmergencyCard("Monastir", "Sfax", "COMPLETED", -5),
-                createEmergencyCard("Tunis", "Gabès", "CANCELLED", -10)
+                createEmergencyCard("Départ", "Destination", "PENDING", 3),
+                createEmergencyCard("Départ", "Destination", "COMPLETED", -5),
+                createEmergencyCard("Départ", "Destination", "CANCELLED", -10)
             );
         }
         
@@ -656,4 +656,4 @@ public class ReservationsViewController implements Initializable {
             alert.showAndWait();
         }
     }
-} 
+}

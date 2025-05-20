@@ -75,6 +75,41 @@ public class SearchViewController implements Initializable {
     private final ReservationService reservationService = new ReservationServiceImpl();
     private final OrganisationService organisationService = new OrganisationService();
     private final OrganisationRouteService organisationRouteService = new OrganisationRouteService();
+
+    /**
+     * Loads locations from the database and populates the CITY_COORDINATES map
+     */
+    private void loadLocationsFromDatabase() {
+        log.info("Loading locations from database");
+
+        // Clear existing coordinates
+        CITY_COORDINATES.clear();
+
+        // Get all locations from the database
+        List<String> dbLocations = routeService.getAllLocations();
+        log.info("Found {} locations in database", dbLocations.size());
+
+        // For each location, add coordinates from DEFAULT_COORDINATES if available
+        for (String location : dbLocations) {
+            if (DEFAULT_COORDINATES.containsKey(location)) {
+                CITY_COORDINATES.put(location, DEFAULT_COORDINATES.get(location));
+                log.debug("Added coordinates for location: {}", location);
+            } else {
+                // For locations without predefined coordinates, use default Tunisia coordinates
+                // In a real app, you might want to use a geocoding service here
+                CITY_COORDINATES.put(location, new double[]{DEFAULT_LATITUDE, DEFAULT_LONGITUDE});
+                log.debug("Using default coordinates for location: {}", location);
+            }
+        }
+
+        // If no locations were found in the database, use the default coordinates
+        if (CITY_COORDINATES.isEmpty()) {
+            log.warn("No locations found in database, using default coordinates");
+            CITY_COORDINATES.putAll(DEFAULT_COORDINATES);
+        }
+
+        log.info("Loaded {} locations with coordinates", CITY_COORDINATES.size());
+    }
     private User currentUser;
 
     // Default coordinates for Tunisia center
@@ -82,8 +117,12 @@ public class SearchViewController implements Initializable {
     private final double DEFAULT_LONGITUDE = 10.1815;
     private final int DEFAULT_ZOOM = 7;
 
-    // City coordinates mapping (sample data with real coordinates)
-    private final java.util.Map<String, double[]> CITY_COORDINATES = new java.util.HashMap<>() {{
+    // City coordinates mapping for locations found in routes
+    // This will be populated from the database
+    private final java.util.Map<String, double[]> CITY_COORDINATES = new java.util.HashMap<>();
+
+    // Default coordinates for common cities (fallback if not in database)
+    private final java.util.Map<String, double[]> DEFAULT_COORDINATES = new java.util.HashMap<>() {{
         // Major Tunisian cities
         put("Tunis", new double[]{36.8065, 10.1815});
         put("Sfax", new double[]{34.7398, 10.7600});
@@ -117,34 +156,12 @@ public class SearchViewController implements Initializable {
         put("Tunis - El Menzah", new double[]{36.8361, 10.1689});
         put("Tunis - Aéroport", new double[]{36.8514, 10.2271});
 
-        // Locations within Sousse
-        put("Sousse - Centre Ville", new double[]{35.8283, 10.6383});
-        put("Sousse - Port El Kantaoui", new double[]{35.8917, 10.5983});
-        put("Sousse - Hammam Sousse", new double[]{35.8611, 10.5986});
-
-        // Locations within Sfax
-        put("Sfax - Centre Ville", new double[]{34.7406, 10.7603});
-        put("Sfax - Thyna", new double[]{34.6761, 10.7514});
-        put("Sfax - Port", new double[]{34.7258, 10.7717});
-
-        // International destinations (airports and ports)
+        // International destinations
         put("Paris (France)", new double[]{48.8566, 2.3522});
         put("Marseille (France)", new double[]{43.2965, 5.3698});
         put("Rome (Italie)", new double[]{41.9028, 12.4964});
         put("Barcelone (Espagne)", new double[]{41.3851, 2.1734});
         put("Alger (Algérie)", new double[]{36.7538, 3.0588});
-        put("Le Caire (Égypte)", new double[]{30.0444, 31.2357});
-        put("Istanbul (Turquie)", new double[]{41.0082, 28.9784});
-        put("Dubaï (UAE)", new double[]{25.2048, 55.2708});
-        put("Genève (Suisse)", new double[]{46.2044, 6.1432});
-        put("Francfort (Allemagne)", new double[]{50.1109, 8.6821});
-
-        // Ports for ferries
-        put("Port de La Goulette", new double[]{36.8183, 10.3050});
-        put("Port de Marseille", new double[]{43.3054, 5.3670});
-        put("Port de Gênes (Italie)", new double[]{44.4056, 8.9463});
-        put("Port de Civitavecchia (Italie)", new double[]{42.0924, 11.7958});
-        put("Port de Barcelone (Espagne)", new double[]{41.3773, 2.1835});
     }};
 
     @Override
@@ -159,10 +176,8 @@ public class SearchViewController implements Initializable {
             log.info("User loaded in SearchViewController: {}", currentUser.getUsername());
         }
 
-        // Initialize location lists from our coordinates map
-        List<String> allLocations = new ArrayList<>(CITY_COORDINATES.keySet());
-        // Sort locations alphabetically
-        Collections.sort(allLocations);
+        // Load locations from database
+        loadLocationsFromDatabase();
 
         // Set default date to today
         departureDatePicker.setValue(LocalDate.now());
@@ -209,19 +224,26 @@ public class SearchViewController implements Initializable {
 
     /**
      * Updates the available locations based on the selected transport type
+     * Uses the database to get locations for the selected transport type
      */
     private void updateLocationsByTransportType(String transportType) {
         // Save current values if any
         String currentDeparture = departureTextField.getText();
         String currentArrival = arrivalTextField.getText();
 
-        // Get all locations
-        List<String> allLocations = new ArrayList<>(CITY_COORDINATES.keySet());
-        Collections.sort(allLocations);
+        // Get locations from database based on transport type
+        List<String> filteredLocations = routeService.getLocationsByTransportMode(transportType);
 
-        // Filter locations based on transport type
-        List<String> filteredDepartures = new ArrayList<>();
-        List<String> filteredArrivals = new ArrayList<>();
+        // If no locations found for this transport type, try to use all locations
+        if (filteredLocations.isEmpty()) {
+            log.warn("No locations found for transport type: {}, using all locations", transportType);
+            filteredLocations = new ArrayList<>(CITY_COORDINATES.keySet());
+            Collections.sort(filteredLocations);
+        }
+
+        // For departure and arrival, we use the same list of locations
+        List<String> filteredDepartures = new ArrayList<>(filteredLocations);
+        List<String> filteredArrivals = new ArrayList<>(filteredLocations);
 
         // Update the prompt text to reflect the transport type
         String departurePrompt = "Saisir une ville de départ";
@@ -229,111 +251,35 @@ public class SearchViewController implements Initializable {
 
         switch (transportType) {
             case "Avion":
-                // For planes: airports and international destinations
                 departurePrompt = "Saisir un aéroport de départ";
                 arrivalPrompt = "Saisir un aéroport d'arrivée";
-
-                filteredDepartures.addAll(allLocations.stream()
-                    .filter(loc -> loc.contains("Aéroport") || 
-                                  loc.equals("Tunis") || 
-                                  loc.equals("Monastir") || 
-                                  loc.equals("Sfax") || 
-                                  loc.equals("Djerba"))
-                    .collect(Collectors.toList()));
-
-                filteredArrivals.addAll(allLocations.stream()
-                    .filter(loc -> loc.contains("(") || // International destinations
-                                  loc.contains("Aéroport") ||
-                                  loc.equals("Tunis") || 
-                                  loc.equals("Monastir") || 
-                                  loc.equals("Sfax") || 
-                                  loc.equals("Djerba"))
-                    .collect(Collectors.toList()));
                 break;
-
             case "Ferry":
-                // For ferries: ports only
                 departurePrompt = "Saisir un port de départ";
                 arrivalPrompt = "Saisir un port d'arrivée";
-
-                filteredDepartures.addAll(allLocations.stream()
-                    .filter(loc -> loc.contains("Port"))
-                    .collect(Collectors.toList()));
-
-                filteredArrivals.addAll(allLocations.stream()
-                    .filter(loc -> loc.contains("Port"))
-                    .collect(Collectors.toList()));
                 break;
-
             case "Train":
-                // For trains: major cities and train stations
                 departurePrompt = "Saisir une gare de départ";
                 arrivalPrompt = "Saisir une gare d'arrivée";
-
-                filteredDepartures.addAll(allLocations.stream()
-                    .filter(loc -> !loc.contains("(") && // No international destinations
-                                  !loc.contains("Port") && // No ports
-                                  !loc.contains("Aéroport")) // No airports
-                    .collect(Collectors.toList()));
-
-                filteredArrivals.addAll(filteredDepartures);
                 break;
-
             case "Métro":
-                // For metro: only locations within Tunis
                 departurePrompt = "Saisir une station de départ";
                 arrivalPrompt = "Saisir une station d'arrivée";
-
-                filteredDepartures.addAll(allLocations.stream()
-                    .filter(loc -> loc.startsWith("Tunis -"))
-                    .collect(Collectors.toList()));
-
-                filteredArrivals.addAll(filteredDepartures);
                 break;
-
             case "TGM":
-                // For TGM: only locations between La Goulette and La Marsa
                 departurePrompt = "Saisir une station de départ";
                 arrivalPrompt = "Saisir une station d'arrivée";
-
-                filteredDepartures.addAll(allLocations.stream()
-                    .filter(loc -> loc.contains("La Goulette") || 
-                                  loc.contains("Carthage") || 
-                                  loc.contains("Sidi Bou Said") || 
-                                  loc.contains("La Marsa"))
-                    .collect(Collectors.toList()));
-
-                filteredArrivals.addAll(filteredDepartures);
                 break;
-
             case "Taxi":
-                // Taxis can go anywhere within Tunisia
                 departurePrompt = "Saisir un lieu de départ";
                 arrivalPrompt = "Saisir un lieu d'arrivée";
-
-                filteredDepartures.addAll(allLocations.stream()
-                    .filter(loc -> !loc.contains("(")) // No international destinations
-                    .collect(Collectors.toList()));
-
-                filteredArrivals.addAll(filteredDepartures);
                 break;
-
             case "Bus":
-                // Buses can go to major cities and some locations within cities
                 departurePrompt = "Saisir un arrêt de départ";
                 arrivalPrompt = "Saisir un arrêt d'arrivée";
-
-                filteredDepartures.addAll(allLocations.stream()
-                    .filter(loc -> !loc.contains("(")) // No international destinations
-                    .collect(Collectors.toList()));
-
-                filteredArrivals.addAll(filteredDepartures);
                 break;
-
             default: // "Tous" or any other value
-                // Show all locations
-                filteredDepartures.addAll(allLocations);
-                filteredArrivals.addAll(allLocations);
+                // Default prompts are already set
                 break;
         }
 
@@ -646,7 +592,7 @@ public class SearchViewController implements Initializable {
                 "<strong>%s</strong><br/>" +
                 "<span style='color: #555;'>Distance: %.1f km</span><br/>" +
                 "<span style='color: #555;'>Durée estimée: %s</span>" +
-                "</div>", 
+                "</div>",
                 routeInfo.replace("<br>", "").replace("<br/>", ""), 
                 distance, 
                 formatDuration(duration)
@@ -690,7 +636,9 @@ public class SearchViewController implements Initializable {
                     setText(null);
                     setGraphic(null);
                 } else {
-                    setText(item);
+                    // Don't set text directly as it will be in the Label
+                    // But for the button cell, we need to ensure the text is visible
+                    setText("");
 
                     // Create icon based on transport type
                     FontIcon icon = new FontIcon();
@@ -741,8 +689,64 @@ public class SearchViewController implements Initializable {
             }
         });
 
-        // Apply the same cell factory to the button cell (what shows when selected)
-        transportTypeComboBox.setButtonCell(transportTypeComboBox.getCellFactory().call(null));
+        // Create a specific button cell that will properly show both icon and text
+        transportTypeComboBox.setButtonCell(new ListCell<String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (item == null || empty) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    // Set the text directly for the button cell
+                    setText(item);
+
+                    // Create icon based on transport type
+                    FontIcon icon = new FontIcon();
+                    icon.setIconSize(16);
+
+                    switch (item) {
+                        case "Bus":
+                            icon.setIconLiteral("fas-bus");
+                            icon.setIconColor(javafx.scene.paint.Color.valueOf("#3498db"));
+                            break;
+                        case "Train":
+                            icon.setIconLiteral("fas-train");
+                            icon.setIconColor(javafx.scene.paint.Color.valueOf("#e74c3c"));
+                            break;
+                        case "Taxi":
+                            icon.setIconLiteral("fas-taxi");
+                            icon.setIconColor(javafx.scene.paint.Color.valueOf("#f1c40f"));
+                            break;
+                        case "Métro":
+                            icon.setIconLiteral("fas-subway");
+                            icon.setIconColor(javafx.scene.paint.Color.valueOf("#9b59b6"));
+                            break;
+                        case "TGM":
+                            icon.setIconLiteral("fas-tram");
+                            icon.setIconColor(javafx.scene.paint.Color.valueOf("#2ecc71"));
+                            break;
+                        case "Avion":
+                            icon.setIconLiteral("fas-plane");
+                            icon.setIconColor(javafx.scene.paint.Color.valueOf("#3498db"));
+                            break;
+                        case "Ferry":
+                            icon.setIconLiteral("fas-ship");
+                            icon.setIconColor(javafx.scene.paint.Color.valueOf("#2980b9"));
+                            break;
+                        case "Tous":
+                        default:
+                            icon.setIconLiteral("fas-globe");
+                            icon.setIconColor(javafx.scene.paint.Color.valueOf("#7f8c8d"));
+                            break;
+                    }
+
+                    // Set the icon as the graphic
+                    setGraphic(icon);
+                }
+            }
+        });
 
         // Add the transport types
         transportTypeComboBox.getItems().addAll(
@@ -857,9 +861,27 @@ public class SearchViewController implements Initializable {
         double[] departureCoords = CITY_COORDINATES.get(departure);
         double[] arrivalCoords = CITY_COORDINATES.get(arrival);
 
-        if (departureCoords == null || arrivalCoords == null) {
-            showError("Map Error", "Coordonnées non disponibles pour les lieux sélectionnés.");
-            return;
+        // If coordinates not found in our map, check if they exist in DEFAULT_COORDINATES
+        if (departureCoords == null) {
+            departureCoords = DEFAULT_COORDINATES.get(departure);
+            if (departureCoords == null) {
+                log.warn("No coordinates found for departure location: {}", departure);
+                // Use default coordinates for Tunisia
+                departureCoords = new double[]{DEFAULT_LATITUDE, DEFAULT_LONGITUDE};
+                // Add to CITY_COORDINATES for future use
+                CITY_COORDINATES.put(departure, departureCoords);
+            }
+        }
+
+        if (arrivalCoords == null) {
+            arrivalCoords = DEFAULT_COORDINATES.get(arrival);
+            if (arrivalCoords == null) {
+                log.warn("No coordinates found for arrival location: {}", arrival);
+                // Use default coordinates for Tunisia with slight offset to avoid overlap
+                arrivalCoords = new double[]{DEFAULT_LATITUDE + 0.05, DEFAULT_LONGITUDE + 0.05};
+                // Add to CITY_COORDINATES for future use
+                CITY_COORDINATES.put(arrival, arrivalCoords);
+            }
         }
 
         // Add markers for departure and arrival
@@ -996,8 +1018,8 @@ public class SearchViewController implements Initializable {
             durationHeaderLabel.setMinWidth(80);
             durationHeaderLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
 
-            Label priceHeaderLabel = new Label("Prix");
-            priceHeaderLabel.setMinWidth(80);
+            Label priceHeaderLabel = new Label("Prix (Base/Total)");
+            priceHeaderLabel.setMinWidth(120);
             priceHeaderLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
 
             Label actionHeaderLabel = new Label("Action");
@@ -1013,9 +1035,12 @@ public class SearchViewController implements Initializable {
             routesListContainer.setSpacing(5);
             routesListContainer.getStyleClass().add("routes-list-container");
 
+            // Parse passenger count
+            int passengerCount = Integer.parseInt(passengers);
+
             // Display routes as list items
             for (Route route : routes) {
-                routesListContainer.getChildren().add(createRouteListItem(route, transportType, departureTime, date));
+                routesListContainer.getChildren().add(createRouteListItem(route, transportType, departureTime, date, passengerCount));
             }
 
             searchResultsContainer.getChildren().addAll(headerBox, routesListContainer);
@@ -1027,20 +1052,11 @@ public class SearchViewController implements Initializable {
             // Find routes in database using OrganisationRouteService
             List<OrganisationRoute> orgRoutes = organisationRouteService.findOrganisationRoutesByLocations(origin, destination);
 
-            // No fallback to random routes - use real organisation routes
+            // Only use routes that have organizations
             if (orgRoutes.isEmpty()) {
                 log.info("No organisation routes found for {}→{}", origin, destination);
-                // Try to find base routes first
-                List<Route> baseRoutes = routeService.searchRoutes(origin, destination);
-
-                if (baseRoutes.isEmpty()) {
-                    log.info("No base routes found for {}→{} either", origin, destination);
-                    return List.of(); // Return empty list instead of generating random routes
-                } else {
-                    log.info("Found {} base routes but no organisation routes", baseRoutes.size());
-                    // These are base routes without organisations assigned
-                    return baseRoutes;
-                }
+                // No fallback to base routes without organizations
+                return List.of(); // Return empty list
             }
 
             log.info("Found {} organisation routes for {}→{}", orgRoutes.size(), origin, destination);
@@ -1120,7 +1136,7 @@ public class SearchViewController implements Initializable {
         return Math.round(distance * 0.5 * 10.0) / 10.0; // Round to 1 decimal place
     }
 
-    private HBox createRouteListItem(Route route, String transportType, String departureTime, LocalDate date) {
+    private HBox createRouteListItem(Route route, String transportType, String departureTime, LocalDate date, int passengerCount) {
         HBox item = new HBox();
         item.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         item.setSpacing(20);
@@ -1214,9 +1230,11 @@ public class SearchViewController implements Initializable {
         Label durationLabel = new Label(formatDuration(route.getEstimatedDuration()));
         durationLabel.setMinWidth(80);
 
-        // Price
-        Label priceLabel = new Label(String.format("%.2f DT", route.getBasePrice()));
-        priceLabel.setMinWidth(80);
+        // Price - show base price and total price for all passengers
+        double basePrice = route.getBasePrice();
+        double totalPrice = basePrice * passengerCount;
+        Label priceLabel = new Label(String.format("%.2f DT (Total: %.2f DT)", basePrice, totalPrice));
+        priceLabel.setMinWidth(120);
 
         // Create a button container with info and book buttons
         VBox buttonContainer = new VBox(5);
@@ -1316,7 +1334,7 @@ public class SearchViewController implements Initializable {
             }
         }
 
-        bookButton.setOnAction(event -> showPaymentForm(route, transportType, departureTime, date));
+        bookButton.setOnAction(event -> showPaymentForm(route, transportType, departureTime, date, passengerCount));
 
         buttonContainer.getChildren().addAll(timeContainer, bookButton);
 
@@ -1336,7 +1354,7 @@ public class SearchViewController implements Initializable {
         }
     }
 
-    private void showPaymentForm(Route route, String transportType, String departureTime, LocalDate date) {
+    private void showPaymentForm(Route route, String transportType, String departureTime, LocalDate date, int passengerCount) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/user/createReservation.fxml"));
             Parent root = loader.load();
@@ -1349,6 +1367,9 @@ public class SearchViewController implements Initializable {
             if (departureTime != null && date != null) {
                 controller.setDepartureTimeAndDate(departureTime, date);
             }
+
+            // Set passenger count
+            controller.setPassengerCount(passengerCount);
 
             // Set payment mode
             controller.setPaymentMode(true);
@@ -1422,4 +1443,4 @@ public class SearchViewController implements Initializable {
             log.error("Error updating weather widget: {}", e.getMessage(), e);
         }
     }
-} 
+}

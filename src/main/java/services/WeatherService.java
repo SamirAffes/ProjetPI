@@ -21,9 +21,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class WeatherService {
-    private static final String API_KEY = "YOUR_API_KEY"; // Replace with your actual API key
+    private static final String API_KEY = System.getProperty("OPENWEATHER_API_KEY", "8c7ed8ad125c244c34a7a3ff87162db5"); // Fallback to a valid API key
     private static final String API_URL = "https://api.openweathermap.org/data/2.5/weather";
-    private static final boolean USE_MOCK_DATA = true; // Set to false when you have a valid API key
+    private static final boolean USE_MOCK_DATA = API_KEY.equals("YOUR_API_KEY"); // Only use mock data if API key is not set
 
     private final ExecutorService executorService;
     private final Gson gson;
@@ -35,7 +35,7 @@ public class WeatherService {
 
     private static WeatherService instance;
 
-    private WeatherService() {
+    public WeatherService() {
         executorService = Executors.newFixedThreadPool(2);
         gson = new Gson();
         weatherCache = new HashMap<>();

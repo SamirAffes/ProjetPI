@@ -22,11 +22,13 @@ public class ReservationServiceImpl implements ReservationService {
     private final RouteService routeService;
     private final TransportService transportService;
     private final UserService userService;
+    private final EmailService emailService;  // Added EmailService
 
     public ReservationServiceImpl() {
         this.routeService = new RouteService();
         this.transportService = new TransportService();
         this.userService = new UserService();
+        this.emailService = new EmailService();  // Initialize EmailService
     }
 
     @Override
@@ -51,6 +53,11 @@ public class ReservationServiceImpl implements ReservationService {
             entityManager.persist(reservation);
             transaction.commit();
             logger.info("Added reservation with ID: {}", reservation.getId());
+            
+            // Send confirmation email if payment is made
+            if (reservation.isPaid()) {
+                sendPaymentConfirmationEmail(reservation);
+            }
         } catch (Exception e) {
             if (transaction.isActive()) {
                 transaction.rollback();
@@ -184,9 +191,7 @@ public class ReservationServiceImpl implements ReservationService {
         } finally {
             entityManager.close();
         }
-    }
-
-    @Override
+    }    @Override
     public boolean confirmReservation(Reservation reservation) {
         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
@@ -203,6 +208,12 @@ public class ReservationServiceImpl implements ReservationService {
             entityManager.merge(reservation);
             transaction.commit();
             logger.info("Confirmed reservation with ID: {}", reservation.getId());
+            
+            // Send payment confirmation email if the reservation is paid
+            if (reservation.isPaid()) {
+                sendPaymentConfirmationEmail(reservation);
+            }
+            
             return true;
         } catch (Exception e) {
             if (transaction.isActive()) {
@@ -426,4 +437,51 @@ public class ReservationServiceImpl implements ReservationService {
             logger.error("Error enriching reservation data for ID: {}", reservation.getId(), e);
         }
     }
-} 
+      /**
+     * Sends a payment confirmation email with QR code to the user who made the reservation
+     * @param reservation The reservation details
+     * @return true if email was sent successfully, false otherwise
+     */
+    private boolean sendPaymentConfirmationEmail(Reservation reservation) {
+        try {
+            // Get user details
+            User user = userService.afficher(reservation.getUserId());
+            if (user == null || user.getEmail() == null || user.getEmail().isEmpty()) {
+                logger.warn("Impossible d'envoyer l'email de confirmation - utilisateur ou email non trouvé pour ID: {}", reservation.getUserId());
+                return false;
+            }
+              // Get transport details
+            Transport transport = transportService.afficher(reservation.getTransportId());
+            String transportInfo = (transport != null) ? transport.getType() + " " + transport.getName() : "";
+            // Get route details
+            Route route = routeService.afficher(reservation.getRouteId());
+            String routeInfo = (route != null) ? 
+                route.getOrigin() + " → " + route.getDestination() : 
+                "Route #" + reservation.getRouteId();
+                  // Include route and transport info in email subject
+            String emailSubject = "Confirmation de paiement - TunTransport - " + routeInfo + 
+                    (transportInfo.isEmpty() ? "" : " (" + transportInfo + ")");
+            
+            // Send email with payment confirmation and QR code
+            boolean emailSent = emailService.sendPaymentConfirmationEmail(
+                user.getEmail(),
+                emailSubject,
+                user.getFullName(),
+                String.valueOf(reservation.getId()),
+                reservation.getPrice(),
+                null  // QR code generated in the EmailService
+            );
+            
+            if (emailSent) {
+                logger.info("Email de confirmation de paiement envoyé à {} pour la réservation {}", user.getEmail(), reservation.getId());
+                return true;
+            } else {
+                logger.warn("Échec de l'envoi de l'email à {} pour la réservation {}", user.getEmail(), reservation.getId());
+                return false;
+            }
+        } catch (Exception e) {
+            logger.error("Erreur lors de l'envoi de l'email de confirmation pour la réservation ID: {}", reservation.getId(), e);
+            return false;
+        }
+    }
+}

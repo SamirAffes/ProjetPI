@@ -8,44 +8,50 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox fx:id="weatherWidget" alignment="CENTER" prefHeight="120.0" prefWidth="200.0" styleClass="dashboard-stats-card, weather-widget" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.WeatherWidgetController">
+<VBox fx:id="weatherWidget" alignment="CENTER" prefHeight="180.0" prefWidth="280.0" styleClass="dashboard-stats-card, weather-widget" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.WeatherWidgetController">
    <children>
-      <HBox alignment="CENTER_LEFT" spacing="10.0">
+      <HBox alignment="CENTER_LEFT" spacing="15.0">
          <children>
-            <FontIcon fx:id="weatherIcon" iconColor="#2196f3" iconLiteral="fas-cloud-sun" iconSize="36" />
+            <FontIcon fx:id="weatherIcon" iconColor="#2196f3" iconLiteral="fas-cloud-sun" iconSize="45" />
             <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
                <children>
                   <Label fx:id="cityLabel" styleClass="weather-location" text="Tunis">
                      <font>
-                        <Font size="16.0" />
+                        <Font size="18.0" />
                      </font>
                   </Label>
                   <Label fx:id="temperatureLabel" styleClass="weather-temp" text="24°C">
                      <font>
-                        <Font name="System Bold" size="24.0" />
+                        <Font name="System Bold" size="28.0" />
                      </font>
                   </Label>
                </children>
             </VBox>
             <Button mnemonicParsing="false" onAction="#refreshWeather" styleClass="icon-button" text="">
                <graphic>
-                  <FontIcon iconColor="#6c757d" iconLiteral="fas-sync-alt" iconSize="12" />
+                  <FontIcon iconColor="#6c757d" iconLiteral="fas-sync-alt" iconSize="14" />
                </graphic>
             </Button>
          </children>
       </HBox>
       <Label fx:id="descriptionLabel" styleClass="weather-desc" text="Ensoleillé">
          <VBox.margin>
-            <Insets top="5.0" />
+            <Insets top="10.0" />
          </VBox.margin>
+         <font>
+            <Font size="16.0" />
+         </font>
       </Label>
-      <Label fx:id="adviceLabel" styleClass="weather-advice" text="Idéal pour voyager">
+      <Label fx:id="adviceLabel" styleClass="weather-advice" text="Idéal pour voyager" wrapText="true">
          <VBox.margin>
-            <Insets top="5.0" />
+            <Insets top="8.0" />
          </VBox.margin>
+         <font>
+            <Font size="14.0" />
+         </font>
       </Label>
    </children>
    <padding>
-      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+      <Insets bottom="18.0" left="18.0" right="18.0" top="18.0" />
    </padding>
 </VBox>
