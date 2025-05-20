@@ -11,6 +11,7 @@ module com.projetpi {
     requires java.desktop;
     requires javafx.swing;
     requires javafx.web; // Added for WebView support
+    requires javafx.media; // Added for Media support
     requires transitive jakarta.persistence;
     requires org.hibernate.orm.core;
     requires org.kordamp.ikonli.fontawesome5;
@@ -19,6 +20,7 @@ module com.projetpi {
     requires jakarta.mail;
     requires org.eclipse.angus.mail;
     requires com.google.gson;
+    requires java.net.http; // Added for HTTP client support
 
 
     exports controllers;
@@ -29,4 +31,6 @@ module com.projetpi {
     opens test to javafx.fxml;
     opens entities to org.hibernate.orm.core, lombok;
     opens utils to lombok;
+    opens entities to org.hibernate.orm.core;
+
 }

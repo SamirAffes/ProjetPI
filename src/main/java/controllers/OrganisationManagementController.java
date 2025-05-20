@@ -327,7 +327,8 @@ public class OrganisationManagementController {
             formGrid.setPadding(new Insets(20));
 
             // Add form fields
-            Label nameLabel = new Label("Nom:");
+            Label nameLabel = new Label("Nom: *");
+            nameLabel.setStyle("-fx-text-fill: #333333;");
             TextField nameField = new TextField();
             nameField.setPrefWidth(300);
 
@@ -335,13 +336,16 @@ public class OrganisationManagementController {
             ComboBox<OrgType> typeCombo = new ComboBox<>();
             typeCombo.getItems().addAll(OrgType.values());
 
-            Label addressLabel = new Label("Adresse:");
+            Label addressLabel = new Label("Adresse: *");
+            addressLabel.setStyle("-fx-text-fill: #333333;");
             TextField addressField = new TextField();
 
-            Label phoneLabel = new Label("Téléphone:");
+            Label phoneLabel = new Label("Téléphone: *");
+            phoneLabel.setStyle("-fx-text-fill: #333333;");
             TextField phoneField = new TextField();
 
-            Label emailLabel = new Label("Email:");
+            Label emailLabel = new Label("Email: *");
+            emailLabel.setStyle("-fx-text-fill: #333333;");
             TextField emailField = new TextField();
 
             Label websiteLabel = new Label("Site Web:");
@@ -479,6 +483,11 @@ public class OrganisationManagementController {
             leftSide.setPadding(new Insets(20));
             leftSide.getChildren().add(logoPreviewBox);
 
+            // Add required fields note
+            Label requiredNote = new Label("* Champs obligatoires");
+            requiredNote.setStyle("-fx-font-size: 11px; -fx-text-fill: #555555; -fx-font-style: italic;");
+            formGrid.add(requiredNote, 0, 9, 2, 1);
+
             // Buttons
             Button saveButton = new Button(organisationToEdit == null ? "Ajouter" : "Enregistrer");
             saveButton.getStyleClass().add("button-primary");
@@ -489,7 +498,7 @@ public class OrganisationManagementController {
             buttonBox.setAlignment(Pos.CENTER_RIGHT);
             buttonBox.getChildren().addAll(cancelButton, saveButton);
 
-            formGrid.add(buttonBox, 1, 9);
+            formGrid.add(buttonBox, 1, 10);
 
             // Event handlers
             saveButton.setOnAction(e -> {
