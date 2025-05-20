@@ -11,6 +11,7 @@ module com.projetpi {
     requires java.desktop;
     requires javafx.swing;
     requires javafx.web; // Added for WebView support
+    requires javafx.media; // Added for Media support
     requires transitive jakarta.persistence;
     requires org.hibernate.orm.core;
     requires org.kordamp.ikonli.fontawesome5;
