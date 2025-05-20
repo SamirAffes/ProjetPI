@@ -20,6 +20,7 @@ module com.projetpi {
     requires jakarta.mail;
     requires org.eclipse.angus.mail;
     requires com.google.gson;
+    requires java.net.http; // Added for HTTP client support
 
 
     exports controllers;

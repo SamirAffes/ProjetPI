@@ -35,6 +35,7 @@ import javafx.scene.paint.Color;
 import javafx.geometry.Insets;
 import javafx.scene.layout.GridPane;
 import services.OrganisationService;
+import utils.GeocodingService;
 import utils.OrganisationContext;
 
 import java.io.IOException;
@@ -518,7 +519,7 @@ public class Home {
             .replaceAll("à", "a")
             .replaceAll("ù", "u");
 
-        // Check against known city names (case insensitive)
+        // First check if it's in our fallback map (for offline use)
         for (String city : CITY_COORDINATES.keySet()) {
             if (city.toLowerCase().contains(normalizedLocation) || 
                 normalizedLocation.contains(city.toLowerCase())) {
@@ -526,7 +527,9 @@ public class Home {
             }
         }
 
-        return false;
+        // If not found in the map, try the online geocoding service
+        logger.info("Location not found in local map, trying online geocoding service for: {}", location);
+        return GeocodingService.hasCoordinates(location);
     }
 
     // Helper method to get coordinates for a location
@@ -539,15 +542,27 @@ public class Home {
             .replaceAll("à", "a")
             .replaceAll("ù", "u");
 
-        // Find matching city
+        // First check if it's in our fallback map (for offline use)
         for (String city : CITY_COORDINATES.keySet()) {
             if (city.toLowerCase().contains(normalizedLocation) || 
                 normalizedLocation.contains(city.toLowerCase())) {
+                logger.info("Found coordinates for {} in local map", location);
                 return CITY_COORDINATES.get(city);
             }
         }
 
+        // If not found in the map, try the online geocoding service
+        logger.info("Location not found in local map, trying online geocoding service for: {}", location);
+        double[] coordinates = GeocodingService.getCoordinates(location);
+
+        if (coordinates != null) {
+            logger.info("Found coordinates for {} using online service: [{}, {}]", 
+                    location, coordinates[0], coordinates[1]);
+            return coordinates;
+        }
+
         // Default to Tunis if not found
+        logger.warn("Could not find coordinates for {}, defaulting to Tunis", location);
         return new double[]{DEFAULT_LATITUDE, DEFAULT_LONGITUDE};
     }
 

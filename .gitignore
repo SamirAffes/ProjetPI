@@ -39,8 +39,3 @@ build/
 
 # ignore all jpeg/png files in src\main\resources\Images\any folder\
 
-src/main/resources/Images/**/*.jpeg
-src/main/resources/Images/**/*.jpg
-src/main/resources/Images/**/*.png
-src/main/resources/Images/**/*.gif
-src/main/resources/Images/**/*.bmp
