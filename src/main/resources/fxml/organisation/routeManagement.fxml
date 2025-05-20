@@ -43,11 +43,11 @@
          </padding>
       </HBox>
 
-      <TabPane prefHeight="500.0" prefWidth="780.0" tabClosingPolicy="UNAVAILABLE" styleClass="modern-tab-pane">
+      <TabPane prefHeight="750.0" prefWidth="780.0" tabClosingPolicy="UNAVAILABLE" styleClass="modern-tab-pane">
          <tabs>
             <Tab text="Mes Itinéraires">
                <content>
-                  <VBox spacing="15.0" styleClass="section-container">
+                  <VBox spacing="15.0" styleClass="section-container" style="-fx-min-height: 650px;">
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="15.0">
                            <children>
@@ -317,7 +317,7 @@
                         </HBox>
 
                         <!-- Available Routes List Container -->
-                        <ScrollPane fitToWidth="true" styleClass="transparent-scroll-pane" VBox.vgrow="ALWAYS">
+                        <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="transparent-scroll-pane" VBox.vgrow="ALWAYS" minHeight="400.0" prefHeight="800.0" maxHeight="Infinity">
                            <content>
                               <VBox fx:id="availableRoutesContainer" spacing="10.0">
                                  <!-- Routes will be added here dynamically -->
@@ -351,3 +351,5 @@
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
    </padding>
 </VBox>
+
+

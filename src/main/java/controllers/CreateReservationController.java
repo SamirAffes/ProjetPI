@@ -55,6 +55,7 @@ public class CreateReservationController implements Initializable {
     private User currentUser;
     private double totalPrice = 0.0;
     private boolean paymentMode = false;
+    private int passengerCount = 1; // Default to 1 passenger
 
     // New payment related fields
     @FXML private VBox paymentContainer;
@@ -165,6 +166,21 @@ public class CreateReservationController implements Initializable {
                 paymentContainer.setVisible(true);
                 paymentContainer.setManaged(true);
             }
+        }
+    }
+
+    /**
+     * Set the number of passengers for this reservation
+     */
+    public void setPassengerCount(int count) {
+        log.info("Setting passenger count: {}", count);
+        if (count > 0) {
+            this.passengerCount = count;
+            // Update price calculation with new passenger count
+            updatePrice();
+        } else {
+            log.warn("Invalid passenger count: {}, using default of 1", count);
+            this.passengerCount = 1;
         }
     }
 
@@ -397,21 +413,19 @@ public class CreateReservationController implements Initializable {
             // Set payment info
             boolean isPaid = paymentMode || payCardRadio.isSelected() || 
                             (paymentContainer != null && (creditCardRadio.isSelected() || 
-                            debitCardRadio.isSelected() || paypalRadio.isSelected()));
-
-            reservation.setIsPaid(isPaid);
+                            debitCardRadio.isSelected() || paypalRadio.isSelected()));            reservation.setIsPaid(isPaid);
             reservation.setPrice(totalPrice);
 
             // Set initial status (if paid, set to CONFIRMED)
             reservation.setStatus(isPaid ? "CONFIRMED" : "PENDING");
 
-            // Save reservation
+            // Save reservation - payment confirmation email will be sent automatically by the service
             reservationService.ajouter(reservation);
             log.info("Reservation created successfully with ID: {}", reservation.getId());
 
             // Show success message and close form
             if (isPaid) {
-                showSuccessPayment("Paiement réussi", "Votre paiement a été traité avec succès et votre réservation est confirmée.");
+                showSuccessPayment("Paiement réussi", "Votre paiement a été traité avec succès et votre réservation est confirmée. Un email de confirmation avec QR code a été envoyé à votre adresse email.");
             } else {
                 showInfo("Succès", "Réservation créée avec succès !");
             }
@@ -561,8 +575,19 @@ public class CreateReservationController implements Initializable {
             totalPrice *= 2;
         }
 
-        // Update price label
-        priceLabel.setText(String.format("%.2f DT", totalPrice));
+        // Calculate price per passenger
+        double pricePerPassenger = totalPrice;
+
+        // Multiply by number of passengers
+        totalPrice *= passengerCount;
+
+        // Update price label with both per passenger and total price
+        if (passengerCount > 1) {
+            priceLabel.setText(String.format("%.2f DT (%.2f DT par passager × %d)", 
+                totalPrice, pricePerPassenger, passengerCount));
+        } else {
+            priceLabel.setText(String.format("%.2f DT", totalPrice));
+        }
     }
 
     private void setupButtons() {

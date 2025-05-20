@@ -15,7 +15,7 @@ public class Weather {
     private String description;
     private String icon;
     private double windSpeed;
-    
+
     /**
      * Format temperature with °C symbol
      * @return Formatted temperature string

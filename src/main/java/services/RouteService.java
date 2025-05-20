@@ -22,7 +22,7 @@ public class RouteService implements CRUD<Route> {
     public void ajouter(Route route) {
         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
-        
+
         try {
             transaction.begin();
             entityManager.persist(route);
@@ -43,7 +43,7 @@ public class RouteService implements CRUD<Route> {
     public void supprimer(Route route) {
         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
-        
+
         try {
             transaction.begin();
             if (!entityManager.contains(route)) {
@@ -67,7 +67,7 @@ public class RouteService implements CRUD<Route> {
     public void modifier(Route route) {
         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
-        
+
         try {
             transaction.begin();
             entityManager.merge(route);
@@ -87,7 +87,7 @@ public class RouteService implements CRUD<Route> {
     @Override
     public Route afficher(int id) {
         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
-        
+
         try {
             Route route = entityManager.find(Route.class, id);
             if (route != null) {
@@ -106,16 +106,16 @@ public class RouteService implements CRUD<Route> {
     @Override
     public List<Route> afficher_tout() {
         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
-        
+
         try {
             TypedQuery<Route> query = entityManager.createQuery("SELECT r FROM Route r", Route.class);
             List<Route> routes = query.getResultList();
-            
+
             for (Route route : routes) {
                 enrichRouteWithOrganisationData(route);
                 route.initializeProperties();
             }
-            
+
             return routes;
         } catch (Exception e) {
             logger.error("Error finding all routes", e);
@@ -124,26 +124,26 @@ public class RouteService implements CRUD<Route> {
             entityManager.close();
         }
     }
-    
+
     /**
      * Search for routes matching the given origin and destination
      */
     public List<Route> searchRoutes(String origin, String destination) {
         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
-        
+
         try {
             String queryStr;
             TypedQuery<Route> query;
-            
+
             // If both origin and destination are provided, use exact match search
             if (origin != null && !origin.isEmpty() && destination != null && !destination.isEmpty()) {
                 queryStr = "SELECT r FROM Route r WHERE LOWER(r.origin) = LOWER(:origin) AND LOWER(r.destination) = LOWER(:destination)";
                 query = entityManager.createQuery(queryStr, Route.class);
                 query.setParameter("origin", origin);
                 query.setParameter("destination", destination);
-                
+
                 List<Route> routes = query.getResultList();
-                
+
                 // If no results with exact match, try with LIKE operator
                 if (routes.isEmpty()) {
                     logger.info("No exact matches found, trying with LIKE operator");
@@ -153,7 +153,7 @@ public class RouteService implements CRUD<Route> {
                     query.setParameter("destPattern", "%" + destination + "%");
                     routes = query.getResultList();
                 }
-                
+
                 // Eliminate duplicate routes by ID using a map
                 Map<Integer, Route> uniqueRoutes = new HashMap<>();
                 for (Route route : routes) {
@@ -163,7 +163,7 @@ public class RouteService implements CRUD<Route> {
                         uniqueRoutes.put(route.getId(), route);
                     }
                 }
-                
+
                 return new ArrayList<>(uniqueRoutes.values());
             } else if (origin != null && !origin.isEmpty()) {
                 // Search by origin only
@@ -179,9 +179,9 @@ public class RouteService implements CRUD<Route> {
                 // If no search criteria provided, return all routes
                 return afficher_tout();
             }
-            
+
             List<Route> routes = query.getResultList();
-            
+
             // Eliminate duplicate routes by ID using a map
             Map<Integer, Route> uniqueRoutes = new HashMap<>();
             for (Route route : routes) {
@@ -191,7 +191,7 @@ public class RouteService implements CRUD<Route> {
                     uniqueRoutes.put(route.getId(), route);
                 }
             }
-            
+
             logger.info("Search found {} unique routes", uniqueRoutes.size());
             return new ArrayList<>(uniqueRoutes.values());
         } catch (Exception e) {
@@ -201,22 +201,22 @@ public class RouteService implements CRUD<Route> {
             entityManager.close();
         }
     }
-    
+
     /**
      * Enrich a route with organisation data if available
      */
     private void enrichRouteWithOrganisationData(Route route) {
         if (route == null) return;
-        
+
         // Check if the route already has company information
         if (route.getCompanyId() > 0 && route.getCompanyName() != null && !route.getCompanyName().isEmpty()) {
             return;
         }
-        
+
         // Find organisations for this route
         OrganisationRouteService organisationRouteService = new OrganisationRouteService();
         List<Organisation> organisations = organisationRouteService.findOrganisationsByRouteId(route.getId());
-        
+
         // Use the first active organisation found for this route
         if (!organisations.isEmpty()) {
             Organisation org = organisations.get(0);
@@ -225,9 +225,129 @@ public class RouteService implements CRUD<Route> {
             logger.debug("Enriched route {} with organisation {}", route.getId(), org.getNom());
         }
     }
-    
+
     // Additional method for UI
     public List<Route> findAll() {
         return afficher_tout();
+    }
+
+    /**
+     * Get all unique origins from routes in the database
+     * @return List of all unique origins
+     */
+    public List<String> getAllOrigins() {
+        EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
+
+        try {
+            TypedQuery<String> query = entityManager.createQuery(
+                "SELECT DISTINCT r.origin FROM Route r ORDER BY r.origin", String.class);
+            return query.getResultList();
+        } catch (Exception e) {
+            logger.error("Error getting all origins", e);
+            return List.of();
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    /**
+     * Get all unique destinations from routes in the database
+     * @return List of all unique destinations
+     */
+    public List<String> getAllDestinations() {
+        EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
+
+        try {
+            TypedQuery<String> query = entityManager.createQuery(
+                "SELECT DISTINCT r.destination FROM Route r ORDER BY r.destination", String.class);
+            return query.getResultList();
+        } catch (Exception e) {
+            logger.error("Error getting all destinations", e);
+            return List.of();
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    /**
+     * Get all unique locations (both origins and destinations) from routes in the database
+     * @return List of all unique locations
+     */
+    public List<String> getAllLocations() {
+        EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
+
+        try {
+            TypedQuery<String> originsQuery = entityManager.createQuery(
+                "SELECT DISTINCT r.origin FROM Route r", String.class);
+            List<String> origins = originsQuery.getResultList();
+
+            TypedQuery<String> destinationsQuery = entityManager.createQuery(
+                "SELECT DISTINCT r.destination FROM Route r", String.class);
+            List<String> destinations = destinationsQuery.getResultList();
+
+            // Combine origins and destinations and remove duplicates
+            List<String> allLocations = new ArrayList<>(origins);
+            for (String destination : destinations) {
+                if (!allLocations.contains(destination)) {
+                    allLocations.add(destination);
+                }
+            }
+
+            // Sort alphabetically
+            java.util.Collections.sort(allLocations);
+
+            logger.info("Found {} unique locations in routes", allLocations.size());
+            return allLocations;
+        } catch (Exception e) {
+            logger.error("Error getting all locations", e);
+            return List.of();
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    /**
+     * Get all unique locations for a specific transport mode
+     * @param transportMode The transport mode to filter by
+     * @return List of all unique locations for the specified transport mode
+     */
+    public List<String> getLocationsByTransportMode(String transportMode) {
+        EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
+
+        try {
+            if (transportMode == null || transportMode.isEmpty() || transportMode.equals("Tous")) {
+                // If no transport mode specified or "All" selected, return all locations
+                return getAllLocations();
+            }
+
+            TypedQuery<String> originsQuery = entityManager.createQuery(
+                "SELECT DISTINCT r.origin FROM Route r WHERE r.transportMode = :mode", String.class);
+            originsQuery.setParameter("mode", transportMode);
+            List<String> origins = originsQuery.getResultList();
+
+            TypedQuery<String> destinationsQuery = entityManager.createQuery(
+                "SELECT DISTINCT r.destination FROM Route r WHERE r.transportMode = :mode", String.class);
+            destinationsQuery.setParameter("mode", transportMode);
+            List<String> destinations = destinationsQuery.getResultList();
+
+            // Combine origins and destinations and remove duplicates
+            List<String> filteredLocations = new ArrayList<>(origins);
+            for (String destination : destinations) {
+                if (!filteredLocations.contains(destination)) {
+                    filteredLocations.add(destination);
+                }
+            }
+
+            // Sort alphabetically
+            java.util.Collections.sort(filteredLocations);
+
+            logger.info("Found {} unique locations for transport mode: {}", filteredLocations.size(), transportMode);
+            return filteredLocations;
+        } catch (Exception e) {
+            logger.error("Error getting locations for transport mode: {}", transportMode, e);
+            return List.of();
+        } finally {
+            entityManager.close();
+        }
     }
 } 

@@ -431,9 +431,12 @@ public class EditReservationController implements Initializable {
             double price = basePrice;
             if (roundTripCheckBox.isSelected()) {
                 price *= 1.8; // Apply a 10% discount for round trip
-            }
-            reservation.setPrice(price);
-            reservation.setIsPaid(payCardRadio.isSelected()); // Only paid if card payment is selected
+            }            reservation.setPrice(price);
+            
+            // Track payment status changes
+            boolean wasPaidBefore = reservation.isPaid();
+            boolean isPaidNow = payCardRadio.isSelected();
+            reservation.setIsPaid(isPaidNow); // Only paid if card payment is selected
             
             // Set status
             if (statusComboBox != null && statusComboBox.getValue() != null) {
@@ -452,10 +455,14 @@ public class EditReservationController implements Initializable {
                 
                 reservation.setStatus(statusCode);
             }
-            
-            // Update the reservation
+              // Update the reservation
             if (reservationService.update(reservation)) {
-                showSuccess("Réservation mise à jour avec succès !");
+                // Check if payment status changed from unpaid to paid
+                if (!wasPaidBefore && isPaidNow) {
+                    showSuccess("Réservation mise à jour avec succès ! Un email de confirmation avec code QR a été envoyé au client.");
+                } else {
+                    showSuccess("Réservation mise à jour avec succès !");
+                }
                 Stage stage = (Stage) saveButton.getScene().getWindow();
                 stage.close();
             } else {
