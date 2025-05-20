@@ -85,15 +85,15 @@
                   </HBox>
                   <HBox alignment="CENTER_LEFT" spacing="20.0">
                      <children>
-                        <VBox alignment="BOTTOM_LEFT" prefWidth="300.0" spacing="5.0">
-                           <children>
-                              <Button fx:id="searchButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" styleClass="button-primary" text="Rechercher">
-                                 <graphic>
+                        <VBox alignment="BOTTOM_RIGHT" prefWidth="300.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                        <children>
+                            <Button fx:id="searchButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" styleClass="button-primary" text="Rechercher">
+                                <graphic>
                                     <FontIcon iconLiteral="fas-search" />
-                                 </graphic>
-                              </Button>
-                           </children>
-                        </VBox>
+                                </graphic>
+                            </Button>
+                        </children>
+                    </VBox>
                      </children>
                   </HBox>
                </children>

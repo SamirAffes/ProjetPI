@@ -22,18 +22,13 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
-import services.MaintenanceService;
 import services.OrganisationRouteService;
 import services.OrganisationService;
-import entities.Maintenance;
-import entities.StatusMaintenance;
-import entities.TypeMaintenance;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class AdminDashboardController {
@@ -68,12 +63,6 @@ public class AdminDashboardController {
     private BarChart<String, Number> fleetSizeChart;
 
     @FXML
-    private PieChart maintenanceStatusChart;
-
-    @FXML
-    private BarChart<String, Number> maintenanceTypeChart;
-
-    @FXML
     private GridPane statsGrid;
 
     @FXML
@@ -90,14 +79,12 @@ public class AdminDashboardController {
 
     private OrganisationService organisationService;
     private OrganisationRouteService organisationRouteService;
-    private MaintenanceService maintenanceService;
 
     @FXML
     public void initialize() {
         // Initialize services
         organisationService = new OrganisationService();
         organisationRouteService = new OrganisationRouteService();
-        maintenanceService = new MaintenanceService();
 
         // Load statistics
         loadStatistics();
@@ -155,16 +142,9 @@ public class AdminDashboardController {
             // Update statistics labels
             updateStatLabels(totalOrgs, totalFleet, totalDrivers, avgFleetSize);
 
-            // Update organization charts
+            // Update charts
             updateOrgTypeChart(orgTypeCount);
             updateFleetSizeChart(organisations);
-
-            // Get all maintenances
-            List<Maintenance> maintenances = maintenanceService.afficher_tout();
-
-            // Update maintenance charts
-            updateMaintenanceStatusChart(maintenances);
-            updateMaintenanceTypeChart(maintenances);
 
             log.info("Statistics loaded successfully");
         } catch (Exception e) {
@@ -228,78 +208,6 @@ public class AdminDashboardController {
 
         fleetSizeChart.getData().addAll(fleetSeries, driverSeries);
         fleetSizeChart.setTitle("Top 5 Organisations par Taille de Flotte");
-    }
-
-    /**
-     * Updates the maintenance status pie chart
-     */
-    private void updateMaintenanceStatusChart(List<Maintenance> maintenances) {
-        if (maintenanceStatusChart == null) return;
-
-        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-
-        // Count maintenances by status
-        Map<StatusMaintenance, Integer> statusCount = new HashMap<>();
-        for (StatusMaintenance status : StatusMaintenance.values()) {
-            statusCount.put(status, 0);
-        }
-
-        // Process each maintenance
-        for (Maintenance maintenance : maintenances) {
-            StatusMaintenance status = maintenance.getStatus();
-            if (status != null) {
-                statusCount.put(status, statusCount.get(status) + 1);
-            }
-        }
-
-        // Add data to chart
-        for (Map.Entry<StatusMaintenance, Integer> entry : statusCount.entrySet()) {
-            if (entry.getValue() > 0) {
-                pieChartData.add(new PieChart.Data(entry.getKey().toString(), entry.getValue()));
-            }
-        }
-
-        maintenanceStatusChart.setData(pieChartData);
-        maintenanceStatusChart.setTitle("Statut des Maintenances");
-        maintenanceStatusChart.setLegendSide(Side.RIGHT);
-    }
-
-    /**
-     * Updates the maintenance type bar chart
-     */
-    private void updateMaintenanceTypeChart(List<Maintenance> maintenances) {
-        if (maintenanceTypeChart == null) return;
-
-        // Clear previous data
-        maintenanceTypeChart.getData().clear();
-
-        // Count maintenances by type
-        Map<TypeMaintenance, Integer> typeCount = new HashMap<>();
-        for (TypeMaintenance type : TypeMaintenance.values()) {
-            typeCount.put(type, 0);
-        }
-
-        // Process each maintenance
-        for (Maintenance maintenance : maintenances) {
-            TypeMaintenance type = maintenance.getTypeMaintenance();
-            if (type != null) {
-                typeCount.put(type, typeCount.get(type) + 1);
-            }
-        }
-
-        // Create series for maintenance types
-        XYChart.Series<String, Number> typeSeries = new XYChart.Series<>();
-        typeSeries.setName("Nombre de Maintenances");
-
-        // Add data to series
-        for (Map.Entry<TypeMaintenance, Integer> entry : typeCount.entrySet()) {
-            if (entry.getValue() > 0) {
-                typeSeries.getData().add(new XYChart.Data<>(entry.getKey().toString(), entry.getValue()));
-            }
-        }
-
-        maintenanceTypeChart.getData().add(typeSeries);
-        maintenanceTypeChart.setTitle("Types de Maintenance");
     }
       @FXML
     public void showDashboard() {

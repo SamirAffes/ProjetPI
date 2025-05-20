@@ -21,6 +21,7 @@ module com.projetpi {
     requires org.eclipse.angus.mail;
     requires com.google.gson;
     requires java.net.http; // Added for HTTP client support
+    requires itextpdf; // Added for PDF generation
 
 
     exports controllers;
@@ -30,6 +31,6 @@ module com.projetpi {
     exports utils;
     opens test to javafx.fxml;
     opens entities to org.hibernate.orm.core, lombok;
-    opens utils to lombok;
+    opens utils to lombok, javafx.fxml;
 
 }

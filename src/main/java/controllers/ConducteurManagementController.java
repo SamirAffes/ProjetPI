@@ -215,13 +215,13 @@ public class ConducteurManagementController {
                     photoView.setImage(photo);
                 } else {
                     // Load default photo
-                    Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.png"));
+                    Image defaultPhoto = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Drivers/default_driver.png")));
                     photoView.setImage(defaultPhoto);
                 }
             } catch (Exception e) {
                 log.warn("Could not load driver photo", e);
                 // Default photo as fallback
-                Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.png"));
+                Image defaultPhoto = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Images/Drivers/default_driver.png")));
                 photoView.setImage(defaultPhoto);
             }
         } else {
@@ -396,34 +396,6 @@ public class ConducteurManagementController {
             detailsGrid.add(permisLbl, 0, row);
             detailsGrid.add(permisValue, 1, row++);
 
-            // Type de permis
-            Label typePermisLbl = new Label("Types de permis:");
-            typePermisLbl.setFont(Font.font("System", FontWeight.BOLD, 14));
-
-            // Defensive approach to avoid LazyInitializationException
-            String permisTypes = "N/A";
-            try {
-                List<String> typePermis = conducteur.getTypePermis();
-                if (typePermis != null && !typePermis.isEmpty()) {
-                    permisTypes = String.join(", ", typePermis);
-                }
-            } catch (Exception e) {
-                log.warn("Could not access typePermis collection", e);
-                // Fallback: try to reload the driver with initialized collections
-                try {
-                    Conducteur refreshedConducteur = conducteurService.afficher(conducteur.getId());
-                    if (refreshedConducteur != null && refreshedConducteur.getTypePermis() != null && 
-                        !refreshedConducteur.getTypePermis().isEmpty()) {
-                        permisTypes = String.join(", ", refreshedConducteur.getTypePermis());
-                    }
-                } catch (Exception ex) {
-                    log.error("Failed to reload driver data", ex);
-                }
-            }
-
-            Label typePermisValue = new Label(permisTypes);
-            detailsGrid.add(typePermisLbl, 0, row);
-            detailsGrid.add(typePermisValue, 1, row++);
 
             // Statut
             Label statutLbl = new Label("Statut:");
@@ -595,30 +567,6 @@ public class ConducteurManagementController {
                         }
 
                         conducteurService.modifier(conducteur);
-
-                        // Send email notification if driver is assigned to a vehicle
-                        if (selectedVehicle.getId() > 0 && conducteur.getEmail() != null && !conducteur.getEmail().isEmpty()) {
-                            Vehicule vehicule = vehiculeService.afficher(selectedVehicle.getId());
-                            if (vehicule != null) {
-                                String subject = "Assignation de véhicule - " + organisation.getNom();
-                                String content = "Bonjour " + conducteur.getPrenom() + " " + conducteur.getNom() + ",\n\n" +
-                                    "Nous vous informons que vous avez été assigné à un nouveau véhicule :\n\n" +
-                                    "- Marque : " + vehicule.getMarque() + "\n" +
-                                    "- Modèle : " + vehicule.getModele() + "\n" +
-                                    "- Immatriculation : " + vehicule.getImmatriculation() + "\n\n" +
-                                    "Veuillez prendre soin de ce véhicule et respecter les règles de conduite de l'entreprise.\n\n" +
-                                    "Cordialement,\n" +
-                                    "L'équipe de " + organisation.getNom();
-
-                                try {
-                                    emailService.sendEmail(conducteur.getEmail(), subject, content);
-                                    log.info("Email d'assignation de véhicule envoyé à {}", conducteur.getEmail());
-                                } catch (Exception ex) {
-                                    log.error("Erreur lors de l'envoi de l'email d'assignation de véhicule", ex);
-                                }
-                            }
-                        }
-
                         dialogStage.close();
                         loadConducteurs();
                     }
@@ -756,10 +704,6 @@ public class ConducteurManagementController {
             formGrid.add(permisLabel, 0, row);
             formGrid.add(permisField, 1, row++);
 
-            Label typePermisLabel = new Label("Types de permis (séparés par des virgules)");
-            TextField typePermisField = new TextField();
-            formGrid.add(typePermisLabel, 0, row);
-            formGrid.add(typePermisField, 1, row++);
 
             Label statutLabel = new Label("Statut");
             ComboBox<String> statutComboBox = new ComboBox<>();
@@ -805,25 +749,6 @@ public class ConducteurManagementController {
                             .toLocalDate());
                 }
 
-                // Defensive approach to avoid LazyInitializationException
-                try {
-                    List<String> typePermis = conducteurToEdit.getTypePermis();
-                    if (typePermis != null && !typePermis.isEmpty()) {
-                        typePermisField.setText(String.join(", ", typePermis));
-                    }
-                } catch (Exception ex) {
-                    log.warn("Could not access typePermis collection in form", ex);
-                    // Fallback: try to reload the driver with initialized collections
-                    try {
-                        Conducteur refreshedConducteur = conducteurService.afficher(conducteurToEdit.getId());
-                        if (refreshedConducteur != null && refreshedConducteur.getTypePermis() != null && 
-                            !refreshedConducteur.getTypePermis().isEmpty()) {
-                            typePermisField.setText(String.join(", ", refreshedConducteur.getTypePermis()));
-                        }
-                    } catch (Exception e) {
-                        log.error("Failed to reload driver data for form", e);
-                    }
-                }
 
                 if (conducteurToEdit.getStatut() != null) {
                     statutComboBox.setValue(conducteurToEdit.getStatut());
@@ -892,16 +817,6 @@ public class ConducteurManagementController {
                     conducteur.setAdresse(adresseArea.getText().trim());
                     conducteur.setStatut(statutComboBox.getValue());
 
-                    // Process type permis
-                    if (!typePermisField.getText().trim().isEmpty()) {
-                        List<String> typePermis = new ArrayList<>();
-                        for (String type : typePermisField.getText().split(",")) {
-                            typePermis.add(type.trim());
-                        }
-                        conducteur.setTypePermis(typePermis);
-                    } else {
-                        conducteur.setTypePermis(new ArrayList<>());
-                    }
 
                     // Handle photo
                     String savedPhotoPath = null;
@@ -921,27 +836,6 @@ public class ConducteurManagementController {
                         conducteur.setVehiculeId(0);
                         conducteur.setOrganisationId(organisation.getId());
                         conducteurService.ajouter(conducteur);
-
-                        // Send email notification to the driver about being hired
-                        if (conducteur.getEmail() != null && !conducteur.getEmail().isEmpty()) {
-                            String subject = "Bienvenue chez " + organisation.getNom();
-                            String content = "Bonjour " + conducteur.getPrenom() + " " + conducteur.getNom() + ",\n\n" +
-                                "Nous sommes heureux de vous informer que vous avez été embauché par " + organisation.getNom() + ".\n\n" +
-                                "Voici les détails de votre embauche :\n" +
-                                "- Date d'embauche : " + (conducteur.getDateEmbauche() != null ? 
-                                    new java.text.SimpleDateFormat("dd/MM/yyyy").format(conducteur.getDateEmbauche()) : "Non spécifiée") + "\n" +
-                                "- Statut : " + conducteur.getStatut() + "\n\n" +
-                                "Nous vous souhaitons la bienvenue dans notre équipe et nous sommes impatients de travailler avec vous.\n\n" +
-                                "Cordialement,\n" +
-                                "L'équipe de " + organisation.getNom();
-
-                            try {
-                                emailService.sendEmail(conducteur.getEmail(), subject, content);
-                                log.info("Email de bienvenue envoyé à {}", conducteur.getEmail());
-                            } catch (Exception ex) {
-                                log.error("Erreur lors de l'envoi de l'email de bienvenue", ex);
-                            }
-                        }
                     } else {
                         // Keep existing vehicle assignment
                         conducteurService.modifier(conducteur);
@@ -1025,8 +919,38 @@ public class ConducteurManagementController {
         Optional<ButtonType> result = confirmAlert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
+                // Send email notification to the driver if email is available
+                if (conducteur.getEmail() != null && !conducteur.getEmail().isEmpty()) {
+                    try {
+                        String subject = "Fin de contrat - TuniTransport";
+                        String content = "Cher(e) " + conducteur.getPrenom() + " " + conducteur.getNom() + ",\n\n" +
+                                "Nous vous informons que votre contrat avec " + 
+                                (organisation != null ? organisation.getNom() : "notre organisation") + 
+                                " a été résilié.\n\n" +
+                                "Veuillez contacter le service des ressources humaines pour plus d'informations.\n\n" +
+                                "Cordialement,\n" +
+                                "L'équipe TuniTransport";
+
+                        emailService.sendEmail(conducteur.getEmail(), subject, content);
+                        log.info("Email de notification envoyé à {}", conducteur.getEmail());
+                    } catch (Exception emailEx) {
+                        log.error("Erreur lors de l'envoi de l'email de notification", emailEx);
+                        // Continue with deletion even if email fails
+                    }
+                }
+
+                // Delete the driver
                 conducteurService.supprimer(conducteur);
                 loadConducteurs();
+
+                // Show success message including email notification status
+                if (conducteur.getEmail() != null && !conducteur.getEmail().isEmpty()) {
+                    showAlert(Alert.AlertType.INFORMATION, "Suppression réussie", 
+                        "Le conducteur a été supprimé et une notification a été envoyée à " + conducteur.getEmail());
+                } else {
+                    showAlert(Alert.AlertType.INFORMATION, "Suppression réussie", 
+                        "Le conducteur a été supprimé. Aucune notification n'a été envoyée (email non disponible).");
+                }
             } catch (Exception e) {
                 log.error("Error deleting driver", e);
                 showAlert(Alert.AlertType.ERROR, "Erreur", "Une erreur est survenue lors de la suppression du conducteur.");

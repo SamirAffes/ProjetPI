@@ -192,6 +192,11 @@ public class SearchViewController implements Initializable {
         departureTextField.setMaxEntries(10);
         arrivalTextField.setMaxEntries(10);
 
+        // Add onAction handlers to make Enter key trigger search
+        departureTextField.setOnAction(event -> handleSearch());
+        arrivalTextField.setOnAction(event -> handleSearch());
+        passengersTextField.setOnAction(event -> handleSearch());
+
         // Update destinations based on default transport type
         updateLocationsByTransportType(transportTypeComboBox.getValue());
 

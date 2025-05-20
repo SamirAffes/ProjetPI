@@ -127,6 +127,9 @@ public class Home {
         locationIcon.setIconSize(20);
         locationButton.setGraphic(locationIcon);
 
+        // Add event handler for Enter key in search field
+        searchField.setOnAction(event -> onSearchButtonClick());
+
         logger.info("Initializing Home controller");
 
         // Initialize map on a separate thread to keep UI responsive

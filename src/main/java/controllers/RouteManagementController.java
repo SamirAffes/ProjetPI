@@ -842,6 +842,8 @@ public class RouteManagementController implements Initializable {
             iconLiteral = "fas-subway";
         } else if (transportType.equalsIgnoreCase("tgm")) {
             iconLiteral = "fas-tram";
+        } else if (transportType.equalsIgnoreCase("ferry")) {
+            iconLiteral = "fas-ship";
         } else {
             iconLiteral = "fas-" + transportType.toLowerCase();
         }

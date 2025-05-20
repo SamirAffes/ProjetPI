@@ -13,15 +13,13 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
-import services.ConducteurService;
-import services.EmailService;
 import services.MaintenanceService;
+import services.PdfGenerationService;
 import services.VehiculeService;
 import utils.OrganisationContext;
-
+import java.awt.Desktop;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -30,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import javafx.stage.FileChooser;
 
 @Slf4j
 public class MaintenanceManagementController {
@@ -43,8 +40,7 @@ public class MaintenanceManagementController {
 
     private final MaintenanceService maintenanceService = new MaintenanceService();
     private final VehiculeService vehiculeService = new VehiculeService();
-    private final ConducteurService conducteurService = new ConducteurService();
-    private final EmailService emailService = new EmailService();
+    private final PdfGenerationService pdfGenerationService = new PdfGenerationService();
 
     private Organisation organisation;
 
@@ -328,6 +324,46 @@ public class MaintenanceManagementController {
             changeStatusButton.getStyleClass().add("button-primary");
             changeStatusButton.setOnAction(e -> showChangeStatusDialog(maintenance, detailStage));
 
+            // Generate PDF button
+            Button generatePdfButton = new Button("Générer PDF");
+            generatePdfButton.getStyleClass().add("button-primary");
+            generatePdfButton.setOnAction(e -> {
+                try {
+                    String pdfPath = pdfGenerationService.generateMaintenanceReport(maintenance, vehicule);
+                    if (pdfPath != null) {
+                        // Show success message
+                        Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                        successAlert.setTitle("PDF Généré");
+                        successAlert.setHeaderText(null);
+                        successAlert.setContentText("Le rapport de maintenance a été généré avec succès: " + pdfPath);
+
+                        // Add button to open the PDF
+                        ButtonType openButton = new ButtonType("Ouvrir le PDF");
+                        ButtonType okButton = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+                        successAlert.getButtonTypes().setAll(openButton, okButton);
+
+                        Optional<ButtonType> result = successAlert.showAndWait();
+                        if (result.isPresent() && result.get() == openButton) {
+                            // Open the PDF file
+                            try {
+                                File pdfFile = new File(pdfPath);
+                                if (pdfFile.exists() && Desktop.isDesktopSupported()) {
+                                    Desktop.getDesktop().open(pdfFile);
+                                }
+                            } catch (Exception ex) {
+                                log.error("Error opening PDF file", ex);
+                                showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir le fichier PDF.");
+                            }
+                        }
+                    } else {
+                        showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de générer le rapport PDF.");
+                    }
+                } catch (Exception ex) {
+                    log.error("Error generating PDF", ex);
+                    showAlert(Alert.AlertType.ERROR, "Erreur", "Une erreur est survenue lors de la génération du PDF.");
+                }
+            });
+
             // Close button
             Button closeButton = new Button("Fermer");
             closeButton.getStyleClass().add("button-secondary");
@@ -336,7 +372,7 @@ public class MaintenanceManagementController {
 
             HBox buttonBox = new HBox(10);
             buttonBox.setAlignment(Pos.CENTER_RIGHT);
-            buttonBox.getChildren().addAll(changeStatusButton, closeButton);
+            buttonBox.getChildren().addAll(generatePdfButton, changeStatusButton, closeButton);
 
             // Add all elements to the details box
             detailsBox.getChildren().addAll(
@@ -636,46 +672,6 @@ public class MaintenanceManagementController {
 
                     if (maintenanceToEdit == null) {
                         maintenanceService.ajouter(maintenance);
-
-                        // Send email notification to the driver if their car is going for maintenance
-                        Vehicule vehicule = vehiculeCombo.getValue();
-                        if (vehicule != null) {
-                            // Find the driver assigned to this vehicle
-                            List<Conducteur> allConducteurs = conducteurService.afficher_tout();
-                            for (Conducteur conducteur : allConducteurs) {
-                                if (conducteur.getVehiculeId() == vehicule.getId() && 
-                                    conducteur.getEmail() != null && !conducteur.getEmail().isEmpty()) {
-
-                                    // Format dates for email
-                                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                                    String dateDebutStr = maintenance.getDateDebut() != null ? 
-                                        sdf.format(maintenance.getDateDebut()) : "Non spécifiée";
-                                    String dateFinStr = maintenance.getDateFin() != null ? 
-                                        sdf.format(maintenance.getDateFin()) : "Non spécifiée";
-
-                                    String subject = "Maintenance planifiée pour votre véhicule - " + organisation.getNom();
-                                    String content = "Bonjour " + conducteur.getPrenom() + " " + conducteur.getNom() + ",\n\n" +
-                                        "Nous vous informons qu'une maintenance a été planifiée pour votre véhicule :\n\n" +
-                                        "- Véhicule : " + vehicule.getMarque() + " " + vehicule.getModele() + " (" + vehicule.getImmatriculation() + ")\n" +
-                                        "- Type de maintenance : " + maintenance.getTypeMaintenance() + "\n" +
-                                        "- Date de début : " + dateDebutStr + "\n" +
-                                        "- Date de fin prévue : " + dateFinStr + "\n" +
-                                        "- Statut : " + maintenance.getStatus() + "\n\n" +
-                                        "Pendant cette période, vous ne pourrez pas utiliser ce véhicule.\n\n" +
-                                        "Cordialement,\n" +
-                                        "L'équipe de " + organisation.getNom();
-
-                                    try {
-                                        emailService.sendEmail(conducteur.getEmail(), subject, content);
-                                        log.info("Email de notification de maintenance envoyé à {}", conducteur.getEmail());
-                                    } catch (Exception ex) {
-                                        log.error("Erreur lors de l'envoi de l'email de notification de maintenance", ex);
-                                    }
-
-                                    break; // Only send to the first driver assigned to this vehicle
-                                }
-                            }
-                        }
                     } else {
                         maintenanceService.modifier(maintenance);
                     }

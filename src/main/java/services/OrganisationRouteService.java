@@ -22,7 +22,7 @@ public class OrganisationRouteService implements CRUD<OrganisationRoute> {
     public void ajouter(OrganisationRoute organisationRoute) {
         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
-        
+
         try {
             transaction.begin();
             entityManager.persist(organisationRoute);
@@ -43,7 +43,7 @@ public class OrganisationRouteService implements CRUD<OrganisationRoute> {
     public void supprimer(OrganisationRoute organisationRoute) {
         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
-        
+
         try {
             transaction.begin();
             if (!entityManager.contains(organisationRoute)) {
@@ -67,7 +67,7 @@ public class OrganisationRouteService implements CRUD<OrganisationRoute> {
     public void modifier(OrganisationRoute organisationRoute) {
         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
-        
+
         try {
             transaction.begin();
             entityManager.merge(organisationRoute);
@@ -87,7 +87,7 @@ public class OrganisationRouteService implements CRUD<OrganisationRoute> {
     @Override
     public OrganisationRoute afficher(int id) {
         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
-        
+
         try {
             OrganisationRoute organisationRoute = entityManager.find(OrganisationRoute.class, id);
             return organisationRoute;
@@ -102,7 +102,7 @@ public class OrganisationRouteService implements CRUD<OrganisationRoute> {
     @Override
     public List<OrganisationRoute> afficher_tout() {
         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
-        
+
         try {
             TypedQuery<OrganisationRoute> query = entityManager.createQuery(
                 "SELECT or FROM OrganisationRoute or", OrganisationRoute.class);
@@ -115,30 +115,28 @@ public class OrganisationRouteService implements CRUD<OrganisationRoute> {
             entityManager.close();
         }
     }
-    
+
     /**
      * Find all routes assigned to a specific organisation
      */
     public List<Route> findRoutesByOrganisationId(int organisationId) {
         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
         List<Route> routes = new ArrayList<>();
-        
+
         try {
             TypedQuery<OrganisationRoute> query = entityManager.createQuery(
                 "SELECT or FROM OrganisationRoute or WHERE or.organisationId = :orgId", 
                 OrganisationRoute.class);
             query.setParameter("orgId", organisationId);
-            
+
             List<OrganisationRoute> organisationRoutes = query.getResultList();
-            
+
             for (OrganisationRoute orgRoute : organisationRoutes) {
                 Route route = routeService.afficher(orgRoute.getRouteId());
                 if (route != null) {
                     routes.add(route);
                 }
             }
-            
-            logger.info("Found {} routes for organisation ID: {}", routes.size(), organisationId);
             return routes;
         } catch (Exception e) {
             logger.error("Error finding routes for organisation ID: {}", organisationId, e);
@@ -147,19 +145,19 @@ public class OrganisationRouteService implements CRUD<OrganisationRoute> {
             entityManager.close();
         }
     }
-    
+
     /**
      * Find all organisation routes by organisation ID
      */
     public List<OrganisationRoute> findByOrganisationId(int organisationId) {
         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
-        
+
         try {
             TypedQuery<OrganisationRoute> query = entityManager.createQuery(
                 "SELECT or FROM OrganisationRoute or WHERE or.organisationId = :orgId", 
                 OrganisationRoute.class);
             query.setParameter("orgId", organisationId);
-            
+
             List<OrganisationRoute> organisationRoutes = query.getResultList();
             logger.info("Found {} organisation routes for organisation ID: {}", 
                        organisationRoutes.size(), organisationId);
@@ -171,13 +169,13 @@ public class OrganisationRouteService implements CRUD<OrganisationRoute> {
             entityManager.close();
         }
     }
-    
+
     /**
      * Check if a route is already assigned to an organisation
      */
     public boolean isRouteAssignedToOrganisation(int routeId, int organisationId) {
         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
-        
+
         try {
             // First try a direct count query
             TypedQuery<Long> query = entityManager.createQuery(
@@ -186,17 +184,17 @@ public class OrganisationRouteService implements CRUD<OrganisationRoute> {
                 Long.class);
             query.setParameter("routeId", routeId);
             query.setParameter("orgId", organisationId);
-            
+
             Long count = query.getSingleResult();
             boolean isAssigned = count > 0;
-            
+
             if (isAssigned) {
                 logger.info("Route {} is already assigned to organisation {}", 
                           routeId, organisationId);
             } else {
                 logger.debug("Route {} is not assigned to organisation {}", 
                           routeId, organisationId);
-                          
+
                 // Double-check by looking for the actual records
                 // This is a safety measure in case there are any issues with the count query
                 TypedQuery<OrganisationRoute> routeQuery = entityManager.createQuery(
@@ -205,7 +203,7 @@ public class OrganisationRouteService implements CRUD<OrganisationRoute> {
                     OrganisationRoute.class);
                 routeQuery.setParameter("routeId", routeId);
                 routeQuery.setParameter("orgId", organisationId);
-                
+
                 List<OrganisationRoute> results = routeQuery.getResultList();
                 if (!results.isEmpty()) {
                     logger.warn("Found inconsistency! Count query returned 0 but found {} records for route {} and organisation {}", 
@@ -213,7 +211,7 @@ public class OrganisationRouteService implements CRUD<OrganisationRoute> {
                     return true;
                 }
             }
-            
+
             return isAssigned;
         } catch (Exception e) {
             logger.error("Error checking if route {} is assigned to organisation {}", 
@@ -223,13 +221,13 @@ public class OrganisationRouteService implements CRUD<OrganisationRoute> {
             entityManager.close();
         }
     }
-    
+
     /**
      * Find organisation route by route ID and organisation ID
      */
     public OrganisationRoute findByRouteAndOrganisation(int routeId, int organisationId) {
         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
-        
+
         try {
             TypedQuery<OrganisationRoute> query = entityManager.createQuery(
                 "SELECT or FROM OrganisationRoute or " +
@@ -237,7 +235,7 @@ public class OrganisationRouteService implements CRUD<OrganisationRoute> {
                 OrganisationRoute.class);
             query.setParameter("routeId", routeId);
             query.setParameter("orgId", organisationId);
-            
+
             List<OrganisationRoute> results = query.getResultList();
             if (results.isEmpty()) {
                 return null;
@@ -251,7 +249,7 @@ public class OrganisationRouteService implements CRUD<OrganisationRoute> {
             entityManager.close();
         }
     }
-    
+
     /**
      * Find organisation(s) that have this route assigned to them
      * Returns a list of organisations that offer this route
@@ -259,16 +257,16 @@ public class OrganisationRouteService implements CRUD<OrganisationRoute> {
     public List<Organisation> findOrganisationsByRouteId(int routeId) {
         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
         List<Organisation> organisations = new ArrayList<>();
-        
+
         try {
             TypedQuery<OrganisationRoute> query = entityManager.createQuery(
                 "SELECT or FROM OrganisationRoute or WHERE or.routeId = :routeId AND or.isActive = true", 
                 OrganisationRoute.class);
             query.setParameter("routeId", routeId);
-            
+
             List<OrganisationRoute> orgRoutes = query.getResultList();
-            logger.info("Found {} organisation routes for route ID: {}", orgRoutes.size(), routeId);
-            
+            logger.debug("Found {} organisation routes for route ID: {}", orgRoutes.size(), routeId);
+
             for (OrganisationRoute orgRoute : orgRoutes) {
                 Organisation org = organisationService.afficher(orgRoute.getOrganisationId());
                 if (org != null) {
@@ -276,7 +274,7 @@ public class OrganisationRouteService implements CRUD<OrganisationRoute> {
                     logger.debug("Found organisation {} for route {}", org.getNom(), routeId);
                 }
             }
-            
+
             return organisations;
         } catch (Exception e) {
             logger.error("Error finding organisations for route ID: {}", routeId, e);
@@ -285,7 +283,7 @@ public class OrganisationRouteService implements CRUD<OrganisationRoute> {
             entityManager.close();
         }
     }
-    
+
     /**
      * Get departure and arrival times for a specific route and organisation
      * @return String[] with [departureTime, arrivalTime] or null if not found
@@ -308,7 +306,7 @@ public class OrganisationRouteService implements CRUD<OrganisationRoute> {
     public List<OrganisationRoute> findOrganisationRoutesByLocations(String origin, String destination) {
         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
         List<OrganisationRoute> results = new ArrayList<>();
-        
+
         try {
             // First find all routes that match the origin and destination
             TypedQuery<Route> routeQuery = entityManager.createQuery(
@@ -316,30 +314,30 @@ public class OrganisationRouteService implements CRUD<OrganisationRoute> {
                 Route.class);
             routeQuery.setParameter("origin", origin);
             routeQuery.setParameter("destination", destination);
-            
+
             List<Route> matchingRoutes = routeQuery.getResultList();
             logger.info("Found {} base routes from {} to {}", matchingRoutes.size(), origin, destination);
-            
+
             if (matchingRoutes.isEmpty()) {
                 return results;
             }
-            
+
             // For each matching route, find active organisation routes
             for (Route route : matchingRoutes) {
                 TypedQuery<OrganisationRoute> orgRouteQuery = entityManager.createQuery(
                     "SELECT or FROM OrganisationRoute or WHERE or.routeId = :routeId AND or.isActive = true", 
                     OrganisationRoute.class);
                 orgRouteQuery.setParameter("routeId", route.getId());
-                
+
                 List<OrganisationRoute> orgRoutes = orgRouteQuery.getResultList();
-                
+
                 if (!orgRoutes.isEmpty()) {
                     logger.debug("Found {} active organisation routes for route {} from {} to {}", 
                         orgRoutes.size(), route.getId(), origin, destination);
                     results.addAll(orgRoutes);
                 }
             }
-            
+
             logger.info("Found a total of {} active organisation routes from {} to {}", 
                 results.size(), origin, destination);
             return results;

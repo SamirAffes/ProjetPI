@@ -28,8 +28,6 @@ public class Conducteur {
     private Date dateNaissance;
     private Date dateEmbauche;
     private String numeroPermis;
-    @ElementCollection
-    private List<String> typePermis;
     private String photo;
     private String statut;
 }
