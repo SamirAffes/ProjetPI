@@ -31,6 +31,5 @@ module com.projetpi {
     opens test to javafx.fxml;
     opens entities to org.hibernate.orm.core, lombok;
     opens utils to lombok;
-    opens entities to org.hibernate.orm.core;
 
 }

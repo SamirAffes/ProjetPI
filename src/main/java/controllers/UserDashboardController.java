@@ -395,6 +395,9 @@ public class UserDashboardController {
             case "metro":
                 transportIcon.setIconLiteral("fas-subway");
                 break;
+            case "tgm":
+                transportIcon.setIconLiteral("fas-tram");
+                break;
             case "avion":
             case "plane":
                 transportIcon.setIconLiteral("fas-plane");

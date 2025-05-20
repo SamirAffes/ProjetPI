@@ -215,18 +215,18 @@ public class ConducteurManagementController {
                     photoView.setImage(photo);
                 } else {
                     // Load default photo
-                    Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.svg"));
+                    Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.png"));
                     photoView.setImage(defaultPhoto);
                 }
             } catch (Exception e) {
                 log.warn("Could not load driver photo", e);
                 // Default photo as fallback
-                Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.svg"));
+                Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.png"));
                 photoView.setImage(defaultPhoto);
             }
         } else {
             // Load default photo
-            Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.svg"));
+            Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.png"));
             photoView.setImage(defaultPhoto);
         }
 
@@ -325,17 +325,17 @@ public class ConducteurManagementController {
                         photoView.setImage(photo);
                     } else {
                         // Load default photo
-                        Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.svg"));
+                        Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.png"));
                         photoView.setImage(defaultPhoto);
                     }
                 } catch (Exception e) {
                     log.warn("Could not load driver photo", e);
-                    Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.svg"));
+                    Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.png"));
                     photoView.setImage(defaultPhoto);
                 }
             } else {
                 // Load default photo
-                Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.svg"));
+                Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.png"));
                 photoView.setImage(defaultPhoto);
             }
 
@@ -399,8 +399,28 @@ public class ConducteurManagementController {
             // Type de permis
             Label typePermisLbl = new Label("Types de permis:");
             typePermisLbl.setFont(Font.font("System", FontWeight.BOLD, 14));
-            String permisTypes = conducteur.getTypePermis() != null && !conducteur.getTypePermis().isEmpty() ? 
-                                 String.join(", ", conducteur.getTypePermis()) : "N/A";
+
+            // Defensive approach to avoid LazyInitializationException
+            String permisTypes = "N/A";
+            try {
+                List<String> typePermis = conducteur.getTypePermis();
+                if (typePermis != null && !typePermis.isEmpty()) {
+                    permisTypes = String.join(", ", typePermis);
+                }
+            } catch (Exception e) {
+                log.warn("Could not access typePermis collection", e);
+                // Fallback: try to reload the driver with initialized collections
+                try {
+                    Conducteur refreshedConducteur = conducteurService.afficher(conducteur.getId());
+                    if (refreshedConducteur != null && refreshedConducteur.getTypePermis() != null && 
+                        !refreshedConducteur.getTypePermis().isEmpty()) {
+                        permisTypes = String.join(", ", refreshedConducteur.getTypePermis());
+                    }
+                } catch (Exception ex) {
+                    log.error("Failed to reload driver data", ex);
+                }
+            }
+
             Label typePermisValue = new Label(permisTypes);
             detailsGrid.add(typePermisLbl, 0, row);
             detailsGrid.add(typePermisValue, 1, row++);
@@ -665,18 +685,18 @@ public class ConducteurManagementController {
                         photoView.setImage(photo);
                     } else {
                         // Load default photo
-                        Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.svg"));
+                        Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.png"));
                         photoView.setImage(defaultPhoto);
                     }
                 } catch (Exception e) {
                     log.warn("Could not load driver photo", e);
-                    Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.svg"));
+                    Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.png"));
                     photoView.setImage(defaultPhoto);
                 }
             } else {
                 initialPhotoPath = null;
                 // Load default photo
-                Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.svg"));
+                Image defaultPhoto = new Image(getClass().getResourceAsStream("/Images/Drivers/default_driver.png"));
                 photoView.setImage(defaultPhoto);
             }
 
@@ -785,8 +805,24 @@ public class ConducteurManagementController {
                             .toLocalDate());
                 }
 
-                if (conducteurToEdit.getTypePermis() != null && !conducteurToEdit.getTypePermis().isEmpty()) {
-                    typePermisField.setText(String.join(", ", conducteurToEdit.getTypePermis()));
+                // Defensive approach to avoid LazyInitializationException
+                try {
+                    List<String> typePermis = conducteurToEdit.getTypePermis();
+                    if (typePermis != null && !typePermis.isEmpty()) {
+                        typePermisField.setText(String.join(", ", typePermis));
+                    }
+                } catch (Exception ex) {
+                    log.warn("Could not access typePermis collection in form", ex);
+                    // Fallback: try to reload the driver with initialized collections
+                    try {
+                        Conducteur refreshedConducteur = conducteurService.afficher(conducteurToEdit.getId());
+                        if (refreshedConducteur != null && refreshedConducteur.getTypePermis() != null && 
+                            !refreshedConducteur.getTypePermis().isEmpty()) {
+                            typePermisField.setText(String.join(", ", refreshedConducteur.getTypePermis()));
+                        }
+                    } catch (Exception e) {
+                        log.error("Failed to reload driver data for form", e);
+                    }
                 }
 
                 if (conducteurToEdit.getStatut() != null) {

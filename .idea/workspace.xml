@@ -5,26 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="97c7973e-54a8-402c-9812-fa5eda47bb91" name="Changes" comment="">
-
       <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/CreateReservationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/CreateReservationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/ReservationsViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/ReservationsViewController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/SearchViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/SearchViewController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/entities/Weather.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/entities/Weather.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/RouteService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/RouteService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/WeatherService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/WeatherService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/components/weatherWidget.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/components/weatherWidget.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/organisation/routeManagement.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/organisation/routeManagement.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/styles/modern-style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/styles/modern-style.css" afterDir="false" />
-
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/Home.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/Home.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/ConducteurManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/ConducteurManagementController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/OrganisationManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/OrganisationManagementController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/RouteManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/RouteManagementController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/UserDashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/UserDashboardController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
-
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,7 +68,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "medamine",
+    "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
@@ -90,13 +78,10 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-
-    "settings.editor.selected.configurable": "com.github.copilot.settings.ApplicationConfigurable",
-
     "project.structure.last.edited": "Libraries",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.5045977",
-
+    "settings.editor.selected.configurable": "com.github.copilot.settings.ApplicationConfigurable",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -162,7 +147,6 @@
       <workItem from="1747733353033" duration="1586000" />
       <workItem from="1747734967566" duration="1034000" />
       <workItem from="1747738213340" duration="5442000" />
-
       <workItem from="1747692296474" duration="88000" />
       <workItem from="1747692448915" duration="3611000" />
       <workItem from="1747741986302" duration="2153000" />
@@ -172,6 +156,17 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/controllers/ConducteurManagementController.java</url>
+          <line>855</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

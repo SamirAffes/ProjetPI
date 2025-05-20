@@ -39,3 +39,4 @@ build/
 
 # ignore all jpeg/png files in src\main\resources\Images\any folder\
 
+.idea

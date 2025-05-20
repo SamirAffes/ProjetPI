@@ -639,7 +639,15 @@ public class RouteManagementController implements Initializable {
         FontIcon transportTypeIcon = new FontIcon();
         transportTypeIcon.setIconSize(12);
         transportTypeIcon.setIconColor(javafx.scene.paint.Color.web("#7f8c8d"));
-        transportTypeIcon.setIconLiteral("fas-" + (transportType.equalsIgnoreCase("métro") ? "subway" : transportType.toLowerCase()));
+        String iconLiteral;
+        if (transportType.equalsIgnoreCase("métro")) {
+            iconLiteral = "fas-subway";
+        } else if (transportType.equalsIgnoreCase("tgm")) {
+            iconLiteral = "fas-tram";
+        } else {
+            iconLiteral = "fas-" + transportType.toLowerCase();
+        }
+        transportTypeIcon.setIconLiteral(iconLiteral);
         Label transportLabel = new Label(transportType);
         transportLabel.getStyleClass().add("reservation-detail");
         transportBox.getChildren().addAll(transportTypeIcon, transportLabel);
@@ -829,7 +837,15 @@ public class RouteManagementController implements Initializable {
         FontIcon transportTypeIcon = new FontIcon();
         transportTypeIcon.setIconSize(12);
         transportTypeIcon.setIconColor(javafx.scene.paint.Color.web("#7f8c8d"));
-        transportTypeIcon.setIconLiteral("fas-" + (transportType.equalsIgnoreCase("métro") ? "subway" : transportType.toLowerCase()));
+        String iconLiteral;
+        if (transportType.equalsIgnoreCase("métro")) {
+            iconLiteral = "fas-subway";
+        } else if (transportType.equalsIgnoreCase("tgm")) {
+            iconLiteral = "fas-tram";
+        } else {
+            iconLiteral = "fas-" + transportType.toLowerCase();
+        }
+        transportTypeIcon.setIconLiteral(iconLiteral);
         Label transportLabel = new Label(transportType);
         transportLabel.getStyleClass().add("reservation-detail");
         transportBox.getChildren().addAll(transportTypeIcon, transportLabel);
