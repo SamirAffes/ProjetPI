@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import services.EmailService;
 import services.OrganisationRouteService;
 import services.StationService;
+import services.WeatherService;
+import services.WeatherInfo;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -39,13 +41,26 @@ public class EditRouteDialogController implements Initializable {
     @FXML private TextField durationField;
     @FXML private CheckBox wifiServiceCheckbox;
     @FXML private CheckBox accessibilityCheckbox;
-    
+
+    @FXML private Label originWeatherTemp;
+    @FXML private Label originWeatherDesc;
+    @FXML private Label destWeatherTemp;
+    @FXML private Label destWeatherDesc;
+
     private OrganisationRoute organisationRoute;
     private Route route;
     private OrganisationRouteService organisationRouteService;
-    
+    private WeatherService weatherService;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        try {
+            weatherService = new WeatherService();
+            log.info("WeatherService initialisé avec succès");
+        } catch (Exception e) {
+            log.error("Erreur lors de l'initialisation du WeatherService", e);
+        }
+
         // Setup vehicle type options
         vehicleTypeComboBox.getItems().addAll(
             "Bus standard", "Bus articulé", "Minibus", "Train", "Taxi", "Voiture", "Rame de métro", 
@@ -91,45 +106,84 @@ public class EditRouteDialogController implements Initializable {
         this.organisationRouteService = service;
     }
     
+    private void updateWeatherInfo(String cityInput, Label tempLabel, Label descLabel, double[] coordinates) {
+        if (tempLabel == null || descLabel == null) {
+            log.error("Les labels météo ne sont pas correctement injectés");
+            return;
+        }
+
+        // Initialiser les labels avec un état de chargement
+        Platform.runLater(() -> {
+            tempLabel.setText("Chargement...");
+            descLabel.setText("Chargement...");
+        });
+
+        if (coordinates == null || coordinates.length != 2) {
+            log.warn("Coordonnées non disponibles pour {}", cityInput);
+            Platform.runLater(() -> {
+                tempLabel.setText("--°C");
+                descLabel.setText("Données non disponibles");
+            });
+            return;
+        }
+
+        // Utiliser un thread séparé pour ne pas bloquer l'interface
+        new Thread(() -> {
+            try {
+                WeatherInfo weather = weatherService.getWeatherByCoordinates(coordinates[0], coordinates[1]);
+                if (weather != null) {
+                    Platform.runLater(() -> {
+                        tempLabel.setText(String.format("%.1f°C", weather.getTemperature()));
+                        descLabel.setText(weather.getDescription());
+                        log.info("Météo mise à jour pour {} ({}, {})", cityInput, coordinates[0], coordinates[1]);
+                    });
+                } else {
+                    Platform.runLater(() -> {
+                        tempLabel.setText("--°C");
+                        descLabel.setText("Données non disponibles");
+                    });
+                }
+            } catch (Exception e) {
+                log.error("Erreur lors de la récupération de la météo", e);
+                Platform.runLater(() -> {
+                    tempLabel.setText("--°C");
+                    descLabel.setText("Erreur");
+                });
+            }
+        }).start();
+    }
+
     private void updateRouteInfo() {
         if (route != null) {
-            System.out.println("Mise à jour des informations de la route...");
-            System.out.println("Origin: " + route.getOrigin());
-            System.out.println("Destination: " + route.getDestination());
+            String origin = route.getOrigin();
+            String destination = route.getDestination();
+            String routeInfo = origin + " → " + destination;
 
-            // Affichage du texte basique de la route
-            String routeInfo = route.getOrigin() + " → " + route.getDestination();
+            log.info("Mise à jour des informations pour la route : {} -> {}", origin, destination);
+
+            // Récupération des coordonnées
+            double[] originCoords = Station.getCoordinates(origin);
+            double[] destCoords = Station.getCoordinates(destination);
+
             Platform.runLater(() -> {
                 routeInfoLabel.setText(routeInfo);
-                System.out.println("Route info label mis à jour: " + routeInfo);
-
-                // Mise à jour des informations détaillées des stations
-                String origin = route.getOrigin();
-                String destination = route.getDestination();
-
-                // Récupération et affichage des coordonnées
-                double[] originCoords = Station.getCoordinates(origin);
-                double[] destCoords = Station.getCoordinates(destination);
-
-                System.out.println("Coordonnées origine trouvées: " + (originCoords != null));
-                System.out.println("Coordonnées destination trouvées: " + (destCoords != null));
 
                 if (originCoords != null) {
+                    log.info("Coordonnées origine trouvées : {}, {}", originCoords[0], originCoords[1]);
                     originDetailsLabel.setText("Origine: " + origin);
                     originCoordinatesLabel.setText(String.format("Coordonnées: %.4f, %.4f", originCoords[0], originCoords[1]));
-                    System.out.println("Labels origine mis à jour");
                 } else {
-                    System.out.println("Coordonnées non trouvées pour: " + origin);
+                    log.warn("Pas de coordonnées pour l'origine : {}", origin);
                     originDetailsLabel.setText("Origine: " + origin);
                     originCoordinatesLabel.setText("Coordonnées non disponibles");
                 }
 
                 if (destCoords != null) {
+                    log.info("Coordonnées destination trouvées : {}, {}", destCoords[0], destCoords[1]);
                     destinationDetailsLabel.setText("Destination: " + destination);
                     destinationCoordinatesLabel.setText(String.format("Coordonnées: %.4f, %.4f", destCoords[0], destCoords[1]));
-                    System.out.println("Labels destination mis à jour");
                 } else {
-                    System.out.println("Coordonnées non trouvées pour: " + destination);
+                    log.warn("Pas de coordonnées pour la destination : {}", destination);
                     destinationDetailsLabel.setText("Destination: " + destination);
                     destinationCoordinatesLabel.setText("Coordonnées non disponibles");
                 }
@@ -138,13 +192,59 @@ public class EditRouteDialogController implements Initializable {
                 if (priceField != null) {
                     priceField.setText(String.valueOf(route.getBasePrice()));
                 }
-
                 if (durationField != null) {
                     durationField.setText(String.valueOf(route.getEstimatedDuration()));
                 }
             });
+
+            // Les appels météo doivent être faits en dehors du Platform.runLater
+            if (originCoords != null) {
+                // Appel météo pour l'origine
+                log.info("Récupération météo pour l'origine: {} ({}, {})", origin, originCoords[0], originCoords[1]);
+                new Thread(() -> {
+                    try {
+                        WeatherInfo weather = weatherService.getWeatherByCoordinates(originCoords[0], originCoords[1]);
+                        if (weather != null) {
+                            Platform.runLater(() -> {
+                                originWeatherTemp.setText(String.format("%.1f°C", weather.getTemperature()));
+                                originWeatherDesc.setText(weather.getDescription());
+                            });
+                        } else {
+                            Platform.runLater(() -> {
+                                originWeatherTemp.setText("--°C");
+                                originWeatherDesc.setText("Données non disponibles");
+                            });
+                        }
+                    } catch (Exception e) {
+                        log.error("Erreur lors de la récupération de la météo pour l'origine", e);
+                    }
+                }).start();
+            }
+
+            if (destCoords != null) {
+                // Appel météo pour la destination
+                log.info("Récupération météo pour la destination: {} ({}, {})", destination, destCoords[0], destCoords[1]);
+                new Thread(() -> {
+                    try {
+                        WeatherInfo weather = weatherService.getWeatherByCoordinates(destCoords[0], destCoords[1]);
+                        if (weather != null) {
+                            Platform.runLater(() -> {
+                                destWeatherTemp.setText(String.format("%.1f°C", weather.getTemperature()));
+                                destWeatherDesc.setText(weather.getDescription());
+                            });
+                        } else {
+                            Platform.runLater(() -> {
+                                destWeatherTemp.setText("--°C");
+                                destWeatherDesc.setText("Données non disponibles");
+                            });
+                        }
+                    } catch (Exception e) {
+                        log.error("Erreur lors de la récupération de la météo pour la destination", e);
+                    }
+                }).start();
+            }
         } else {
-            System.out.println("Route est null!");
+            log.warn("Route est null!");
         }
     }
     

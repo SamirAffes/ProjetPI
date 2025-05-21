@@ -4,11 +4,9 @@ module com.projetpi {
     requires javafx.graphics;
     requires static lombok;
     requires org.slf4j;
-    requires java.sql;
     requires ch.qos.logback.core;
     requires ch.qos.logback.classic;
     requires java.dotenv;
-    requires java.desktop;
     requires javafx.swing;
     requires javafx.web; // Added for WebView support
     requires javafx.media; // Added for Media support
@@ -21,7 +19,9 @@ module com.projetpi {
     requires org.eclipse.angus.mail;
     requires com.google.gson;
     requires java.net.http; // Added for HTTP client support
-    requires itextpdf; // Added for PDF generation
+    requires itextpdf;
+    requires com.fasterxml.jackson.databind;
+    requires okhttp3; // Added for PDF generation
 
 
     exports controllers;

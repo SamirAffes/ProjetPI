@@ -1,6 +1,5 @@
 package controllers;
 
-import entities.Weather;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -8,12 +7,8 @@ import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.javafx.FontIcon;
 import services.WeatherService;
+import services.WeatherInfo;
 
-import java.util.concurrent.CompletableFuture;
-
-/**
- * Controller for the weather widget component
- */
 @Slf4j
 public class WeatherWidgetController {
 
@@ -35,23 +30,18 @@ public class WeatherWidgetController {
     @FXML
     private FontIcon weatherIcon;
 
-    private final WeatherService weatherService = WeatherService.getInstance();
-    private String defaultCity = "Tunis"; // Default city
+    private final WeatherService weatherService;
+    private String defaultCity = "Tunis";
 
-    /**
-     * Initialize the weather widget
-     */
+    public WeatherWidgetController() {
+        this.weatherService = new WeatherService();
+    }
+
     @FXML
     public void initialize() {
-        // Load weather data for default city
         loadWeatherData(defaultCity);
     }
 
-    /**
-     * Set the city for the weather widget and load its weather data
-     * 
-     * @param city The city name
-     */
     public void setCity(String city) {
         if (city != null && !city.isEmpty()) {
             this.defaultCity = city;
@@ -59,88 +49,59 @@ public class WeatherWidgetController {
         }
     }
 
-    /**
-     * Load weather data for the specified city
-     * 
-     * @param city The city name
-     */
     private void loadWeatherData(String city) {
-        // Show loading state
         updateUIForLoading();
 
-        // Fetch weather data asynchronously
-        CompletableFuture<Weather> weatherFuture = weatherService.getWeatherForCity(city);
-        
-        weatherFuture.thenAccept(weather -> {
-            // Update UI on JavaFX thread
-            Platform.runLater(() -> updateWeatherUI(weather));
-        }).exceptionally(ex -> {
-            // Handle errors on JavaFX thread
-            Platform.runLater(() -> handleWeatherError(ex));
-            return null;
+        // Utiliser un thread séparé pour ne pas bloquer l'interface
+        new Thread(() -> {
+            try {
+                WeatherInfo weather = weatherService.getWeatherForCity(city);
+                Platform.runLater(() -> updateWeatherUI(weather));
+            } catch (Exception ex) {
+                Platform.runLater(() -> handleWeatherError(ex));
+            }
+        }).start();
+    }
+
+    private void updateUIForLoading() {
+        Platform.runLater(() -> {
+            cityLabel.setText(defaultCity);
+            temperatureLabel.setText("--°C");
+            descriptionLabel.setText("Chargement...");
+            adviceLabel.setText("");
+            weatherIcon.setIconLiteral("fas-cloud");
         });
     }
 
-    /**
-     * Update UI to show loading state
-     */
-    private void updateUIForLoading() {
-        cityLabel.setText(defaultCity);
-        temperatureLabel.setText("--°C");
-        descriptionLabel.setText("Chargement...");
-        adviceLabel.setText("");
-        weatherIcon.setIconLiteral("fas-cloud");
-    }
+    private void updateWeatherUI(WeatherInfo weather) {
+        if (weather != null) {
+            cityLabel.setText(defaultCity);
+            temperatureLabel.setText(String.format("%.1f°C", weather.getTemperature()));
+            descriptionLabel.setText(weather.getDescription());
 
-    /**
-     * Update the UI with weather data
-     * 
-     * @param weather The weather data
-     */
-    private void updateWeatherUI(Weather weather) {
-        if (weather == null) {
-            handleWeatherError(new RuntimeException("Weather data is null"));
-            return;
-        }
-
-        try {
-            cityLabel.setText(weather.getCity());
-            temperatureLabel.setText(weather.getFormattedTemperature());
-            descriptionLabel.setText(weather.getCapitalizedDescription());
-            adviceLabel.setText(weatherService.getTravelAdvice(weather));
-            
-            // Set appropriate weather icon
-            String iconLiteral = weatherService.getWeatherIcon(weather.getIcon());
-            weatherIcon.setIconLiteral(iconLiteral);
-            
-            log.info("Weather widget updated for {}: {}, {}", 
-                    weather.getCity(), weather.getFormattedTemperature(), weather.getDescription());
-        } catch (Exception e) {
-            log.error("Error updating weather UI: {}", e.getMessage(), e);
-            handleWeatherError(e);
+            // Définir un conseil en fonction de la température
+            if (weather.getTemperature() > 30) {
+                adviceLabel.setText("Pensez à bien vous hydrater");
+                weatherIcon.setIconLiteral("fas-sun");
+            } else if (weather.getTemperature() < 10) {
+                adviceLabel.setText("Couvrez-vous bien");
+                weatherIcon.setIconLiteral("fas-snowflake");
+            } else {
+                adviceLabel.setText("Température agréable");
+                weatherIcon.setIconLiteral("fas-cloud-sun");
+            }
+        } else {
+            handleWeatherError(new Exception("Données météo non disponibles"));
         }
     }
 
-    /**
-     * Handle errors when fetching weather data
-     * 
-     * @param ex The exception
-     */
     private void handleWeatherError(Throwable ex) {
-        log.error("Error fetching weather data: {}", ex.getMessage(), ex);
-        
+        log.error("Erreur lors de la récupération de la météo", ex);
         cityLabel.setText(defaultCity);
         temperatureLabel.setText("--°C");
-        descriptionLabel.setText("Données non disponibles");
-        adviceLabel.setText("Vérifiez votre connexion internet");
+        descriptionLabel.setText("Erreur de chargement");
+        adviceLabel.setText("Veuillez réessayer plus tard");
         weatherIcon.setIconLiteral("fas-exclamation-triangle");
     }
-
-    /**
-     * Refresh weather data
-     */
-    @FXML
-    public void refreshWeather() {
-        loadWeatherData(defaultCity);
-    }
 }
+

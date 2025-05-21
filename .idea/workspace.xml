@@ -4,10 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="97c7973e-54a8-402c-9812-fa5eda47bb91" name="Changes" comment="Ajouter la fonction email lors de l'ajout d'une station et la modification d'une station aussi nous avons ajouter une fonction sous la classe route pour recuperer les coordonne d'une station a partir d'un code">
+    <list default="true" id="97c7973e-54a8-402c-9812-fa5eda47bb91" name="Changes" comment="Ajouter la fonction email lors de l'ajout d'une station et la modification d'une station aussi nous avons ajouter une fonction sous la classe route pour recuperer les coordonne d'une station a partir d'un code, ajout sur edit route l'affichage du station origine et station distination et ces coordonnées">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/controllers/EditRouteDialogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/EditRouteDialogController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/entities/Station.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/entities/Station.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/WeatherWidgetController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/WeatherWidgetController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/services/WeatherService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/WeatherService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/components/weatherWidget.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/components/weatherWidget.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/organisation/editRouteDialog.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/organisation/editRouteDialog.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -82,7 +86,7 @@
     "project.structure.last.edited": "Libraries",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.5045977",
-    "settings.editor.selected.configurable": "com.github.copilot.settings.ApplicationConfigurable",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -155,7 +159,7 @@
       <workItem from="1747773586159" duration="5649000" />
       <workItem from="1747828286034" duration="2063000" />
       <workItem from="1747846441193" duration="2407000" />
-      <workItem from="1747861591398" duration="3313000" />
+      <workItem from="1747861591398" duration="5866000" />
     </task>
     <task id="LOCAL-00001" summary="Ajouter la fonction email lors de l'ajout d'une station et la modification d'une station aussi nous avons ajouter une fonction sous la classe route pour recuperer les coordonne d'une station a partir d'un code">
       <option name="closed" value="true" />
@@ -173,7 +177,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747865031831</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Ajouter la fonction email lors de l'ajout d'une station et la modification d'une station aussi nous avons ajouter une fonction sous la classe route pour recuperer les coordonne d'une station a partir d'un code, ajout sur edit route l'affichage du station origine et station distination et ces coordonnées">
+      <option name="closed" value="true" />
+      <created>1747866275049</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1747866275049</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -181,7 +193,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Ajouter la fonction email lors de l'ajout d'une station et la modification d'une station aussi nous avons ajouter une fonction sous la classe route pour recuperer les coordonne d'une station a partir d'un code" />
-    <option name="LAST_COMMIT_MESSAGE" value="Ajouter la fonction email lors de l'ajout d'une station et la modification d'une station aussi nous avons ajouter une fonction sous la classe route pour recuperer les coordonne d'une station a partir d'un code" />
+    <MESSAGE value="Ajouter la fonction email lors de l'ajout d'une station et la modification d'une station aussi nous avons ajouter une fonction sous la classe route pour recuperer les coordonne d'une station a partir d'un code, ajout sur edit route l'affichage du station origine et station distination et ces coordonnées" />
+    <option name="LAST_COMMIT_MESSAGE" value="Ajouter la fonction email lors de l'ajout d'une station et la modification d'une station aussi nous avons ajouter une fonction sous la classe route pour recuperer les coordonne d'une station a partir d'un code, ajout sur edit route l'affichage du station origine et station distination et ces coordonnées" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -1,57 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.HBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox fx:id="weatherWidget" alignment="CENTER" prefHeight="180.0" prefWidth="280.0" styleClass="dashboard-stats-card, weather-widget" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.WeatherWidgetController">
-   <children>
-      <HBox alignment="CENTER_LEFT" spacing="15.0">
-         <children>
-            <FontIcon fx:id="weatherIcon" iconColor="#2196f3" iconLiteral="fas-cloud-sun" iconSize="45" />
-            <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
-               <children>
-                  <Label fx:id="cityLabel" styleClass="weather-location" text="Tunis">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="temperatureLabel" styleClass="weather-temp" text="24°C">
-                     <font>
-                        <Font name="System Bold" size="28.0" />
-                     </font>
-                  </Label>
-               </children>
-            </VBox>
-            <Button mnemonicParsing="false" onAction="#refreshWeather" styleClass="icon-button" text="">
-               <graphic>
-                  <FontIcon iconColor="#6c757d" iconLiteral="fas-sync-alt" iconSize="14" />
-               </graphic>
-            </Button>
-         </children>
-      </HBox>
-      <Label fx:id="descriptionLabel" styleClass="weather-desc" text="Ensoleillé">
-         <VBox.margin>
-            <Insets top="10.0" />
-         </VBox.margin>
-         <font>
-            <Font size="16.0" />
-         </font>
-      </Label>
-      <Label fx:id="adviceLabel" styleClass="weather-advice" text="Idéal pour voyager" wrapText="true">
-         <VBox.margin>
-            <Insets top="8.0" />
-         </VBox.margin>
-         <font>
-            <Font size="14.0" />
-         </font>
-      </Label>
-   </children>
-   <padding>
-      <Insets bottom="18.0" left="18.0" right="18.0" top="18.0" />
-   </padding>
+<VBox fx:id="weatherWidget" spacing="5" style="-fx-background-color: white; -fx-padding: 10; -fx-background-radius: 5; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.WeatherWidgetController">
+
+    <Label fx:id="cityLabel" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <FontIcon fx:id="weatherIcon" iconLiteral="fas-cloud" iconSize="32"/>
+        <Label fx:id="temperatureLabel" style="-fx-font-size: 24; -fx-font-weight: bold;"/>
+    </HBox>
+
+    <Label fx:id="descriptionLabel" style="-fx-font-size: 14;"/>
+    <Label fx:id="adviceLabel" style="-fx-font-size: 12; -fx-text-fill: #666666;"/>
+
+    <padding>
+        <Insets bottom="10" left="10" right="10" top="10"/>
+    </padding>
 </VBox>

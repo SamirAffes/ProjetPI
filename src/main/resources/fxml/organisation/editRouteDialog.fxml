@@ -15,17 +15,25 @@
         <Label text="Informations de la route" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
         <Label fx:id="routeInfoLabel" style="-fx-font-size: 14;"/>
 
-        <!-- Station Details -->
+        <!-- Station Details with Weather -->
         <VBox spacing="5" style="-fx-padding: 10 0;">
             <Label text="Station de départ" style="-fx-font-weight: bold;"/>
             <Label fx:id="originDetailsLabel" style="-fx-padding: 0 0 0 10;"/>
             <Label fx:id="originCoordinatesLabel" style="-fx-padding: 0 0 0 10; -fx-text-fill: #666666;"/>
+            <HBox spacing="10" style="-fx-padding: 5 0 0 10;">
+                <Label fx:id="originWeatherTemp" style="-fx-text-fill: #1976D2;"/>
+                <Label fx:id="originWeatherDesc" style="-fx-text-fill: #666666;"/>
+            </HBox>
         </VBox>
 
         <VBox spacing="5" style="-fx-padding: 10 0;">
             <Label text="Station d'arrivée" style="-fx-font-weight: bold;"/>
             <Label fx:id="destinationDetailsLabel" style="-fx-padding: 0 0 0 10;"/>
             <Label fx:id="destinationCoordinatesLabel" style="-fx-padding: 0 0 0 10; -fx-text-fill: #666666;"/>
+            <HBox spacing="10" style="-fx-padding: 5 0 0 10;">
+                <Label fx:id="destWeatherTemp" style="-fx-text-fill: #1976D2;"/>
+                <Label fx:id="destWeatherDesc" style="-fx-text-fill: #666666;"/>
+            </HBox>
         </VBox>
     </VBox>
 
