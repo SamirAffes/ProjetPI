@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import services.EmailService;
 import services.OrganisationRouteService;
 
 import java.net.URL;
@@ -169,6 +170,11 @@ public class EditRouteDialogController implements Initializable {
             log.info("Updated organisation route {}", organisationRoute.getId());
             utils.NotificationManager.showSuccess("Succès", "L'itinéraire a été modifié avec succès");
             closeDialog();
+
+
+
+            EmailService es = new EmailService();
+            es.sendEmail(organisationRoute.getOrganisation().getEmail(),"Une ligne modifié","Votre ligne a été modifié avec succès");
             
         } catch (Exception e) {
             log.error("Error updating organisation route", e);

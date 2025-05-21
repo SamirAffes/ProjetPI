@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import services.OrganisationRouteService;
 import services.StationService;
+import services.EmailService;
 
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -359,7 +360,10 @@ public class AddRouteDialogController implements Initializable {
             log.info("Added route {} to organisation {}", route.getId(), organisation.getId());
             utils.NotificationManager.showSuccess("Succès", "L'itinéraire a été ajouté avec succès");
             closeDialog();
-            
+
+            EmailService es = new EmailService();
+            es.sendEmail(organisation.getEmail(),"Nouvelle ligne ajouté","Votre ligne a été ajoutée avec succès");
+
         } catch (Exception e) {
             log.error("Error adding route to organisation", e);
             showAlert(Alert.AlertType.ERROR, "Erreur", "Une erreur est survenue lors de l'ajout de l'itinéraire");

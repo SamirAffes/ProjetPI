@@ -18,6 +18,10 @@ public class OrganisationRoute {
     @Column(nullable = false)
     private int organisationId;
     
+    @ManyToOne
+    @JoinColumn(name = "organisationId", referencedColumnName = "id", insertable = false, updatable = false)
+    private Organisation organisation;
+
     @Column(nullable = false)
     private int routeId;
     
@@ -136,4 +140,5 @@ public class OrganisationRoute {
     public int getRouteDuration() {
         return customDuration != null ? customDuration : 0;
     }
-} 
+}
+
