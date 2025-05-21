@@ -221,8 +221,7 @@ public class AutoCompleteTextField extends TextField {
         lastSelectedValue = value;
         entriesPopup.hide();
         
-        // Move caret to end of text and trigger onChange event
+        // Move caret to end of text
         positionCaret(getText().length());
-        fireEvent(new ActionEvent());
     }
-} 
+}
