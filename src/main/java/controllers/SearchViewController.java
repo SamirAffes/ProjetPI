@@ -16,6 +16,8 @@ import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -192,10 +194,29 @@ public class SearchViewController implements Initializable {
         departureTextField.setMaxEntries(10);
         arrivalTextField.setMaxEntries(10);
 
-        // Add onAction handlers to make Enter key trigger search
-        departureTextField.setOnAction(event -> handleSearch());
-        arrivalTextField.setOnAction(event -> handleSearch());
-        passengersTextField.setOnAction(event -> handleSearch());
+        // Remove action handlers that auto-trigger search
+        // departureTextField.setOnAction(event -> handleSearch());
+        // arrivalTextField.setOnAction(event -> handleSearch());
+        // passengersTextField.setOnAction(event -> handleSearch());
+        
+        // Prevent text fields from triggering search on Enter key press
+        departureTextField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                event.consume(); // This prevents the event from being processed further
+            }
+        });
+        
+        arrivalTextField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                event.consume();
+            }
+        });
+        
+        passengersTextField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                event.consume();
+            }
+        });
 
         // Update destinations based on default transport type
         updateLocationsByTransportType(transportTypeComboBox.getValue());
