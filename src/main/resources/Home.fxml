@@ -61,6 +61,19 @@
                </font>
             </Button>
 
+            <!-- Chatbot button at bottom left -->
+            <Button fx:id="chatbotButton" mnemonicParsing="false" onAction="#onChatbotButtonClick" prefHeight="50.0" prefWidth="50.0" styleClass="chatbot-button" StackPane.alignment="BOTTOM_LEFT">
+               <StackPane.margin>
+                  <Insets bottom="20.0" left="20.0" />
+               </StackPane.margin>
+               <graphic>
+                  <FontIcon iconLiteral="fas-robot" iconSize="20" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Chat with TunBot" />
+               </tooltip>
+            </Button>
+
             <!-- Sign-in form (initially invisible) -->
           <VBox fx:id="signInForm" alignment="CENTER" maxHeight="430.0" maxWidth="410.0" spacing="15.0" styleClass="card" visible="false" BorderPane.alignment="CENTER">
                <children>

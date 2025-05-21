@@ -337,15 +337,6 @@
                               <FontIcon iconColor="#f39c12" iconLiteral="fas-car" iconSize="20" />
                            </graphic>
                         </Label>
-                        <HBox alignment="CENTER_RIGHT" spacing="15.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Button mnemonicParsing="false" styleClass="button-primary" text="Ajouter un véhicule">
-                                 <graphic>
-                                    <FontIcon iconLiteral="fas-plus" />
-                                 </graphic>
-                              </Button>
-                           </children>
-                        </HBox>
                      </children>
                      <padding>
                         <Insets bottom="10.0" />
@@ -369,15 +360,6 @@
                               <FontIcon iconColor="#9b59b6" iconLiteral="fas-user" iconSize="20" />
                            </graphic>
                         </Label>
-                        <HBox alignment="CENTER_RIGHT" spacing="15.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Button mnemonicParsing="false" styleClass="button-primary" text="Ajouter un conducteur">
-                                 <graphic>
-                                    <FontIcon iconLiteral="fas-plus" />
-                                 </graphic>
-                              </Button>
-                           </children>
-                        </HBox>
                      </children>
                      <padding>
                         <Insets bottom="10.0" />
@@ -401,15 +383,6 @@
                               <FontIcon iconColor="#e74c3c" iconLiteral="fas-tools" iconSize="20" />
                            </graphic>
                         </Label>
-                        <HBox alignment="CENTER_RIGHT" spacing="15.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Button mnemonicParsing="false" styleClass="button-primary" text="Ajouter une maintenance">
-                                 <graphic>
-                                    <FontIcon iconLiteral="fas-plus" />
-                                 </graphic>
-                              </Button>
-                           </children>
-                        </HBox>
                      </children>
                      <padding>
                         <Insets bottom="10.0" />
@@ -433,15 +406,6 @@
                               <FontIcon iconColor="#2ecc71" iconLiteral="fas-route" iconSize="20" />
                            </graphic>
                         </Label>
-                        <HBox alignment="CENTER_RIGHT" spacing="15.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Button mnemonicParsing="false" styleClass="button-primary" text="Ajouter un itinéraire">
-                                 <graphic>
-                                    <FontIcon iconLiteral="fas-plus" />
-                                 </graphic>
-                              </Button>
-                           </children>
-                        </HBox>
                      </children>
                      <padding>
                         <Insets bottom="10.0" />

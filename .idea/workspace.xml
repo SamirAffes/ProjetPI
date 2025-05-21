@@ -6,20 +6,15 @@
   <component name="ChangeListManager">
     <list default="true" id="97c7973e-54a8-402c-9812-fa5eda47bb91" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/AdminDashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/AdminDashboardController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/controllers/ConducteurManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/ConducteurManagementController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/controllers/Home.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/Home.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/controllers/MaintenanceManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/MaintenanceManagementController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/RouteManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/RouteManagementController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/SearchViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/SearchViewController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/entities/Conducteur.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/entities/Conducteur.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/ConducteurService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/ConducteurService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/OrganisationRouteService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/OrganisationRouteService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/VehiculeManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/VehiculeManagementController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/services/EmailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/EmailService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/services/RouteService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/RouteService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/Home.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Home.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/admin/dashboard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/admin/dashboard.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/user/search.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/user/search.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/organisation/dashboard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/organisation/dashboard.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/styles/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/styles/style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -158,7 +153,9 @@
       <workItem from="1747692448915" duration="3611000" />
       <workItem from="1747741986302" duration="2153000" />
       <workItem from="1747762661562" duration="1481000" />
-      <workItem from="1747773586159" duration="5213000" />
+      <workItem from="1747773586159" duration="5649000" />
+      <workItem from="1747828286034" duration="2063000" />
+      <workItem from="1747846441193" duration="2407000" />
     </task>
     <servers />
   </component>
@@ -170,7 +167,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/controllers/ConducteurManagementController.java</url>
-          <line>780</line>
+          <line>790</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>

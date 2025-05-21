@@ -156,4 +156,101 @@ public class EmailService {
             return false;
         }
     }
+    
+    /**
+     * Génère le contenu HTML pour l'embauche d'un conducteur
+     */
+    public String buildHiringEmailContent(String prenom, String nom) {
+        return "<!DOCTYPE html>"
+                + "<html><head><style>body{font-family:Arial,sans-serif;}" +
+                ".header{background-color:#4CAF50;color:white;padding:10px;text-align:center;}" +
+                ".content{padding:20px;border:1px solid #ddd;}" +
+                ".footer{background-color:#f1f1f1;padding:10px;text-align:center;}" +
+                "</style></head><body>"
+                + "<div class='container'>"
+                + "<div class='header'><h2>Bienvenue chez TuniTransport !</h2></div>"
+                + "<div class='content'>"
+                + "<p>Cher(e) " + prenom + " " + nom + ",</p>"
+                + "<p>Nous avons le plaisir de vous informer que vous avez été <b>recruté(e)</b> en tant que conducteur au sein de notre équipe.</p>"
+                + "<img src='https://cdn-icons-png.flaticon.com/512/194/194938.png' alt='Conducteur' style='width:120px;display:block;margin:20px auto;'>"
+                + "<p>Bienvenue à bord ! Nous vous souhaitons beaucoup de succès dans vos nouvelles fonctions.</p>"
+                + "</div>"
+                + "<div class='footer'><p>L'équipe TuniTransport</p></div>"
+                + "</div></body></html>";
+    }
+
+    /**
+     * Génère le contenu HTML pour l'assignation d'un véhicule
+     */
+    public String buildVehicleAssignmentEmailContent(String prenom, String nom, String vehicule, String immatriculation) {
+        return "<!DOCTYPE html>"
+                + "<html><head><style>body{font-family:Arial,sans-serif;}" +
+                ".header{background-color:#2196F3;color:white;padding:10px;text-align:center;}" +
+                ".content{padding:20px;border:1px solid #ddd;}" +
+                ".footer{background-color:#f1f1f1;padding:10px;text-align:center;}" +
+                "</style></head><body>"
+                + "<div class='container'>"
+                + "<div class='header'><h2>Véhicule Assigné</h2></div>"
+                + "<div class='content'>"
+                + "<p>Cher(e) " + prenom + " " + nom + ",</p>"
+                + "<p>Un véhicule vous a été assigné :</p>"
+                + "<ul><li><b>Véhicule :</b> " + vehicule + "</li>"
+                + "<li><b>Immatriculation :</b> " + immatriculation + "</li></ul>"
+                + "<img src='https://cdn-icons-png.flaticon.com/512/743/743007.png' alt='Véhicule' style='width:120px;display:block;margin:20px auto;'>"
+                + "<p>Merci de vérifier l'état du véhicule avant chaque prise de service.</p>"
+                + "</div>"
+                + "<div class='footer'><p>L'équipe TuniTransport</p></div>"
+                + "</div></body></html>";
+    }
+
+    /**
+     * Génère le contenu HTML pour la notification de licenciement
+     */
+    public String buildFiringEmailContent(String prenom, String nom, String organisation) {
+        return "<!DOCTYPE html>"
+                + "<html><head><style>body{font-family:Arial,sans-serif;}" +
+                ".header{background-color:#f44336;color:white;padding:10px;text-align:center;}" +
+                ".content{padding:20px;border:1px solid #ddd;}" +
+                ".footer{background-color:#f1f1f1;padding:10px;text-align:center;}" +
+                "</style></head><body>"
+                + "<div class='container'>"
+                + "<div class='header'><h2>Fin de Contrat</h2></div>"
+                + "<div class='content'>"
+                + "<p>Cher(e) " + prenom + " " + nom + ",</p>"
+                + "<p>Nous vous informons que votre contrat avec " + organisation + " a été résilié.</p>"
+                + "<img src='https://cdn-icons-png.flaticon.com/512/753/753345.png' alt='Fin de contrat' style='width:120px;display:block;margin:20px auto;'>"
+                + "<p>Veuillez contacter le service RH pour plus d'informations.</p>"
+                + "</div>"
+                + "<div class='footer'><p>L'équipe TuniTransport</p></div>"
+                + "</div></body></html>";
+    }
+
+    /**
+     * Génère le contenu HTML pour la notification de maintenance du véhicule
+     */
+    public String buildMaintenanceEmailContent(String prenom, String nom, String vehicule, String immatriculation) {
+        return "<!DOCTYPE html>"
+                + "<html><head><style>body{font-family:Arial,sans-serif;}" +
+                ".header{background-color:#FF9800;color:white;padding:10px;text-align:center;}" +
+                ".content{padding:20px;border:1px solid #ddd;}" +
+                ".footer{background-color:#f1f1f1;padding:10px;text-align:center;}" +
+                "</style></head><body>"
+                + "<div class='container'>"
+                + "<div class='header'><h2>Véhicule en Maintenance</h2></div>"
+                + "<div class='content'>"
+                + "<p>Cher(e) " + prenom + " " + nom + ",</p>"
+                + "<p>Votre véhicule <b>" + vehicule + "</b> (" + immatriculation + ") a été envoyé en maintenance.</p>"
+                + "<img src='https://cdn-icons-png.flaticon.com/512/3062/3062634.png' alt='Maintenance' style='width:120px;display:block;margin:20px auto;'>"
+                + "<p>Nous vous tiendrons informé(e) dès qu'il sera de nouveau disponible.</p>"
+                + "</div>"
+                + "<div class='footer'><p>L'équipe TuniTransport</p></div>"
+                + "</div></body></html>";
+    }
+
+    /**
+     * Envoie un email HTML générique
+     */
+    public boolean sendGenericHtmlEmail(String to, String subject, String htmlContent) {
+        return sendHtmlEmail(to, subject, htmlContent);
+    }
 }

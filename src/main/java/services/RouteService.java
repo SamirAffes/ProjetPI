@@ -350,4 +350,103 @@ public class RouteService implements CRUD<Route> {
             entityManager.close();
         }
     }
+
+    /**
+     * Get relevant route data for RAG (Retrieval-Augmented Generation) functionality.
+     * This method collects information about routes, transport modes, and locations
+     * to provide context for the chatbot.
+     * 
+     * @return A string containing relevant route data
+     */
+    public String getRelevantRouteData() {
+        logger.info("Gathering relevant route data for RAG");
+        StringBuilder routeData = new StringBuilder();
+
+        try {
+            // Get all routes
+            List<Route> routes = afficher_tout();
+
+            // Get unique locations
+            List<String> locations = getAllLocations();
+
+            // Get unique transport modes
+            EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
+            TypedQuery<String> modesQuery = entityManager.createQuery(
+                "SELECT DISTINCT r.transportMode FROM Route r", String.class);
+            List<String> transportModes = modesQuery.getResultList();
+            entityManager.close();
+
+            // Add summary information
+            routeData.append("Transport System Information:\n");
+            routeData.append("- Total routes: ").append(routes.size()).append("\n");
+            routeData.append("- Available locations: ").append(String.join(", ", locations)).append("\n");
+            routeData.append("- Transport modes: ").append(String.join(", ", transportModes)).append("\n\n");
+
+            // Add detailed route information (limit to 20 routes to avoid too much data)
+            routeData.append("Sample Routes:\n");
+            int count = 0;
+            for (Route route : routes) {
+                if (count >= 20) break;
+
+                routeData.append("- Route ").append(route.getId()).append(": ")
+                        .append(route.getOrigin()).append(" to ").append(route.getDestination())
+                        .append(" via ").append(route.getTransportMode())
+                        .append(", operated by ").append(route.getCompanyName() != null ? route.getCompanyName() : "Unknown")
+                        .append(", price: ").append(route.getPrice()).append(" TND")
+                        .append(", duration: ").append(route.getEstimatedDuration()).append(" minutes")
+                        .append("\n");
+                count++;
+            }
+
+            // Add some common route patterns
+            routeData.append("\nCommon Route Patterns:\n");
+            Map<String, Integer> transportModeCount = new HashMap<>();
+            Map<String, Integer> originCount = new HashMap<>();
+            Map<String, Integer> destinationCount = new HashMap<>();
+
+            for (Route route : routes) {
+                // Count transport modes
+                String mode = route.getTransportMode();
+                transportModeCount.put(mode, transportModeCount.getOrDefault(mode, 0) + 1);
+
+                // Count origins
+                String origin = route.getOrigin();
+                originCount.put(origin, originCount.getOrDefault(origin, 0) + 1);
+
+                // Count destinations
+                String destination = route.getDestination();
+                destinationCount.put(destination, destinationCount.getOrDefault(destination, 0) + 1);
+            }
+
+            // Add most common transport modes
+            routeData.append("- Most common transport modes: ");
+            transportModeCount.entrySet().stream()
+                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                .limit(3)
+                .forEach(e -> routeData.append(e.getKey()).append(" (").append(e.getValue()).append(" routes), "));
+            routeData.append("\n");
+
+            // Add most common origins
+            routeData.append("- Most common origins: ");
+            originCount.entrySet().stream()
+                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                .limit(3)
+                .forEach(e -> routeData.append(e.getKey()).append(" (").append(e.getValue()).append(" routes), "));
+            routeData.append("\n");
+
+            // Add most common destinations
+            routeData.append("- Most common destinations: ");
+            destinationCount.entrySet().stream()
+                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                .limit(3)
+                .forEach(e -> routeData.append(e.getKey()).append(" (").append(e.getValue()).append(" routes), "));
+            routeData.append("\n");
+
+            logger.info("Successfully gathered route data for RAG");
+            return routeData.toString();
+        } catch (Exception e) {
+            logger.error("Error gathering route data for RAG", e);
+            return "Error retrieving route data. Basic information: Routes connect various cities in Tunisia using different transport modes like bus, train, and metro.";
+        }
+    }
 } 

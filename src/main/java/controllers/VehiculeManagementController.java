@@ -310,11 +310,6 @@ public class VehiculeManagementController {
                 conducteurLabel.setText("Conducteur: Non assigné");
             }
             
-            // Buttons for assigning/changing conducteur
-            Button assignConducteurBtn = new Button(vehicule.getConducteurId() > 0 ? "Changer conducteur" : "Assigner un conducteur");
-            assignConducteurBtn.getStyleClass().add("button-primary");
-            assignConducteurBtn.setOnAction(e -> assignConducteur(vehicule, detailStage));
-            
             Button closeButton = new Button("Fermer");
             closeButton.getStyleClass().add("button-secondary");
             closeButton.setPrefWidth(100);
@@ -322,7 +317,7 @@ public class VehiculeManagementController {
             
             HBox buttonBox = new HBox(10);
             buttonBox.setAlignment(Pos.CENTER_RIGHT);
-            buttonBox.getChildren().addAll(assignConducteurBtn, closeButton);
+            buttonBox.getChildren().addAll(closeButton);
             
             // Add photo to top center
             HBox photoBox = new HBox();
@@ -357,115 +352,6 @@ public class VehiculeManagementController {
         }
     }
     
-    private void assignConducteur(Vehicule vehicule, Stage parentStage) {
-        try {
-            // Get all conducteurs from the current organization
-            List<Conducteur> conducteurs = conducteurService.afficher_tout();
-            
-            if (conducteurs.isEmpty()) {
-                showAlert(Alert.AlertType.INFORMATION, "Information", "Aucun conducteur disponible. Veuillez ajouter des conducteurs d'abord.");
-                return;
-            }
-            
-            // Create a dialog to select a conducteur
-            Stage dialogStage = new Stage();
-            dialogStage.initModality(Modality.WINDOW_MODAL);
-            dialogStage.initOwner(parentStage);
-            dialogStage.setTitle("Assigner un conducteur");
-            
-            VBox dialogVbox = new VBox(15);
-            dialogVbox.setPadding(new Insets(20));
-            
-            Label titleLabel = new Label("Sélectionner un conducteur");
-            titleLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
-            
-            // Create a combobox of conducteurs
-            ComboBox<Conducteur> conducteurCombo = new ComboBox<>();
-            for (Conducteur c : conducteurs) {
-                // Only show conducteurs from this organization
-                if (c.getOrganisationId() == organisation.getId()) {
-                    conducteurCombo.getItems().add(c);
-                }
-            }
-            
-            // Custom cell factory to display conducteur info
-            conducteurCombo.setCellFactory(param -> new ListCell<Conducteur>() {
-                @Override
-                protected void updateItem(Conducteur item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty || item == null) {
-                        setText(null);
-                    } else {
-                        setText(item.getPrenom() + " " + item.getNom() + " (" + item.getTelephone() + ")");
-                    }
-                }
-            });
-            
-            // Custom string converter for the selected item
-            conducteurCombo.setButtonCell(new ListCell<Conducteur>() {
-                @Override
-                protected void updateItem(Conducteur item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty || item == null) {
-                        setText(null);
-                    } else {
-                        setText(item.getPrenom() + " " + item.getNom() + " (" + item.getTelephone() + ")");
-                    }
-                }
-            });
-            
-            // Set current conducteur if any
-            if (vehicule.getConducteurId() > 0) {
-                for (Conducteur c : conducteurCombo.getItems()) {
-                    if (c.getId() == vehicule.getConducteurId()) {
-                        conducteurCombo.setValue(c);
-                        break;
-                    }
-                }
-            }
-            
-            // Action buttons
-            Button assignButton = new Button("Assigner");
-            assignButton.getStyleClass().add("button-primary");
-            assignButton.setOnAction(e -> {
-                Conducteur selectedConducteur = conducteurCombo.getValue();
-                if (selectedConducteur != null) {
-                    // Update the vehicle
-                    vehicule.setConducteurId(selectedConducteur.getId());
-                    vehiculeService.modifier(vehicule);
-                    
-                    // Close dialog and refresh details
-                    dialogStage.close();
-                    parentStage.close();
-                    showVehiculeDetails(vehicule);
-                    
-                    // Also update the cards view
-                    loadVehicules();
-                } else {
-                    showAlert(Alert.AlertType.WARNING, "Avertissement", "Veuillez sélectionner un conducteur.");
-                }
-            });
-            
-            Button cancelButton = new Button("Annuler");
-            cancelButton.setOnAction(e -> dialogStage.close());
-            
-            HBox buttonBox = new HBox(10);
-            buttonBox.setAlignment(Pos.CENTER_RIGHT);
-            buttonBox.getChildren().addAll(cancelButton, assignButton);
-            
-            dialogVbox.getChildren().addAll(titleLabel, conducteurCombo, buttonBox);
-            dialogVbox.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
-            
-            Scene dialogScene = new Scene(dialogVbox, 400, 150);
-            dialogStage.setScene(dialogScene);
-            dialogStage.showAndWait();
-            
-        } catch (Exception e) {
-            log.error("Error showing conductor assignment dialog", e);
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'afficher la boîte de dialogue d'assignation.");
-        }
-    }
-
     private void showVehiculeForm(Vehicule vehiculeToEdit) {
         try {
             // Vérifier si l'organisation est disponible

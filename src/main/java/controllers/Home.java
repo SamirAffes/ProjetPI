@@ -14,6 +14,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.scene.media.Media;
@@ -70,7 +71,12 @@ public class Home {
     private Button accessibilityButton;
 
     @FXML
+    private Button chatbotButton;
+
+    @FXML
     private VBox signInForm;
+
+    private VBox chatbotContainer;
 
     @FXML
     private TextField usernameField;
@@ -1149,4 +1155,65 @@ public class Home {
         hideSignInForm();
     }
 
+    /**
+     * Handles the chatbot button click event.
+     * Toggles the visibility of the chatbot UI.
+     */
+    @FXML
+    public void onChatbotButtonClick() {
+        logger.info("Chatbot button clicked");
+
+        if (chatbotContainer == null) {
+            // First time initialization
+            initializeChatbot();
+        } else {
+            // Toggle visibility
+            boolean isVisible = !chatbotContainer.isVisible();
+            chatbotContainer.setVisible(isVisible);
+            chatbotContainer.setManaged(isVisible);
+
+            // Update button style to indicate active state
+            if (isVisible) {
+                chatbotButton.setStyle("-fx-background-color: #4285F4;");
+            } else {
+                chatbotButton.setStyle("");
+            }
+
+            logger.info("Chatbot visibility toggled to: {}", isVisible);
+        }
+    }
+
+    /**
+     * Initializes the chatbot UI by loading the FXML and adding it to the scene.
+     */
+    private void initializeChatbot() {
+        try {
+            // Load the chatbot FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/components/chatbot.fxml"));
+            chatbotContainer = (VBox) loader.load();
+
+            // Get the controller
+            ChatbotController chatbotController = loader.getController();
+
+            // Add the chatbot to the scene
+            StackPane stackPane = (StackPane) mapContainer.getParent();
+            stackPane.getChildren().add(chatbotContainer);
+
+            // Position the chatbot at the bottom left
+            StackPane.setAlignment(chatbotContainer, javafx.geometry.Pos.BOTTOM_LEFT);
+            StackPane.setMargin(chatbotContainer, new Insets(0, 0, 20, 20));
+
+            // Set initial visibility
+            chatbotContainer.setVisible(true);
+            chatbotContainer.setManaged(true);
+
+            // Update button style to indicate active state
+            chatbotButton.setStyle("-fx-background-color: #4285F4;");
+
+            logger.info("Chatbot initialized successfully");
+        } catch (IOException e) {
+            logger.error("Failed to initialize chatbot", e);
+            showError("Chatbot Error", "Failed to initialize the chatbot. Please try again.");
+        }
+    }
 }

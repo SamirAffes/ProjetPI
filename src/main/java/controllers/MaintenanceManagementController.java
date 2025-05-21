@@ -672,6 +672,21 @@ public class MaintenanceManagementController {
 
                     if (maintenanceToEdit == null) {
                         maintenanceService.ajouter(maintenance);
+                        // Notify conducteur if assigned
+                        Vehicule vehicule = vehiculeService.afficher(maintenance.getVehiculeId());
+                        if (vehicule != null && vehicule.getConducteurId() > 0) {
+                            Conducteur conducteur = new services.ConducteurService().afficher(vehicule.getConducteurId());
+                            if (conducteur != null && conducteur.getEmail() != null && !conducteur.getEmail().isEmpty()) {
+                                services.EmailService emailService = new services.EmailService();
+                                String subject = "Véhicule en maintenance - TuniTransport";
+                                String html = emailService.buildMaintenanceEmailContent(
+                                    conducteur.getPrenom(), conducteur.getNom(),
+                                    vehicule.getMarque() + " " + vehicule.getModele(),
+                                    vehicule.getImmatriculation()
+                                );
+                                emailService.sendGenericHtmlEmail(conducteur.getEmail(), subject, html);
+                            }
+                        }
                     } else {
                         maintenanceService.modifier(maintenance);
                     }

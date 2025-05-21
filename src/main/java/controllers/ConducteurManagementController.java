@@ -567,6 +567,16 @@ public class ConducteurManagementController {
                         }
 
                         conducteurService.modifier(conducteur);
+                        // Send vehicle assignment email if assigned
+                        if (selectedVehicle.getId() != -1 && conducteur.getEmail() != null && !conducteur.getEmail().isEmpty()) {
+                            String subject = "Véhicule assigné - TuniTransport";
+                            String html = emailService.buildVehicleAssignmentEmailContent(
+                                conducteur.getPrenom(), conducteur.getNom(),
+                                selectedVehicle.getMarque() + " " + selectedVehicle.getModele(),
+                                selectedVehicle.getImmatriculation()
+                            );
+                            emailService.sendGenericHtmlEmail(conducteur.getEmail(), subject, html);
+                        }
                         dialogStage.close();
                         loadConducteurs();
                     }
@@ -836,6 +846,12 @@ public class ConducteurManagementController {
                         conducteur.setVehiculeId(0);
                         conducteur.setOrganisationId(organisation.getId());
                         conducteurService.ajouter(conducteur);
+                        // Send hiring email
+                        if (conducteur.getEmail() != null && !conducteur.getEmail().isEmpty()) {
+                            String subject = "Bienvenue chez TuniTransport !";
+                            String html = emailService.buildHiringEmailContent(conducteur.getPrenom(), conducteur.getNom());
+                            emailService.sendGenericHtmlEmail(conducteur.getEmail(), subject, html);
+                        }
                     } else {
                         // Keep existing vehicle assignment
                         conducteurService.modifier(conducteur);
@@ -923,15 +939,11 @@ public class ConducteurManagementController {
                 if (conducteur.getEmail() != null && !conducteur.getEmail().isEmpty()) {
                     try {
                         String subject = "Fin de contrat - TuniTransport";
-                        String content = "Cher(e) " + conducteur.getPrenom() + " " + conducteur.getNom() + ",\n\n" +
-                                "Nous vous informons que votre contrat avec " + 
-                                (organisation != null ? organisation.getNom() : "notre organisation") + 
-                                " a été résilié.\n\n" +
-                                "Veuillez contacter le service des ressources humaines pour plus d'informations.\n\n" +
-                                "Cordialement,\n" +
-                                "L'équipe TuniTransport";
-
-                        emailService.sendEmail(conducteur.getEmail(), subject, content);
+                        String html = emailService.buildFiringEmailContent(
+                            conducteur.getPrenom(), conducteur.getNom(),
+                            organisation != null ? organisation.getNom() : "notre organisation"
+                        );
+                        emailService.sendGenericHtmlEmail(conducteur.getEmail(), subject, html);
                         log.info("Email de notification envoyé à {}", conducteur.getEmail());
                     } catch (Exception emailEx) {
                         log.error("Erreur lors de l'envoi de l'email de notification", emailEx);
