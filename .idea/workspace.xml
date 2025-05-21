@@ -5,7 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="97c7973e-54a8-402c-9812-fa5eda47bb91" name="Changes" comment="Ajouter la fonction email lors de l'ajout d'une station et la modification d'une station aussi nous avons ajouter une fonction sous la classe route pour recuperer les coordonne d'une station a partir d'un code">
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controllers/EditRouteDialogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controllers/EditRouteDialogController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/entities/Station.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/entities/Station.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/organisation/editRouteDialog.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fxml/organisation/editRouteDialog.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -152,7 +155,7 @@
       <workItem from="1747773586159" duration="5649000" />
       <workItem from="1747828286034" duration="2063000" />
       <workItem from="1747846441193" duration="2407000" />
-      <workItem from="1747861591398" duration="2084000" />
+      <workItem from="1747861591398" duration="3313000" />
     </task>
     <task id="LOCAL-00001" summary="Ajouter la fonction email lors de l'ajout d'une station et la modification d'une station aussi nous avons ajouter une fonction sous la classe route pour recuperer les coordonne d'une station a partir d'un code">
       <option name="closed" value="true" />
@@ -162,7 +165,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747862911362</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Ajouter la fonction email lors de l'ajout d'une station et la modification d'une station aussi nous avons ajouter une fonction sous la classe route pour recuperer les coordonne d'une station a partir d'un code">
+      <option name="closed" value="true" />
+      <created>1747865031831</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1747865031831</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

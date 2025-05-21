@@ -2,6 +2,8 @@ package controllers;
 
 import entities.OrganisationRoute;
 import entities.Route;
+import entities.Station;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -9,6 +11,7 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import services.EmailService;
 import services.OrganisationRouteService;
+import services.StationService;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -17,6 +20,10 @@ import java.util.ResourceBundle;
 public class EditRouteDialogController implements Initializable {
 
     @FXML private Label routeInfoLabel;
+    @FXML private Label originDetailsLabel;
+    @FXML private Label destinationDetailsLabel;
+    @FXML private Label originCoordinatesLabel;
+    @FXML private Label destinationCoordinatesLabel;
     @FXML private TextField internalCodeField;
     @FXML private ComboBox<String> vehicleTypeComboBox;
     @FXML private Spinner<Integer> frequencySpinner;
@@ -62,7 +69,22 @@ public class EditRouteDialogController implements Initializable {
     
     public void setRoute(Route route) {
         this.route = route;
-        updateRouteInfo();
+        if (route != null) {
+            // Mise à jour immédiate des informations de la route
+            Platform.runLater(() -> {
+                updateRouteInfo();
+                // Debug logging
+                System.out.println("Route origin: " + route.getOrigin());
+                System.out.println("Route destination: " + route.getDestination());
+
+                // Vérification des coordonnées
+                double[] originCoords = Station.getCoordinates(route.getOrigin());
+                double[] destCoords = Station.getCoordinates(route.getDestination());
+
+                System.out.println("Origin coordinates: " + (originCoords != null ? originCoords[0] + "," + originCoords[1] : "null"));
+                System.out.println("Destination coordinates: " + (destCoords != null ? destCoords[0] + "," + destCoords[1] : "null"));
+            });
+        }
     }
     
     public void setOrganisationRouteService(OrganisationRouteService service) {
@@ -71,17 +93,58 @@ public class EditRouteDialogController implements Initializable {
     
     private void updateRouteInfo() {
         if (route != null) {
+            System.out.println("Mise à jour des informations de la route...");
+            System.out.println("Origin: " + route.getOrigin());
+            System.out.println("Destination: " + route.getDestination());
+
+            // Affichage du texte basique de la route
             String routeInfo = route.getOrigin() + " → " + route.getDestination();
-            routeInfoLabel.setText(routeInfo);
-            
-            // Set price and duration from Route entity
-            if (priceField != null) {
-                priceField.setText(String.valueOf(route.getBasePrice()));
-            }
-            
-            if (durationField != null) {
-                durationField.setText(String.valueOf(route.getEstimatedDuration()));
-            }
+            Platform.runLater(() -> {
+                routeInfoLabel.setText(routeInfo);
+                System.out.println("Route info label mis à jour: " + routeInfo);
+
+                // Mise à jour des informations détaillées des stations
+                String origin = route.getOrigin();
+                String destination = route.getDestination();
+
+                // Récupération et affichage des coordonnées
+                double[] originCoords = Station.getCoordinates(origin);
+                double[] destCoords = Station.getCoordinates(destination);
+
+                System.out.println("Coordonnées origine trouvées: " + (originCoords != null));
+                System.out.println("Coordonnées destination trouvées: " + (destCoords != null));
+
+                if (originCoords != null) {
+                    originDetailsLabel.setText("Origine: " + origin);
+                    originCoordinatesLabel.setText(String.format("Coordonnées: %.4f, %.4f", originCoords[0], originCoords[1]));
+                    System.out.println("Labels origine mis à jour");
+                } else {
+                    System.out.println("Coordonnées non trouvées pour: " + origin);
+                    originDetailsLabel.setText("Origine: " + origin);
+                    originCoordinatesLabel.setText("Coordonnées non disponibles");
+                }
+
+                if (destCoords != null) {
+                    destinationDetailsLabel.setText("Destination: " + destination);
+                    destinationCoordinatesLabel.setText(String.format("Coordonnées: %.4f, %.4f", destCoords[0], destCoords[1]));
+                    System.out.println("Labels destination mis à jour");
+                } else {
+                    System.out.println("Coordonnées non trouvées pour: " + destination);
+                    destinationDetailsLabel.setText("Destination: " + destination);
+                    destinationCoordinatesLabel.setText("Coordonnées non disponibles");
+                }
+
+                // Mise à jour des autres champs
+                if (priceField != null) {
+                    priceField.setText(String.valueOf(route.getBasePrice()));
+                }
+
+                if (durationField != null) {
+                    durationField.setText(String.valueOf(route.getEstimatedDuration()));
+                }
+            });
+        } else {
+            System.out.println("Route est null!");
         }
     }
     
@@ -250,4 +313,4 @@ public class EditRouteDialogController implements Initializable {
         alert.setContentText(message);
         alert.showAndWait();
     }
-} 
+}

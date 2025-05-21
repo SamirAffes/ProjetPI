@@ -100,11 +100,29 @@ public class Station {
 
     /**
      * Récupère les coordonnées GPS d'une station à partir de son code
-     * @param code Le code de la station
-     * @return Un tableau de deux doubles [latitude, longitude] ou null si le code n'existe pas
+     * @param location La localisation de la station
+     * @return Un tableau de deux doubles [latitude, longitude] ou null si la localisation n'existe pas
      */
-    public static double[] getCoordinates(String code) {
-        return DEFAULT_COORDINATES.get(code);
+    public static double[] getCoordinates(String location) {
+        // Si la localisation est trouvée dans la Map par défaut, retourner ses coordonnées
+        double[] coords = DEFAULT_COORDINATES.get(location);
+        if (coords != null) {
+            System.out.println("Coordonnées trouvées pour " + location + ": " + coords[0] + ", " + coords[1]);
+            return coords;
+        }
+
+        // Si c'est une ville sans précision particulière, essayer de trouver dans la Map
+        if (location.contains(" - ")) {
+            String cityOnly = location.substring(0, location.indexOf(" - "));
+            coords = DEFAULT_COORDINATES.get(cityOnly);
+            if (coords != null) {
+                System.out.println("Coordonnées de la ville trouvées pour " + location + ": " + coords[0] + ", " + coords[1]);
+                return coords;
+            }
+        }
+
+        System.out.println("Aucune coordonnée trouvée pour " + location);
+        return null;
     }
 
     // Helper method to initialize properties from entity fields
