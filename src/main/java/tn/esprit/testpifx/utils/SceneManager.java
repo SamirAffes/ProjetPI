@@ -2,8 +2,10 @@ package tn.esprit.testpifx.utils;
 
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import tn.esprit.testpifx.Main;
 
@@ -32,26 +34,33 @@ public class SceneManager {
         if (controller != null) {
             loader.setController(controller);
             System.out.println("Using pre-configured controller of type: " + controller.getClass().getSimpleName());
-        }
-        
-        // Load the FXML file
+        }        // Load the FXML file
         Parent root = loader.load();
         T actualController = controller != null ? controller : loader.getController();
         System.out.println("Controller loaded: " + actualController.getClass().getSimpleName());
-          Scene scene = new Scene(root);
+        
+        Scene scene = new Scene(root);
         scene.getStylesheets().add(Objects.requireNonNull(
-            SceneManager.class.getResource(Main.getCurrentCssFile())).toExternalForm());
-        
-        // During auto-login, avoid changing maximization state to prevent flickering
-        boolean isAutoLogin = UserSessionManager.isSessionValid() && UserPreferences.hasRememberedCredentials();
-        if (!isAutoLogin) {
-            // Only for normal navigation, temporarily reset maximized state
-            currentStage.setMaximized(false);
-        }
-        
-        // Set the new scene
+            SceneManager.class.getResource(Main.getCurrentCssFile())).toExternalForm());// Don't modify maximization state during scene transitions to prevent minimized appearance
+        // The applyStandardWindowSettings method will handle proper maximization after scene change
+          // Set the new scene
         currentStage.setScene(scene);
         System.out.println("New scene set on stage");
+        
+        // For problematic screens, force proper window sizing before maximization
+        if (fxmlPath.contains("user_management") || fxmlPath.contains("team_management")) {
+            // Get screen dimensions
+            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+            
+            // Force stage to proper dimensions before maximizing
+            currentStage.setWidth(screenBounds.getWidth());
+            currentStage.setHeight(screenBounds.getHeight());
+            currentStage.setX(screenBounds.getMinX());
+            currentStage.setY(screenBounds.getMinY());
+            
+            System.out.println("Applied explicit dimensions for " + fxmlPath + ": " + 
+                              screenBounds.getWidth() + "x" + screenBounds.getHeight());
+        }
         
         // Apply standard window settings after scene change
         applyStandardWindowSettings(currentStage);
@@ -114,15 +123,12 @@ public class SceneManager {
      * but only performs actions when needed to avoid screen flickering.
      *
      * @param stage The stage to monitor
-     */
-    private static void addMaximizationListener(Stage stage) {
+     */    private static void addMaximizationListener(Stage stage) {
         // Remove any existing listeners to avoid duplicates and multiple triggers
         stage.maximizedProperty().removeListener(maximizeListener);
         
-        // For now, we'll disable the automatic maximization listener to avoid screen flickering
-        // This means the user can manually resize the window if desired
-        // If the automatic maximization behavior is needed, this can be uncommented
-        // stage.maximizedProperty().addListener(maximizeListener);
+        // Add the maximization listener to ensure the window stays maximized
+        stage.maximizedProperty().addListener(maximizeListener);
     }
     
     /**
@@ -139,30 +145,77 @@ public class SceneManager {
                 stage.setMaximized(true);
             }
         };    /**
-     * A simplified approach to maximizing a JavaFX window that avoids excessive changes
-     * to prevent screen flickering.
+     * A more robust approach to maximizing a JavaFX window that avoids excessive changes
+     * to prevent screen flickering but ensures consistent maximization.
      *
      * @param stage The stage to maximize
-     */
-    private static void maximizeStageReliably(Stage stage) {
-        // Skip maximization during auto-login to reduce screen flickering
-        if (UserSessionManager.isSessionValid() && UserPreferences.hasRememberedCredentials()) {
-            System.out.println("Auto-login detected, skipping window maximization to prevent flickering");
-            
-            // Still ensure the window is visible and has focus
-            Platform.runLater(() -> {
-                stage.toFront();
-                stage.requestFocus();
-            });
-            return;
-        }
+     */    private static void maximizeStageReliably(Stage stage) {
+        // Immediate attempt to ensure we're not iconified (minimized to taskbar)
+        stage.setIconified(false);
         
-        // For normal navigation, apply maximization
-        if (!stage.isMaximized()) {
-            // Simple one-time maximization
-            stage.setMaximized(true);
+        // Immediate maximization attempt - this works in many cases
+        stage.setMaximized(true);
+        
+        // If we're on a particularly troublesome scene, ensure maximization happens sooner
+        String title = stage.getTitle();
+        boolean isUserOrTeamManagement = title != null && (
+            title.contains("User Management") || 
+            title.contains("Team Management")
+        );
+        
+        // First-level retry with Platform.runLater to ensure UI thread execution
+        Platform.runLater(() -> {
+            // Set title again to ensure it's preserved
+            stage.setTitle("User Management System");
+            
+            // Re-check and ensure maximization
+            if (!stage.isMaximized()) {
+                stage.setMaximized(true);
+            }
+            
+            // Special handling for user/team management screens
+            if (isUserOrTeamManagement) {
+                // Apply additional maximization attempts
+                new Thread(() -> {
+                    try {
+                        // Multiple attempts with increasing delays
+                        for (int i = 0; i < 3; i++) {
+                            Thread.sleep(50 * (i + 1)); // 50ms, 100ms, 150ms
+                            final int attempt = i;
+                            Platform.runLater(() -> {
+                                if (!stage.isMaximized()) {
+                                    System.out.println("Forcing maximization attempt " + (attempt + 1));
+                                    stage.setMaximized(true);
+                                }
+                                stage.toFront();
+                                stage.requestFocus();
+                            });
+                        }
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }).start();
+            } else {
+                // Standard delay for other screens
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(50);
+                        Platform.runLater(() -> {
+                            if (!stage.isMaximized()) {
+                                stage.setMaximized(true);
+                            }
+                            stage.toFront();
+                            stage.requestFocus();
+                        });
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }).start();
+            }
+            
+            // Ensure window has focus and is frontmost
             stage.toFront();
             stage.requestFocus();
-        }
+        });
     }
 }

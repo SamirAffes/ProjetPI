@@ -662,6 +662,10 @@ public class UserManagementController {
         try {
             // Use SceneManager to handle the scene transition
             Stage stage = (Stage) homeButton.getScene().getWindow();
+            
+            // Ensure stage is maximized before the transition
+            stage.setMaximized(true);
+            
             WelcomeController controller = SceneManager.changeScene(stage, "/tn/esprit/testpifx/views/welcome.fxml");
             
             // Configure the controller after loading
@@ -821,6 +825,10 @@ public class UserManagementController {
         try {
             // Use SceneManager to handle the scene transition
             Stage stage = (Stage) usersTable.getScene().getWindow();
+            
+            // Ensure stage is maximized before the transition
+            stage.setMaximized(true);
+            
             TeamManagementController controller = SceneManager.changeScene(stage, "/tn/esprit/testpifx/views/team_management.fxml");
             
             // Configure the controller after loading
