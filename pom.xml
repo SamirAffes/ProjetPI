@@ -12,6 +12,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>5.10.2</junit.version>
+        <mysql.version>8.0.33</mysql.version>
+        <jfoenix.version>9.0.10</jfoenix.version>
     </properties>
 
     <dependencies>
@@ -38,6 +40,123 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- MySQL -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>
+
+        <!-- SLF4J for logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.9</version>
+        </dependency>
+
+        <!-- JFoenix for Material Design -->
+        <dependency>
+            <groupId>com.jfoenix</groupId>
+            <artifactId>jfoenix</artifactId>
+            <version>${jfoenix.version}</version>
+        </dependency>
+
+        <!-- Charting Library -->
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-javafx</artifactId>
+            <version>12.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-materialdesign2-pack</artifactId>
+            <version>12.3.1</version>
+        </dependency>
+
+        <!-- Add Mockito for mocking -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>4.11.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Add AssertJ for fluent assertions -->
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.24.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Jakarta Mail API for email validation -->
+        <dependency>
+            <groupId>jakarta.mail</groupId>
+            <artifactId>jakarta.mail-api</artifactId>
+            <version>2.1.2</version>
+        </dependency>
+        
+        <!-- JSON Processing for API requests -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20240205</version>
+        </dependency>
+        
+        <!-- Add TestFX for JavaFX testing -->
+        <dependency>
+            <groupId>org.testfx</groupId>
+            <artifactId>testfx-core</artifactId>
+            <version>4.0.16-alpha</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testfx</groupId>
+            <artifactId>testfx-junit5</artifactId>
+            <version>4.0.16-alpha</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <!-- JavaMail API for email functionality -->
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+        
+        <!-- Activation Framework -->
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        
+        <!-- Jakarta Mail API - newer implementation -->
+        <dependency>
+            <groupId>jakarta.mail</groupId>
+            <artifactId>jakarta.mail-api</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-mail</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        
+        <!-- Brevo (formerly SendinBlue) API Client -->
+        <dependency>
+            <groupId>com.sendinblue</groupId>
+            <artifactId>sib-api-v3-sdk</artifactId>
+            <version>7.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -57,20 +176,25 @@
                 <version>0.0.8</version>
                 <executions>
                     <execution>
-                        <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.pijava/com.pijava.HelloApplication</mainClass>
+                            <mainClass>tn.esprit.testpifx.Main</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>
+                            <options>
+                                <option>--add-modules</option>
+                                <option>java.desktop</option>
+                            </options>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+            
+            <!-- No need for duplicate compiler plugin -->
         </plugins>
     </build>
 </project>

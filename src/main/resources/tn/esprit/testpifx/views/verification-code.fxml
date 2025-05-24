@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<StackPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.testpifx.controllers.VerificationCodeController"
+           style="-fx-background-color: linear-gradient(to bottom right, #4e73df, #224abe);">
+
+    <BorderPane>
+        <center>
+            <HBox alignment="CENTER" styleClass="card" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);" maxWidth="900" maxHeight="550">
+                <!-- Left side - Gradient Background -->
+                <StackPane HBox.hgrow="ALWAYS" style="-fx-background-color: linear-gradient(to bottom right, #4e73df, #224abe); -fx-background-radius: 10 0 0 10;" minWidth="450">
+                    <VBox alignment="CENTER" spacing="20">
+                        <Text text="📧" style="-fx-font-size: 60px;" fill="WHITE" />
+                        <Text text="Check Your Email" fill="WHITE" style="-fx-font-size: 24px; -fx-font-weight: bold;" textAlignment="CENTER" />
+                        <Text text="We've sent a 6-digit verification code to your email address." fill="WHITE" style="-fx-font-size: 16px;" textAlignment="CENTER" />
+                    </VBox>
+                </StackPane>
+                
+                <!-- Right side - Verification Form -->
+                <VBox alignment="CENTER" spacing="20" HBox.hgrow="ALWAYS" style="-fx-background-radius: 0 10 10 0;">
+                    <padding>
+                        <Insets top="40" right="50" bottom="40" left="50" />
+                    </padding>
+                    
+                    <!-- Icon -->
+                    <StackPane styleClass="icon-circle" style="-fx-background-color: #f8f9fc; -fx-background-radius: 50; -fx-min-width: 80; -fx-min-height: 80; -fx-max-width: 80; -fx-max-height: 80;">
+                        <Text text="🔢" style="-fx-font-size: 40px;" />
+                    </StackPane>
+                    
+                    <!-- Title -->
+                    <Label fx:id="titleLabel" text="Enter Verification Code" 
+                           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #5a5c69;" />
+                    
+                    <!-- Description -->
+                    <Label fx:id="instructionLabel" text="Please enter the 6-digit verification code that was sent to your email" 
+                           textAlignment="CENTER" wrapText="true" 
+                           style="-fx-text-fill: #858796; -fx-font-size: 14px;" />
+                    
+                    <!-- Verification Code Field -->
+                    <TextField fx:id="codeField" promptText="Enter 6-digit code" styleClass="form-control-user"
+                              alignment="CENTER" maxWidth="250"
+                              style="-fx-pref-height: 50; -fx-font-size: 18px; -fx-background-radius: 25; -fx-border-radius: 25; -fx-border-color: #e3e6f0; -fx-text-alignment: center; -fx-font-weight: bold; -fx-letter-spacing: 2px;">
+                        <VBox.margin>
+                            <Insets top="10" bottom="10" />
+                        </VBox.margin>
+                    </TextField>
+                    
+                    <!-- Status Label -->
+                    <Label fx:id="statusLabel" textAlignment="CENTER" wrapText="true" 
+                           style="-fx-text-fill: #e74a3b; -fx-font-size: 13px;" />
+                    
+                    <!-- Action Buttons -->
+                    <HBox alignment="CENTER" spacing="15">
+                        <Button fx:id="submitButton" text="Verify Code" onAction="#handleSubmit" defaultButton="true" 
+                                styleClass="btn, btn-primary"
+                                style="-fx-pref-height: 50; -fx-background-radius: 25; -fx-pref-width: 140; -fx-font-size: 14px; -fx-font-weight: bold;" />
+                        <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel" cancelButton="true" 
+                                styleClass="btn, btn-secondary"
+                                style="-fx-pref-height: 50; -fx-background-radius: 25; -fx-pref-width: 140; -fx-font-size: 14px;" />
+                    </HBox>
+                      <!-- Resend Code Link -->
+                    <VBox alignment="CENTER" spacing="10">
+                        <VBox.margin>
+                            <Insets top="15" />
+                        </VBox.margin>
+                        <HBox alignment="CENTER" spacing="5">
+                            <Label text="Didn't receive the code?" style="-fx-text-fill: #858796; -fx-font-size: 13px;" />
+                        </HBox>
+                        <Button fx:id="resendButton" text="Resend Code" onAction="#handleResend" 
+                                styleClass="btn, btn-secondary"
+                                style="-fx-pref-height: 40; -fx-background-radius: 20; -fx-pref-width: 140; -fx-font-size: 12px;" />
+                    </VBox>
+                </VBox>
+            </HBox>
+        </center>
+    </BorderPane>
+</StackPane>

@@ -1,0 +1,649 @@
+package tn.esprit.testpifx.repositories;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import tn.esprit.testpifx.models.Role;
+import tn.esprit.testpifx.models.User;
+import tn.esprit.testpifx.services.TokenService;
+import tn.esprit.testpifx.services.UserService;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+public class MySQLUserRepository implements UserRepository {
+    private static final Logger logger = LoggerFactory.getLogger(MySQLUserRepository.class);
+    
+    // Default connection parameters - these should be configurable in a real application
+    private static final String DEFAULT_HOST = "localhost";
+    private static final int DEFAULT_PORT = 3306;
+    private static final String DEFAULT_DATABASE = "javafx";
+    private static final String DEFAULT_USERNAME = "root";    private static final String DEFAULT_PASSWORD = "";
+    
+    private final String host;
+    private final int port;
+    private final String database;
+    private final String username;
+    private final String password;
+    
+    // SQL statements for user table
+    private static final String CREATE_USERS_TABLE = 
+            "CREATE TABLE IF NOT EXISTS users (" +
+            "user_id VARCHAR(36) PRIMARY KEY, " +
+            "username VARCHAR(50) UNIQUE NOT NULL, " +
+            "first_name VARCHAR(50), " +
+            "last_name VARCHAR(50), " +
+            "password VARCHAR(100) NOT NULL, " +
+            "email VARCHAR(100) UNIQUE NOT NULL, " +
+            "profile_picture_url VARCHAR(255), " +
+            "country VARCHAR(50), " +
+            "region VARCHAR(50), " +  
+            "phone_number VARCHAR(20), " +
+            "country_prefix VARCHAR(10), " +
+            "address VARCHAR(255), " +
+            "zip_code VARCHAR(20), " +
+            "gender VARCHAR(20), " +
+            "birthdate DATE, " +
+            "roles VARCHAR(100), " +
+            "active TINYINT(1) NOT NULL" +
+            ")";
+    
+    // SQL statements to check if columns exist and add them if they don't
+    private static final String CHECK_COLUMN_EXISTS = 
+            "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS " +
+            "WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'users' AND COLUMN_NAME = ?";
+    
+    private static final String ADD_FIRST_NAME_COLUMN = 
+            "ALTER TABLE users ADD COLUMN first_name VARCHAR(50) AFTER username";
+    
+    private static final String ADD_LAST_NAME_COLUMN = 
+            "ALTER TABLE users ADD COLUMN last_name VARCHAR(50) AFTER first_name";
+    
+    private static final String ADD_BIRTHDATE_COLUMN = 
+            "ALTER TABLE users ADD COLUMN birthdate DATE AFTER gender";
+            
+    private static final String ADD_REGION_COLUMN = 
+            "ALTER TABLE users ADD COLUMN region VARCHAR(50) AFTER country";
+    
+    // Updated SQL statements to remove team_ids
+    private static final String INSERT_USER = 
+            "INSERT INTO users (user_id, username, first_name, last_name, password, email, profile_picture_url, country, " +
+            "region, phone_number, country_prefix, address, zip_code, gender, birthdate, roles, active) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    
+    private static final String UPDATE_USER = 
+            "UPDATE users SET first_name = ?, last_name = ?, password = ?, email = ?, profile_picture_url = ?, country = ?, " +
+            "region = ?, phone_number = ?, country_prefix = ?, address = ?, zip_code = ?, gender = ?, birthdate = ?, " +
+            "roles = ?, active = ? WHERE user_id = ?";
+    
+    private static final String SELECT_USER_BY_ID = "SELECT * FROM users WHERE user_id = ?";
+    private static final String SELECT_USER_BY_USERNAME = "SELECT * FROM users WHERE username = ?";
+    private static final String SELECT_ALL_USERS = "SELECT * FROM users";
+    private static final String DELETE_USER = "DELETE FROM users WHERE user_id = ?";
+    private static final String EXISTS_BY_USERNAME = "SELECT COUNT(*) FROM users WHERE username = ?";
+    private static final String EXISTS_BY_EMAIL = "SELECT COUNT(*) FROM users WHERE email = ?";
+    
+    private static final String SELECT_USERS_BY_TEAM = 
+            "SELECT u.* FROM users u " +
+            "INNER JOIN team_members tm ON u.user_id = tm.user_id " +
+            "WHERE tm.team_id = ?";
+
+    /**
+     * Constructor with default connection parameters
+     */
+    public MySQLUserRepository() {
+        this(DEFAULT_HOST, DEFAULT_PORT, DEFAULT_DATABASE, DEFAULT_USERNAME, DEFAULT_PASSWORD);
+    }
+    
+    /**
+     * Constructor with custom connection parameters
+     */
+    public MySQLUserRepository(String host, int port, String database, String username, String password) {
+        this.host = host;
+        this.port = port;
+        this.database = database;
+        this.username = username;
+        this.password = password;
+        
+        initializeDatabase();
+    }
+    
+    private void initializeDatabase() {
+        try (Connection conn = getConnection()) {
+            try (Statement stmt = conn.createStatement()) {
+                // Create users table if it doesn't exist
+                stmt.execute(CREATE_USERS_TABLE);
+            }
+            
+            // Check and add columns if they don't exist
+            addColumnIfNotExists(conn, "first_name", ADD_FIRST_NAME_COLUMN);
+            addColumnIfNotExists(conn, "last_name", ADD_LAST_NAME_COLUMN);
+            addColumnIfNotExists(conn, "birthdate", ADD_BIRTHDATE_COLUMN);
+            addColumnIfNotExists(conn, "region", ADD_REGION_COLUMN);
+            
+            logger.info("MySQL database initialized successfully");
+            
+        } catch (SQLException e) {
+            logger.error("Error initializing MySQL database: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to initialize MySQL database", e);
+        }
+    }
+    
+    private void addColumnIfNotExists(Connection conn, String columnName, String addColumnSQL) throws SQLException {
+        try (PreparedStatement checkStmt = conn.prepareStatement(CHECK_COLUMN_EXISTS)) {
+            checkStmt.setString(1, database);
+            checkStmt.setString(2, columnName);
+            
+            try (ResultSet rs = checkStmt.executeQuery()) {
+                if (rs.next() && rs.getInt(1) == 0) {
+                    // Column doesn't exist, add it
+                    try (Statement addStmt = conn.createStatement()) {
+                        addStmt.execute(addColumnSQL);
+                        logger.info("Added column '{}' to users table", columnName);
+                    }
+                }
+            }
+        }
+    }    private Connection getConnection() throws SQLException {
+        String url = String.format("jdbc:mysql://%s:%d/%s?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true", 
+                host, port, database);
+        logger.info("Attempting to connect to database with URL: {}", url);
+        logger.info("Using username: {}", username);
+        try {
+            // Ensure the MySQL driver is loaded
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            
+            Connection conn = DriverManager.getConnection(url, username, password);
+            conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+            logger.info("Successfully connected to database");
+            return conn;
+        } catch (ClassNotFoundException e) {
+            logger.error("MySQL JDBC driver not found: {}", e.getMessage(), e);
+            throw new SQLException("MySQL JDBC driver not found", e);
+        } catch (SQLException e) {
+            logger.error("Failed to connect to database: {}", e.getMessage(), e);
+            throw e;
+        }
+    }      @Override
+    public User save(User user) {
+        boolean isNewUser = user.getUserId() == null || !existsById(user.getUserId());
+        
+        if (isNewUser) {
+            // New user - generate ID and insert
+            if (user.getUserId() == null) {
+                user.setUserId(UUID.randomUUID().toString());
+            }
+            logger.info("Creating new user with ID: {}", user.getUserId());
+            insertUser(user);
+        } else {
+            // Existing user - update
+            logger.info("Updating existing user with ID: {}", user.getUserId());
+            updateUser(user);
+        }
+        
+        logger.info("User saved: {}", user.getUsername());
+        
+        // Generate token and send email for new users
+        if (isNewUser) {
+            try {
+                // Create token service
+                TokenRepository tokenRepository = TokenRepositoryFactory.createRepository(
+                    TokenRepositoryFactory.RepositoryType.MYSQL
+                );
+                UserService userService = new UserService(this, false);
+                TokenService tokenService = new TokenService(tokenRepository, userService);
+                  // Create verification token and send email
+                tokenService.createAccountVerificationToken(user);
+                logger.info("Created verification token for new user: {}", user.getUsername());
+            } catch (Exception e) {
+                logger.error("Error creating verification token for user: {}", e.getMessage(), e);
+                // We don't rethrow the exception as the user is already saved successfully
+            }
+        }
+        
+        return user;
+    }private void insertUser(User user) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        
+        try {
+            // Get a new connection
+            conn = getConnection();
+            
+            // Begin transaction
+            conn.setAutoCommit(false);
+            
+            // Log the user data before insert
+            logger.info("Attempting to insert user - ID: {}, Username: {}, Email: {}", 
+                user.getUserId(), user.getUsername(), user.getEmail());
+            
+            // Prepare the SQL statement
+            pstmt = conn.prepareStatement(INSERT_USER);
+            setUserParameters(pstmt, user);
+            
+            // Execute the insert
+            int rowsAffected = pstmt.executeUpdate();
+            logger.info("Insert statement executed, affected rows: {}", rowsAffected);
+            
+            if (rowsAffected == 0) {
+                throw new SQLException("Creating user failed, no rows affected.");
+            }
+            
+            // Verify the user was inserted
+            if (existsById(user.getUserId())) {
+                logger.info("User insertion verified - User exists in database with ID: {}", user.getUserId());
+            } else {
+                logger.warn("User insertion could not be verified - User with ID: {} not found after insert", user.getUserId());
+            }
+            
+            // Commit the transaction
+            conn.commit();
+            logger.info("Transaction committed successfully for user ID: {}", user.getUserId());
+            
+        } catch (SQLException e) {
+            // Handle transaction rollback on error
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                    logger.error("Transaction rolled back due to error: {}", e.getMessage());
+                } catch (SQLException ex) {
+                    logger.error("Error rolling back transaction: {}", ex.getMessage());
+                }
+            }
+            logger.error("Error inserting user: {} - {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to insert user: " + e.getMessage(), e);
+        } finally {
+            // Clean up resources
+            if (pstmt != null) {
+                try {
+                    pstmt.close();
+                } catch (SQLException e) {
+                    logger.error("Error closing statement: {}", e.getMessage());
+                }
+            }
+            if (conn != null) {
+                try {
+                    // Reset auto-commit mode
+                    conn.setAutoCommit(true);
+                    conn.close();
+                    logger.info("Database connection closed");
+                } catch (SQLException e) {
+                    logger.error("Error closing connection: {}", e.getMessage());
+                }
+            }
+        }
+    }
+    
+    private void updateUser(User user) {
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(UPDATE_USER)) {
+            
+            // Log the values we're about to save
+            logger.info("Updating user: {}, firstName='{}', lastName='{}'", 
+                user.getUsername(), user.getFirstName(), user.getLastName());
+                
+            // Set parameters for update (different order than insert)
+            pstmt.setString(1, user.getFirstName());
+            pstmt.setString(2, user.getLastName());
+            pstmt.setString(3, user.getPassword());
+            pstmt.setString(4, user.getEmail());
+            pstmt.setString(5, user.getProfilePictureUrl());
+            pstmt.setString(6, user.getCountry());
+            pstmt.setString(7, user.getRegion());
+            pstmt.setString(8, user.getPhoneNumber());
+            pstmt.setString(9, user.getCountryPrefix());
+            pstmt.setString(10, user.getAddress());
+            pstmt.setString(11, user.getZipCode());
+            pstmt.setString(12, user.getGender());
+            
+            if (user.getBirthdate() != null) {
+                pstmt.setDate(13, java.sql.Date.valueOf(user.getBirthdate()));
+            } else {
+                pstmt.setNull(13, java.sql.Types.DATE);
+            }
+            
+            pstmt.setString(14, rolesToString(user.getRoles()));
+            pstmt.setInt(15, user.isActive() ? 1 : 0);
+            pstmt.setString(16, user.getUserId());
+            
+            int rowsUpdated = pstmt.executeUpdate();
+            logger.info("Updated {} rows for user: {}", rowsUpdated, user.getUsername());
+            
+        } catch (SQLException e) {
+            logger.error("Error updating user: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to update user", e);
+        }
+    }    private void setUserParameters(PreparedStatement pstmt, User user) throws SQLException {
+        logger.info("Setting parameters for user: {}, firstName='{}', lastName='{}', email='{}'", 
+            user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail());
+        logger.info("User roles: {}, Active: {}", rolesToString(user.getRoles()), user.isActive());
+            
+        try {
+            // Debug each parameter as it's set
+            logger.debug("Setting parameter 1 (user_id): {}", user.getUserId());
+            pstmt.setString(1, user.getUserId());
+            
+            logger.debug("Setting parameter 2 (username): {}", user.getUsername());
+            pstmt.setString(2, user.getUsername());
+            
+            logger.debug("Setting parameter 3 (first_name): {}", user.getFirstName());
+            pstmt.setString(3, user.getFirstName());
+            
+            logger.debug("Setting parameter 4 (last_name): {}", user.getLastName());
+            pstmt.setString(4, user.getLastName());
+            
+            logger.debug("Setting parameter 5 (password): ******");
+            pstmt.setString(5, user.getPassword());
+            
+            logger.debug("Setting parameter 6 (email): {}", user.getEmail());
+            pstmt.setString(6, user.getEmail());
+            
+            logger.debug("Setting parameter 7 (profile_picture_url): {}", user.getProfilePictureUrl());
+            pstmt.setString(7, user.getProfilePictureUrl());
+            
+            logger.debug("Setting parameter 8 (country): {}", user.getCountry());
+            pstmt.setString(8, user.getCountry());
+            
+            logger.debug("Setting parameter 9 (region): {}", user.getRegion());
+            pstmt.setString(9, user.getRegion());
+            
+            logger.debug("Setting parameter 10 (phone_number): {}", user.getPhoneNumber());
+            pstmt.setString(10, user.getPhoneNumber());
+            
+            logger.debug("Setting parameter 11 (country_prefix): {}", user.getCountryPrefix());
+            pstmt.setString(11, user.getCountryPrefix());
+            
+            logger.debug("Setting parameter 12 (address): {}", user.getAddress());
+            pstmt.setString(12, user.getAddress());
+            
+            logger.debug("Setting parameter 13 (zip_code): {}", user.getZipCode());
+            pstmt.setString(13, user.getZipCode());
+            
+            logger.debug("Setting parameter 14 (gender): {}", user.getGender());
+            pstmt.setString(14, user.getGender());
+            
+            if (user.getBirthdate() != null) {
+                logger.debug("Setting parameter 15 (birthdate): {}", user.getBirthdate());
+                pstmt.setDate(15, java.sql.Date.valueOf(user.getBirthdate()));
+            } else {
+                logger.debug("Setting parameter 15 (birthdate): NULL");
+                pstmt.setNull(15, java.sql.Types.DATE);
+            }
+            
+            String rolesString = rolesToString(user.getRoles());
+            logger.debug("Setting parameter 16 (roles): {}", rolesString);
+            pstmt.setString(16, rolesString);
+            
+            logger.debug("Setting parameter 17 (active): {}", user.isActive() ? 1 : 0);
+            pstmt.setInt(17, user.isActive() ? 1 : 0);
+            
+            logger.info("All parameters set successfully");
+        } catch (SQLException e) {
+            logger.error("Error setting parameter: {}", e.getMessage(), e);
+            throw e;
+        }
+    }    
+    
+    @Override
+    public Optional<User> findById(String userId) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        
+        try {
+            conn = getConnection();
+            logger.info("Searching for user with ID: {}", userId);
+            
+            pstmt = conn.prepareStatement(SELECT_USER_BY_ID);
+            pstmt.setString(1, userId);
+            rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                User user = resultSetToUser(rs);
+                logger.info("Found user: {} with ID: {}", user.getUsername(), userId);
+                return Optional.of(user);
+            } else {
+                logger.warn("No user found with ID: {}", userId);
+            }
+            
+        } catch (SQLException e) {
+            logger.error("Error finding user by ID: {}", e.getMessage(), e);
+        } finally {
+            // Close resources in reverse order
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    logger.error("Error closing result set: {}", e.getMessage());
+                }
+            }
+            if (pstmt != null) {
+                try {
+                    pstmt.close();
+                } catch (SQLException e) {
+                    logger.error("Error closing statement: {}", e.getMessage());
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    logger.error("Error closing connection: {}", e.getMessage());
+                }
+            }
+        }
+        
+        return Optional.empty();
+    }
+    
+    @Override
+    public Optional<User> findByUsername(String username) {
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SELECT_USER_BY_USERNAME)) {
+            
+            pstmt.setString(1, username);
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                return Optional.of(resultSetToUser(rs));
+            }
+            
+        } catch (SQLException e) {
+            logger.error("Error finding user by username: {}", e.getMessage(), e);
+        }
+        
+        return Optional.empty();
+    }
+    
+    @Override
+    public List<User> findAll() {
+        List<User> users = new ArrayList<>();
+        
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(SELECT_ALL_USERS)) {
+            
+            while (rs.next()) {
+                users.add(resultSetToUser(rs));
+            }
+            
+        } catch (SQLException e) {
+            logger.error("Error finding all users: {}", e.getMessage(), e);
+        }
+        
+        return users;
+    }
+    
+    @Override
+    public void deleteById(String userId) {
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(DELETE_USER)) {
+            
+            pstmt.setString(1, userId);
+            pstmt.executeUpdate();
+            
+        } catch (SQLException e) {
+            logger.error("Error deleting user: {}", e.getMessage(), e);
+        }
+    }
+    
+    @Override
+    public boolean existsByUsername(String username) {
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(EXISTS_BY_USERNAME)) {
+            
+            pstmt.setString(1, username);
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+            
+        } catch (SQLException e) {
+            logger.error("Error checking if username exists: {}", e.getMessage(), e);
+        }
+        
+        return false;
+    }
+    
+    @Override
+    public boolean existsByEmail(String email) {
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(EXISTS_BY_EMAIL)) {
+            
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+            
+        } catch (SQLException e) {
+            logger.error("Error checking if email exists: {}", e.getMessage(), e);
+        }
+        
+        return false;
+    }
+    
+    @Override
+    public List<User> findByTeamId(String teamId) {
+        List<User> users = new ArrayList<>();
+        
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SELECT_USERS_BY_TEAM)) {
+            
+            pstmt.setString(1, teamId);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                users.add(resultSetToUser(rs));
+            }
+            
+            logger.info("Found {} users for team ID: {}", users.size(), teamId);
+            
+        } catch (SQLException e) {
+            logger.error("Error finding users by team ID: {}", e.getMessage(), e);
+        }
+        
+        return users;
+    }
+
+    @Override
+    public boolean existsById(String userId) {
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SELECT_USER_BY_ID)) {
+            
+            pstmt.setString(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+            
+            return rs.next();
+            
+        } catch (SQLException e) {
+            logger.error("Error checking if user ID exists: {}", e.getMessage(), e);
+        }
+        
+        return false;
+    }
+
+    private User resultSetToUser(ResultSet rs) throws SQLException {
+        User user = new User();
+        user.setUserId(rs.getString("user_id"));
+        user.setUsername(rs.getString("username"));
+        
+        // Handle new fields with null checks to support older database schemas
+        try {
+            user.setFirstName(rs.getString("first_name"));
+        } catch (SQLException e) {
+            // Column might not exist in older databases
+            user.setFirstName("");
+        }
+        
+        try {
+            user.setLastName(rs.getString("last_name"));
+        } catch (SQLException e) {
+            // Column might not exist in older databases
+            user.setLastName("");
+        }
+        
+        user.setPassword(rs.getString("password"));
+        user.setEmail(rs.getString("email"));
+        user.setProfilePictureUrl(rs.getString("profile_picture_url"));
+        user.setCountry(rs.getString("country"));
+        
+        try {
+            user.setRegion(rs.getString("region"));
+        } catch (SQLException e) {
+            // Column might not exist in older databases
+            user.setRegion("");
+        }
+        
+        user.setPhoneNumber(rs.getString("phone_number"));
+        user.setCountryPrefix(rs.getString("country_prefix"));
+        user.setAddress(rs.getString("address"));
+        user.setZipCode(rs.getString("zip_code"));
+        user.setGender(rs.getString("gender"));
+        
+        try {
+            java.sql.Date birthdate = rs.getDate("birthdate");
+            if (birthdate != null) {
+                user.setBirthdate(birthdate.toLocalDate());
+            }
+        } catch (SQLException e) {
+            // Column might not exist in older databases
+            user.setBirthdate(null);
+        }
+        
+        user.setRoles(stringToRoles(rs.getString("roles")));
+        
+        user.setActive(rs.getInt("active") == 1);
+        
+        return user;
+    }    private String rolesToString(Set<Role> roles) {
+        if (roles == null || roles.isEmpty()) {
+            return "USER"; // Default to USER role if none specified
+        }
+        return roles.stream()
+                .map(Enum::name)
+                .collect(Collectors.joining(","));
+    }    private Set<Role> stringToRoles(String rolesStr) {
+        if (rolesStr == null || rolesStr.isEmpty()) {
+            return new HashSet<>();
+        }
+        
+        return Arrays.stream(rolesStr.split(","))
+                .map(String::toUpperCase) // Convert to uppercase before parsing
+                .map(Role::valueOf)
+                .collect(Collectors.toSet());
+    }
+}

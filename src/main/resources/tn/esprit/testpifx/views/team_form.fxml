@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.testpifx.controllers.TeamFormController" 
+      spacing="20" styleClass="form-container" prefWidth="500" prefHeight="400">
+    
+    <padding>
+        <Insets top="20" right="30" bottom="20" left="30"/>
+    </padding>
+
+    <!-- Header Section -->
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label fx:id="titleLabel" styleClass="header-label" text="Add Team"/>
+    </HBox>
+
+    <!-- Form Fields -->
+    <VBox spacing="15">
+        <!-- Team Name -->
+        <VBox spacing="5">
+            <Label text="Team Name" styleClass="form-label"/>
+            <TextField fx:id="nameField" styleClass="form-field" promptText="Enter team name"/>
+        </VBox>
+
+        <!-- Team Description -->
+        <VBox spacing="5">
+            <Label text="Description" styleClass="form-label"/>
+            <TextArea fx:id="descriptionField" styleClass="form-field" promptText="Enter team description" 
+                     prefRowCount="4" wrapText="true"/>
+        </VBox>
+    </VBox>
+
+    <!-- Button Bar -->
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button fx:id="cancelButton" text="Cancel" styleClass="btn, btn-light" onAction="#handleCancel"/>
+        <Button fx:id="saveButton" text="Save" styleClass="btn, btn-success" onAction="#handleSave"/>
+    </HBox>
+</VBox>

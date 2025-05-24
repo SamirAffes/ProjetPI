@@ -1,0 +1,1 @@
+<!-- Add this dependency to your pom.xml inside the dependencies section --><dependency>    <groupId>com.sun.mail</groupId>    <artifactId>javax.mail</artifactId>    <version>1.6.2</version></dependency>

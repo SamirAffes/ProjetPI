@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.shape.Circle?>
+<?import java.lang.String?>
+<?import javafx.scene.control.DatePicker?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="tn.esprit.testpifx.controllers.UserFormController"
+            stylesheets="@../styles/modern.css"
+            styleClass="full-screen-container">
+
+    <top>
+        <HBox styleClass="header-modern">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <Label fx:id="titleLabel" text="Add User" styleClass="header-label">
+                <font>
+                    <Font size="24.0" />
+                </font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="backButton" text="Back" onAction="#handleCancel" styleClass="btn, btn-secondary">
+                <graphic>
+                    <Label text="←" style="-fx-text-fill: white;"/>
+                </graphic>
+            </Button>
+        </HBox>
+    </top>
+
+    <center>
+        <StackPane>
+            <VBox styleClass="bg-gradient-primary" alignment="CENTER" StackPane.alignment="CENTER">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+                
+                <!-- Card Container -->
+                <VBox styleClass="card-shadow" maxWidth="900" maxHeight="700">
+                    
+                    <!-- Card Body -->
+                    <HBox VBox.vgrow="ALWAYS">
+                        <!-- Left side profile image section -->
+                        <VBox alignment="CENTER" HBox.hgrow="NEVER" maxWidth="300" styleClass="profile-sidebar">
+                            <padding>
+                                <Insets top="30" right="20" bottom="30" left="20"/>
+                            </padding>
+                            <StackPane alignment="CENTER">
+                                <Circle radius="80" style="-fx-fill: white; -fx-stroke: #e0e0e0; -fx-stroke-width: 2;"/>
+                                <ImageView fx:id="profileImageView" fitWidth="150" fitHeight="150" preserveRatio="true" 
+                                          styleClass="profile-image" onMouseClicked="#handleUploadPhoto"/>
+                            </StackPane>
+                            <Button fx:id="uploadButton" text="Change Profile Picture" onAction="#handleUploadPhoto" 
+                                    styleClass="btn, btn-outline-primary">
+                                <VBox.margin>
+                                    <Insets top="15"/>
+                                </VBox.margin>
+                            </Button>
+                        </VBox>
+                        
+                        <!-- Right side form section -->
+                        <VBox spacing="20" HBox.hgrow="ALWAYS" styleClass="form-container">
+                            <padding>
+                                <Insets top="30" right="30" bottom="30" left="30"/>
+                            </padding>
+                            
+                            <!-- Form Title -->
+                            <VBox alignment="CENTER">
+                                <Label text="Create an Account!" styleClass="section-title">
+                                    <font>
+                                        <Font size="22.0" name="System Bold"/>
+                                    </font>
+                                </Label>
+                                <Separator>
+                                    <VBox.margin>
+                                        <Insets top="10" bottom="20"/>
+                                    </VBox.margin>
+                                </Separator>
+                            </VBox>
+                            
+                            <!-- User Form -->
+                            <GridPane hgap="15" vgap="15">
+                                <columnConstraints>
+                                    <ColumnConstraints hgrow="NEVER" minWidth="120"/>
+                                    <ColumnConstraints hgrow="ALWAYS"/>
+                                </columnConstraints>
+                                
+                                <!-- First row - Username -->
+                                <Label text="Username:" styleClass="form-label" 
+                                        GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                                <TextField fx:id="usernameField" promptText="Enter username" styleClass="form-field" 
+                                        GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                                <!-- Second row - First Name -->
+                                <Label text="First Name:" styleClass="form-label" 
+                                        GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                                <TextField fx:id="firstNameField" promptText="Enter first name" styleClass="form-field" 
+                                        GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                                        
+                                <!-- Third row - Last Name -->
+                                <Label text="Last Name:" styleClass="form-label" 
+                                        GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                                <TextField fx:id="lastNameField" promptText="Enter last name" styleClass="form-field" 
+                                        GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                                <!-- Fourth row - Email -->
+                                <Label text="Email:" styleClass="form-label" 
+                                        GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                                <TextField fx:id="emailField" promptText="Email Address" styleClass="form-field" 
+                                        GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                                        
+                                <!-- Fifth row - Birthdate -->
+                                <Label text="Birthdate:" styleClass="form-label" 
+                                        GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                                <DatePicker fx:id="birthdatePicker" promptText="Select date of birth" styleClass="form-field" 
+                                        GridPane.rowIndex="4" GridPane.columnIndex="1" maxWidth="Infinity"/>
+
+                                <!-- Sixth row - Password -->
+                                <Label text="Password:" styleClass="form-label" 
+                                        GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                                <PasswordField fx:id="passwordField" promptText="Password" styleClass="form-field" 
+                                        GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+                                <!-- Seventh row - Confirm Password -->
+                                <Label text="Confirm Password:" styleClass="form-label" 
+                                        GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                                <PasswordField fx:id="confirmPasswordField" promptText="Repeat Password" styleClass="form-field" 
+                                        GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+
+                                <!-- Eighth row - Role selection -->
+                                <Label text="Role:" styleClass="form-label" 
+                                        GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+                                <ComboBox fx:id="roleComboBox" promptText="Select Role" styleClass="form-field" 
+                                        GridPane.rowIndex="7" GridPane.columnIndex="1" maxWidth="Infinity"/>
+
+                                <!-- Ninth row - Gender -->
+                                <Label text="Gender:" styleClass="form-label" 
+                                       GridPane.rowIndex="8" GridPane.columnIndex="0"/>
+                                <ComboBox fx:id="genderComboBox" promptText="Select Gender" styleClass="form-field" 
+                                        GridPane.rowIndex="8" GridPane.columnIndex="1" maxWidth="Infinity"/>
+
+                                <!-- Tenth row - Country -->
+                                <Label text="Country:" styleClass="form-label" 
+                                       GridPane.rowIndex="9" GridPane.columnIndex="0"/>
+                                <ComboBox fx:id="countryComboBox" promptText="Select Country" styleClass="form-field" 
+                                        GridPane.rowIndex="9" GridPane.columnIndex="1" maxWidth="Infinity" onAction="#handleCountryChange"/>
+                                
+                                <!-- Eleventh row - Region/Governorate -->
+                                <Label fx:id="regionLabel" text="Region:" styleClass="form-label" visible="false"
+                                       GridPane.rowIndex="10" GridPane.columnIndex="0"/>
+                                <ComboBox fx:id="regionComboBox" promptText="Select Region" styleClass="form-field" visible="false"
+                                        GridPane.rowIndex="10" GridPane.columnIndex="1" maxWidth="Infinity"/>
+                            </GridPane>
+                            
+                            <!-- Buttons section -->
+                            <VBox spacing="10">
+                                <padding>
+                                    <Insets top="15" />
+                                </padding>
+                                <Button fx:id="saveButton" text="Register Account" onAction="#handleSave" defaultButton="true" 
+                                        styleClass="btn, btn-success, btn-lg" maxWidth="Infinity">
+                                    <font>
+                                        <Font size="14.0" name="System Bold"/>
+                                    </font>
+                                </Button>
+                                <Separator>
+                                    <VBox.margin>
+                                        <Insets top="10" bottom="10"/>
+                                    </VBox.margin>
+                                </Separator>
+                                <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel" 
+                                        styleClass="btn, btn-light" maxWidth="Infinity"/>
+                            </VBox>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </StackPane>
+    </center>
+</BorderPane>

@@ -1,0 +1,675 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.chart.LineChart?>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="tn.esprit.testpifx.controllers.WelcomeController"
+            style="-fx-background-color: #f8f9fc;">
+
+    <!-- Left Sidebar Navigation -->
+    <left>
+        <VBox styleClass="sidebar" style="-fx-background-color: linear-gradient(to bottom, #4e73df, #224abe); -fx-padding: 0; -fx-pref-width: 220;">
+            <!-- Brand Logo and Title -->
+            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 15 20; -fx-background-color: rgba(0,0,0,0.1);">
+                <Label text="👑" style="-fx-font-size: 20px; -fx-text-fill: white; -fx-rotate: -15;"/>
+                <Label text="SBAdmin" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            </HBox>
+            
+            <Separator style="-fx-background-color: rgba(255,255,255,0.15);"/>
+            
+            <!-- Dashboard Link -->
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="nav-item, sidebar-button-active" 
+                  style="-fx-padding: 12 15 12 20; -fx-background-color: rgba(255,255,255,0.1);">
+                <Label text="📊" style="-fx-text-fill: white; -fx-font-size: 14px;"/>
+                <Label text="Dashboard" style="-fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+            </HBox>
+            
+            <Separator style="-fx-background-color: rgba(255,255,255,0.15);"/>
+            
+            <Label text="MANAGEMENT" style="-fx-text-fill: rgba(255,255,255,0.4); -fx-font-size: 11px; -fx-padding: 12 15 5 20; -fx-font-weight: bold;"/>
+            
+            <!-- User Management Link -->
+            <HBox fx:id="userManagementBtn" alignment="CENTER_LEFT" spacing="10" styleClass="nav-item, sidebar-button"
+                  style="-fx-padding: 12 15 12 20; -fx-cursor: hand;" onMouseClicked="#handleManageUsers">
+                <Label text="👤" style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px;"/>
+                <Label text="User Management" style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px;"/>
+            </HBox>
+            
+            <!-- Team Management Link -->
+            <HBox fx:id="teamManagementBtn" alignment="CENTER_LEFT" spacing="10" styleClass="nav-item, sidebar-button"
+                  style="-fx-padding: 12 15 12 20; -fx-cursor: hand;" onMouseClicked="#handleManageTeams">
+                <Label text="👥" style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px;"/>
+                <Label text="Team Management" style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px;"/>
+            </HBox>
+            
+            <Separator style="-fx-background-color: rgba(255,255,255,0.15);"/>
+            
+            <Label text="PROFILE" style="-fx-text-fill: rgba(255,255,255,0.4); -fx-font-size: 11px; -fx-padding: 12 15 5 20; -fx-font-weight: bold;"/>
+            
+            <!-- Profile Link -->
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="nav-item, sidebar-button"
+                  style="-fx-padding: 12 15 12 20; -fx-cursor: hand;" onMouseClicked="#handleViewProfile">
+                <Label text="🧑" style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px;"/>
+                <Label text="My Profile" style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px;"/>
+            </HBox>
+            
+            <!-- Logout Link -->
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="nav-item, sidebar-button"
+                  style="-fx-padding: 12 15 12 20; -fx-cursor: hand;" onMouseClicked="#handleLogout">
+                <Label text="🚪" style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px;"/>
+                <Label text="Logout" style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px;"/>
+            </HBox>
+            
+            <Region VBox.vgrow="ALWAYS"/>
+            
+            <!-- Collapse Sidebar Button -->
+            <HBox alignment="CENTER" spacing="10" styleClass="btn, btn-icon, rounded-circle" 
+                  style="-fx-padding: 15; -fx-background-color: rgba(0,0,0,0.1); -fx-cursor: hand;">
+                <Circle radius="10" fill="rgba(255,255,255,0.1)"/>
+                <Label text="←" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+            </HBox>
+        </VBox>
+    </left>
+    
+    <!-- Main Content Area -->
+    <center>
+        <VBox VBox.vgrow="ALWAYS">
+            <!-- Top Navigation Bar -->
+            <HBox alignment="CENTER_LEFT" style="-fx-background-color: white; -fx-padding: 12 25; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0); -fx-border-color: #e8e8e8; -fx-border-width: 0 0 1 0;">
+                <!-- Search Box -->
+                <HBox spacing="5" alignment="CENTER" styleClass="search-box-container" style="-fx-padding: 5 10;">
+                    <Label text="🔍" style="-fx-text-fill: #4e73df;"/>
+                    <TextField promptText="Search..." styleClass="search-box-modern" style="-fx-pref-width: 200;"/>
+                </HBox>
+                
+                <Region HBox.hgrow="ALWAYS"/>
+                
+                <!-- Notifications -->
+                <HBox fx:id="notificationIcon" alignment="CENTER" spacing="5" style="-fx-padding: 0 15; -fx-cursor: hand;" onMouseClicked="#handleNotifications">
+                    <Label text="🔔" style="-fx-font-size: 16px;"/>
+                    <Circle fx:id="notificationBadge" radius="5" fill="#e74a3b" style="-fx-translate-x: -8; -fx-translate-y: -5;"/>
+                </HBox>
+                
+                <!-- Messages -->
+                <HBox alignment="CENTER" spacing="5" style="-fx-padding: 0 15;">
+                    <Label text="✉️" style="-fx-font-size: 16px;"/>
+                    <Circle radius="5" fill="#e74a3b" style="-fx-translate-x: -8; -fx-translate-y: -5;"/>
+                </HBox>
+                
+                <!-- Divider -->
+                <Line startY="0" endY="25" style="-fx-stroke: #e3e6f0; -fx-stroke-width: 1;"/>
+                
+                <!-- User Info -->
+                <HBox alignment="CENTER" spacing="10" style="-fx-padding: 0 15;">
+                    <Label fx:id="welcomeLabel" text="Welcome, User" style="-fx-text-fill: #5a5c69;"/>
+                    <Circle radius="15" fill="#4e73df">
+                        <HBox.margin>
+                            <Insets left="5"/>
+                        </HBox.margin>
+                    </Circle>
+                </HBox>
+            </HBox>
+            
+            <!-- Dashboard Content - Making sure ScrollPane takes remaining space -->
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" 
+                      style="-fx-background-color: transparent; -fx-padding: 0; -fx-background: transparent; -fx-fit-to-height: false; -fx-pannable: true;">
+                <content>
+                    <VBox spacing="25" style="-fx-padding: 25 30;">
+                        <!-- Header -->
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="Dashboard" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a5c69;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="Generate Report" styleClass="btn, btn-primary, btn-sm" style="-fx-font-size: 12px;">
+                                <graphic>
+                                    <Label text="📥" style="-fx-text-fill: white;"/>
+                                </graphic>
+                            </Button>
+                        </HBox>
+                        
+                        <!-- First Row of Statistics Cards (Keeping these) -->
+                        <HBox spacing="25" alignment="CENTER_LEFT">
+                            <!-- Users Card -->
+                            <VBox styleClass="card" style="-fx-background-color: white; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 8, 0, 0, 3); -fx-border-color: #4e73df; -fx-border-width: 0 0 0 4px; -fx-pref-width: 250;">
+                                <padding>
+                                    <Insets top="20" right="20" bottom="20" left="20"/>
+                                </padding>
+                                <HBox>
+                                    <VBox spacing="5">
+                                        <Label text="TOTAL USERS" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #4e73df;"/>
+                                        <Label fx:id="totalUsersLabel" text="0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #5a5c69;"/>
+                                        <HBox alignment="CENTER_LEFT" spacing="5">
+                                            <Label text="↗" style="-fx-text-fill: #1cc88a; -fx-font-weight: bold;"/>
+                                            <Label text="Updated now" style="-fx-font-size: 12px; -fx-text-fill: #858796;"/>
+                                        </HBox>
+                                    </VBox>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label text="👥" style="-fx-font-size: 32px; -fx-text-fill: #dddfeb;"/>
+                                </HBox>
+                            </VBox>
+                            
+                            <!-- Active Users Card -->
+                            <VBox styleClass="card" style="-fx-background-color: white; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 8, 0, 0, 3); -fx-border-color: #1cc88a; -fx-border-width: 0 0 0 4px; -fx-pref-width: 250;">
+                                <padding>
+                                    <Insets top="20" right="20" bottom="20" left="20"/>
+                                </padding>
+                                <HBox>
+                                    <VBox spacing="5">
+                                        <Label text="ACTIVE USERS" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #1cc88a;"/>
+                                        <Label fx:id="activeUsersLabel" text="0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #5a5c69;"/>
+                                        <HBox alignment="CENTER_LEFT" spacing="5">
+                                            <Label text="●" style="-fx-text-fill: #1cc88a; -fx-font-weight: bold;"/>
+                                            <Label text="Online now" style="-fx-font-size: 12px; -fx-text-fill: #858796;"/>
+                                        </HBox>
+                                    </VBox>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label text="👤" style="-fx-font-size: 32px; -fx-text-fill: #dddfeb;"/>
+                                </HBox>
+                            </VBox>
+                            
+                            <!-- Teams Card -->
+                            <VBox styleClass="card" style="-fx-background-color: white; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 8, 0, 0, 3); -fx-border-color: #36b9cc; -fx-border-width: 0 0 0 4px; -fx-pref-width: 250;">
+                                <padding>
+                                    <Insets top="20" right="20" bottom="20" left="20"/>
+                                </padding>
+                                <HBox>
+                                    <VBox spacing="5">
+                                        <Label text="TOTAL TEAMS" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #36b9cc;"/>
+                                        <Label fx:id="totalTeamsLabel" text="0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #5a5c69;"/>
+                                        <HBox alignment="CENTER_LEFT" spacing="5">
+                                            <Label text="↗" style="-fx-text-fill: #1cc88a; -fx-font-weight: bold;"/>
+                                            <Label text="Updated now" style="-fx-font-size: 12px; -fx-text-fill: #858796;"/>
+                                        </HBox>
+                                    </VBox>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label text="👨‍💼" style="-fx-font-size: 32px; -fx-text-fill: #dddfeb;"/>
+                                </HBox>
+                            </VBox>
+                            
+                            <!-- Activity Card -->
+                            <VBox styleClass="card" style="-fx-background-color: white; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 8, 0, 0, 3); -fx-border-color: #f6c23e; -fx-border-width: 0 0 0 4px; -fx-pref-width: 250;">
+                                <padding>
+                                    <Insets top="20" right="20" bottom="20" left="20"/>
+                                </padding>
+                                <HBox>
+                                    <VBox spacing="5">
+                                        <Label text="RECENT ACTIVITY" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #f6c23e;"/>
+                                        <Label fx:id="recentActivityLabel" text="0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #5a5c69;"/>
+                                        <HBox alignment="CENTER_LEFT" spacing="5">
+                                            <Label text="⟳" style="-fx-text-fill: #858796; -fx-font-weight: bold;"/>
+                                            <Label text="Last 24 Hours" style="-fx-font-size: 12px; -fx-text-fill: #858796;"/>
+                                        </HBox>
+                                    </VBox>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label text="📊" style="-fx-font-size: 32px; -fx-text-fill: #dddfeb;"/>
+                                </HBox>
+                            </VBox>
+                        </HBox>
+                        
+                        <!-- Second Row: Charts and Graphs (Replacing the 4 cards) -->
+                        <HBox spacing="25">
+                            <!-- Left Side: Regional Distribution Chart - Now a Pie Chart -->
+                            <VBox styleClass="card" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0); -fx-border-color: #e3e6f0; -fx-border-width: 1; -fx-border-radius: 5; -fx-pref-width: 500;">
+                                <!-- Card Header -->
+                                <HBox style="-fx-padding: 15 20; -fx-background-color: #f8f9fc; -fx-border-color: #e3e6f0; -fx-border-width: 0 0 1 0;">
+                                    <Label text="Regional Distribution" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #e74a3b;"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label text="⋮" style="-fx-font-size: 18px; -fx-text-fill: #dddfeb; -fx-cursor: hand;"/>
+                                </HBox>
+                                
+                                <!-- Card Body - Now with Pie Chart instead of Bar Chart -->
+                                <VBox spacing="15" alignment="CENTER" style="-fx-padding: 15 20 25 20;">
+                                    <?import javafx.scene.chart.PieChart?>
+                                    <PieChart fx:id="regionBarChart" legendVisible="false" prefHeight="200" prefWidth="200" labelsVisible="true"/>
+                                    
+                                    <!-- Legend -->
+                                    <HBox spacing="15" alignment="CENTER" style="-fx-padding: 15 0 0 0;">
+                                        <HBox alignment="CENTER" spacing="5">
+                                            <Circle radius="5" fill="#e74a3b"/>
+                                            <Label text="Tunis" style="-fx-font-size: 12px;"/>
+                                        </HBox>
+                                        
+                                        <HBox alignment="CENTER" spacing="5">
+                                            <Circle radius="5" fill="#fd7e14"/>
+                                            <Label text="Sousse" style="-fx-font-size: 12px;"/>
+                                        </HBox>
+                                        
+                                        <HBox alignment="CENTER" spacing="5">
+                                            <Circle radius="5" fill="#f6c23e"/>
+                                            <Label text="Sfax" style="-fx-font-size: 12px;"/>
+                                        </HBox>
+                                    </HBox>
+                                    
+                                    <HBox alignment="CENTER" spacing="10" style="-fx-padding: 10 0 0 0;">
+                                        <Label text="🇹🇳" style="-fx-font-weight: bold;"/>
+                                        <Label text="Most active regions: " style="-fx-font-size: 12px; -fx-text-fill: #858796;"/>
+                                        <Label fx:id="topRegionsLabel" text="Tunis, Sousse, Sfax" style="-fx-font-size: 12px; -fx-font-weight: bold;"/>
+                                    </HBox>
+                                </VBox>
+                            </VBox>
+                            
+                            <!-- Right Side: User Roles Pie Chart -->
+                            <VBox styleClass="card" VBox.vgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0); -fx-border-color: #e3e6f0; -fx-border-width: 1; -fx-border-radius: 5; -fx-pref-width: 500;">
+                                <!-- Card Header -->
+                                <HBox style="-fx-padding: 15 20; -fx-background-color: #f8f9fc; -fx-border-color: #e3e6f0; -fx-border-width: 0 0 1 0;">
+                                    <Label text="User Role Distribution" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #fd7e14;"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label text="⋮" style="-fx-font-size: 18px; -fx-text-fill: #dddfeb; -fx-cursor: hand;"/>
+                                </HBox>
+                                
+                                <!-- Card Body -->
+                                <VBox spacing="15" alignment="CENTER" style="-fx-padding: 15 20 25 20;">
+                                    <?import javafx.scene.chart.PieChart?>
+                                    <PieChart fx:id="roleDistributionChart" legendVisible="false" prefHeight="200" prefWidth="200" labelsVisible="true"/>
+                                    
+                                    <!-- Legend -->
+                                    <HBox spacing="15" alignment="CENTER" style="-fx-padding: 15 0 0 0;">
+                                        <HBox alignment="CENTER" spacing="5">
+                                            <Circle radius="5" fill="#4e73df"/>
+                                            <Label text="Admins" style="-fx-font-size: 12px;"/>
+                                        </HBox>
+                                        
+                                        <HBox alignment="CENTER" spacing="5">
+                                            <Circle radius="5" fill="#1cc88a"/>
+                                            <Label text="Managers" style="-fx-font-size: 12px;"/>
+                                        </HBox>
+                                        
+                                        <HBox alignment="CENTER" spacing="5">
+                                            <Circle radius="5" fill="#36b9cc"/>
+                                            <Label text="Users" style="-fx-font-size: 12px;"/>
+                                        </HBox>
+                                    </HBox>
+                                </VBox>
+                            </VBox>
+                        </HBox>
+                        
+                        <!-- Third Row: More Charts -->
+                        <HBox spacing="25">
+                            <!-- Left Side: Team Size Chart - Redesigned inspired by Bootstrap -->
+                            <VBox styleClass="card" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0); -fx-border-color: #e3e6f0; -fx-border-width: 1; -fx-border-radius: 5; -fx-pref-width: 500;">
+                                <!-- Card Header - With more modern styling and dropdown button -->
+                                <HBox alignment="CENTER_LEFT" style="-fx-padding: 15 20; -fx-background-color: #f8f9fc; -fx-border-color: #e3e6f0; -fx-border-width: 0 0 1 0;">
+                                    <HBox alignment="CENTER_LEFT" spacing="10">
+                                        <Label text="Team Size Distribution" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #6f42c1;"/>
+                                    </HBox>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <MenuButton style="-fx-background-color: transparent; -fx-cursor: hand;" text="">
+                                        <graphic>
+                                            <Label text="⋮" style="-fx-font-size: 18px; -fx-text-fill: #dddfeb;"/>
+                                        </graphic>
+                                        <items>
+                                            <MenuItem text="View Details"/>
+                                            <MenuItem text="Export Data"/>
+                                            <SeparatorMenuItem/>
+                                            <MenuItem text="Settings"/>
+                                        </items>
+                                    </MenuButton>
+                                </HBox>
+                                
+                                <!-- Card Body with progressive bars -->
+                                <VBox style="-fx-padding: 20 25;">
+                                    <!-- Project-style team size indicators -->
+                                    <VBox spacing="15">
+                                        <!-- IT Department -->
+                                        <VBox spacing="5">
+                                            <HBox alignment="CENTER_LEFT" spacing="5">
+                                                <Label text="IT Department" style="-fx-font-weight: bold; -fx-font-size: 13px;"/>
+                                                <Region HBox.hgrow="ALWAYS"/>
+                                                <Label text="12 members" style="-fx-font-size: 13px; -fx-text-fill: #858796;"/>
+                                            </HBox>
+                                            <ProgressBar progress="0.8" style="-fx-accent: #6f42c1; -fx-pref-height: 10;" maxWidth="Infinity"/>
+                                        </VBox>
+                                        
+                                        <!-- Marketing Team -->
+                                        <VBox spacing="5">
+                                            <HBox alignment="CENTER_LEFT" spacing="5">
+                                                <Label text="Marketing Team" style="-fx-font-weight: bold; -fx-font-size: 13px;"/>
+                                                <Region HBox.hgrow="ALWAYS"/>
+                                                <Label text="8 members" style="-fx-font-size: 13px; -fx-text-fill: #858796;"/>
+                                            </HBox>
+                                            <ProgressBar progress="0.6" style="-fx-accent: #1cc88a; -fx-pref-height: 10;" maxWidth="Infinity"/>
+                                        </VBox>
+                                        
+                                        <!-- Finance Department -->
+                                        <VBox spacing="5">
+                                            <HBox alignment="CENTER_LEFT" spacing="5">
+                                                <Label text="Finance Department" style="-fx-font-weight: bold; -fx-font-size: 13px;"/>
+                                                <Region HBox.hgrow="ALWAYS"/>
+                                                <Label text="6 members" style="-fx-font-size: 13px; -fx-text-fill: #858796;"/>
+                                            </HBox>
+                                            <ProgressBar progress="0.4" style="-fx-accent: #36b9cc; -fx-pref-height: 10;" maxWidth="Infinity"/>
+                                        </VBox>
+                                        
+                                        <!-- Mobile App Project -->
+                                        <VBox spacing="5">
+                                            <HBox alignment="CENTER_LEFT" spacing="5">
+                                                <Label text="Mobile App Project" style="-fx-font-weight: bold; -fx-font-size: 13px;"/>
+                                                <Region HBox.hgrow="ALWAYS"/>
+                                                <Label text="5 members" style="-fx-font-size: 13px; -fx-text-fill: #858796;"/>
+                                            </HBox>
+                                            <ProgressBar progress="0.35" style="-fx-accent: #4e73df; -fx-pref-height: 10;" maxWidth="Infinity"/>
+                                        </VBox>
+                                        
+                                        <!-- Website Redesign -->
+                                        <VBox spacing="5">
+                                            <HBox alignment="CENTER_LEFT" spacing="5">
+                                                <Label text="Website Redesign" style="-fx-font-weight: bold; -fx-font-size: 13px;"/>
+                                                <Region HBox.hgrow="ALWAYS"/>
+                                                <Label text="3 members" style="-fx-font-size: 13px; -fx-text-fill: #858796;"/>
+                                            </HBox>
+                                            <ProgressBar progress="0.2" style="-fx-accent: #f6c23e; -fx-pref-height: 10;" maxWidth="Infinity"/>
+                                        </VBox>
+                                    </VBox>
+                                    
+                                    <Separator style="-fx-padding: 15 0;">
+                                        <VBox.margin>
+                                            <Insets top="10" bottom="10"/>
+                                        </VBox.margin>
+                                    </Separator>
+                                    
+                                    <HBox alignment="CENTER" spacing="10">
+                                        <Label text="📈" style="-fx-font-weight: bold;"/>
+                                        <Label text="Average team size: " style="-fx-font-size: 12px; -fx-text-fill: #858796;"/>
+                                        <Label fx:id="avgTeamSizeValue" text="4.2 members" style="-fx-font-size: 12px; -fx-font-weight: bold;"/>
+                                    </HBox>
+                                </VBox>
+                            </VBox>
+                            
+                            <!-- Right Side: Gender Distribution Donut Chart -->
+                            <VBox styleClass="card" VBox.vgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0); -fx-border-color: #e3e6f0; -fx-border-width: 1; -fx-border-radius: 5; -fx-pref-width: 500;">
+                                <!-- Card Header -->
+                                <HBox style="-fx-padding: 15 20; -fx-background-color: #f8f9fc; -fx-border-color: #e3e6f0; -fx-border-width: 0 0 1 0;">
+                                    <Label text="Gender Distribution" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #858796;"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label text="⋮" style="-fx-font-size: 18px; -fx-text-fill: #dddfeb; -fx-cursor: hand;"/>
+                                </HBox>
+                                
+                                <!-- Card Body -->
+                                <VBox spacing="15" alignment="CENTER" style="-fx-padding: 15 20 25 20;">
+                                    <PieChart fx:id="genderDistributionChart" legendVisible="false" prefHeight="200" prefWidth="200" labelsVisible="true"/>
+                                    
+                                    <!-- Legend -->
+                                    <HBox spacing="15" alignment="CENTER" style="-fx-padding: 15 0 0 0;">
+                                        <HBox alignment="CENTER" spacing="5">
+                                            <Circle radius="5" fill="#4e73df"/>
+                                            <Label text="Female" style="-fx-font-size: 12px;"/>
+                                        </HBox>
+                                        
+                                        <HBox alignment="CENTER" spacing="5">
+                                            <Circle radius="5" fill="#e74a3b"/>
+                                            <Label text="Male" style="-fx-font-size: 12px;"/>
+                                        </HBox>
+                                    </HBox>
+                                    
+                                    <HBox alignment="CENTER" spacing="10" style="-fx-padding: 10 0 0 0;">
+                                        <Label text="♀️♂️" style="-fx-font-weight: bold;"/>
+                                        <Label text="Gender ratio: " style="-fx-font-size: 12px; -fx-text-fill: #858796;"/>
+                                        <Label fx:id="genderRatioValue" text="Male: 55% Female: 45%" style="-fx-font-size: 12px; -fx-font-weight: bold;"/>
+                                    </HBox>
+                                </VBox>
+                            </VBox>
+                        </HBox>
+                        
+                        <!-- Content Row -->
+                        <HBox spacing="25">
+                            <!-- Left Side: Activity Chart -->
+                            <VBox styleClass="card" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0); -fx-border-color: #e3e6f0; -fx-border-width: 1; -fx-border-radius: 5; -fx-pref-width: 800;">
+                                <!-- Card Header -->
+                                <HBox style="-fx-padding: 15 20; -fx-background-color: #f8f9fc; -fx-border-color: #e3e6f0; -fx-border-width: 0 0 1 0;">
+                                    <Label text="User Activity Overview" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4e73df;"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label text="⋮" style="-fx-font-size: 18px; -fx-text-fill: #dddfeb; -fx-cursor: hand;"/>
+                                </HBox>
+                                
+                                <!-- Card Body -->
+                                <VBox style="-fx-padding: 15 20 25 20;">
+                                    <?import javafx.scene.chart.LineChart?>
+                                    <?import javafx.scene.chart.CategoryAxis?>
+                                    <?import javafx.scene.chart.NumberAxis?>
+                                    
+                                    <LineChart fx:id="activityLineChart" legendVisible="true" prefHeight="320" createSymbols="true">
+                                        <xAxis>
+                                            <CategoryAxis fx:id="activityXAxis" label="Date" />
+                                        </xAxis>
+                                        <yAxis>
+                                            <NumberAxis fx:id="activityYAxis" label="Activity" />
+                                        </yAxis>
+                                    </LineChart>
+                                </VBox>
+                            </VBox>
+                            
+                            <!-- Right Side: Team Productivity -->
+                            <VBox styleClass="card" VBox.vgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0); -fx-border-color: #e3e6f0; -fx-border-width: 1; -fx-border-radius: 5; -fx-pref-width: 400;">
+                                <!-- Card Header -->
+                                <HBox style="-fx-padding: 15 20; -fx-background-color: #f8f9fc; -fx-border-color: #e3e6f0; -fx-border-width: 0 0 1 0;">
+                                    <Label text="Team Productivity" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4e73df;"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label text="⋮" style="-fx-font-size: 18px; -fx-text-fill: #dddfeb; -fx-cursor: hand;"/>
+                                </HBox>
+                                
+                                <!-- Card Body -->
+                                <VBox spacing="15" style="-fx-padding: 15 20 25 20;">
+                                    <!-- Team Productivity Overview -->
+                                    <HBox alignment="CENTER_LEFT" spacing="15">
+                                        <Circle radius="25" fill="#4e73df"/>
+                                        <VBox>
+                                            <Label text="Development Teams" style="-fx-font-weight: bold;"/>
+                                            <Label text="3 Teams - 76% of tasks completed" style="-fx-text-fill: #858796;"/>
+                                        </VBox>
+                                    </HBox>
+                                    
+                                    <!-- Marketing Team -->
+                                    <HBox alignment="CENTER_LEFT" spacing="15">
+                                        <Circle radius="25" fill="#1cc88a"/>
+                                        <VBox>
+                                            <Label text="Marketing Teams" style="-fx-font-weight: bold;"/>
+                                            <Label text="2 Teams - 82% of tasks completed" style="-fx-text-fill: #858796;"/>
+                                        </VBox>
+                                    </HBox>
+                                    
+                                    <!-- Support Teams -->
+                                    <HBox alignment="CENTER_LEFT" spacing="15">
+                                        <Circle radius="25" fill="#f6c23e"/>
+                                        <VBox>
+                                            <Label text="Support Teams" style="-fx-font-weight: bold;"/>
+                                            <Label text="2 Teams - 94% of tasks completed" style="-fx-text-fill: #858796;"/>
+                                        </VBox>
+                                    </HBox>
+                                    
+                                    <!-- Product Teams -->
+                                    <HBox alignment="CENTER_LEFT" spacing="15">
+                                        <Circle radius="25" fill="#e74a3b"/>
+                                        <VBox>
+                                            <Label text="Product Teams" style="-fx-font-weight: bold;"/>
+                                            <Label text="1 Team - 68% of tasks completed" style="-fx-text-fill: #858796;"/>
+                                        </VBox>
+                                    </HBox>
+                                </VBox>
+                            </VBox>
+                        </HBox>
+                        
+                        <!-- Additional Charts Row -->
+                        <HBox spacing="25">
+                            <!-- Replacing this section with more useful content -->
+                            <VBox styleClass="card" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0); -fx-border-color: #e3e6f0; -fx-border-width: 1; -fx-border-radius: 5; -fx-pref-width: 600;">
+                                <!-- Card Header -->
+                                <HBox style="-fx-padding: 15 20; -fx-background-color: #f8f9fc; -fx-border-color: #e3e6f0; -fx-border-width: 0 0 1 0;">
+                                    <Label text="System Performance" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #e74a3b;"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label text="⋮" style="-fx-font-size: 18px; -fx-text-fill: #dddfeb; -fx-cursor: hand;"/>
+                                </HBox>
+                                
+                                <!-- Card Body -->
+                                <VBox spacing="15" style="-fx-padding: 15 20 25 20;">
+                                    <!-- Login Statistics -->
+                                    <HBox alignment="CENTER_LEFT" spacing="15">
+                                        <Circle radius="25" fill="#4e73df"/>
+                                        <VBox>
+                                            <Label text="Login Statistics" style="-fx-font-weight: bold;"/>
+                                            <Label text="Average daily logins: 12.5" style="-fx-text-fill: #858796;"/>
+                                        </VBox>
+                                    </HBox>
+                                    
+                                    <!-- Response Time Statistics -->
+                                    <HBox alignment="CENTER_LEFT" spacing="15">
+                                        <Circle radius="25" fill="#1cc88a"/>
+                                        <VBox>
+                                            <Label text="System Response" style="-fx-font-weight: bold;"/>
+                                            <Label text="Average response time: 45ms" style="-fx-text-fill: #858796;"/>
+                                        </VBox>
+                                    </HBox>
+                                    
+                                    <!-- Server Health -->
+                                    <HBox alignment="CENTER_LEFT" spacing="15">
+                                        <Circle radius="25" fill="#f6c23e"/>
+                                        <VBox>
+                                            <Label text="Server Health" style="-fx-font-weight: bold;"/>
+                                            <Label text="CPU: 24%, Memory: 38%, Storage: 42%" style="-fx-text-fill: #858796;"/>
+                                        </VBox>
+                                    </HBox>
+                                </VBox>
+                            </VBox>
+                            
+                            <!-- System Overview Card -->
+                            <VBox styleClass="card" VBox.vgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0); -fx-border-color: #e3e6f0; -fx-border-width: 1; -fx-border-radius: 5; -fx-pref-width: 400;">
+                                <!-- Card Header -->
+                                <HBox style="-fx-padding: 15 20; -fx-background-color: #f8f9fc; -fx-border-color: #e3e6f0; -fx-border-width: 0 0 1 0;">
+                                    <Label text="System Overview" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #858796;"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label text="⋮" style="-fx-font-size: 18px; -fx-text-fill: #dddfeb; -fx-cursor: hand;"/>
+                                </HBox>
+                                
+                                <!-- Card Body -->
+                                <VBox spacing="15" style="-fx-padding: 15 20 25 20;">
+                                    <!-- User Statistics -->
+                                    <HBox alignment="CENTER_LEFT" spacing="15">
+                                        <Circle radius="25" fill="#4e73df"/>
+                                        <VBox>
+                                            <Label text="User Statistics" style="-fx-font-weight: bold;"/>
+                                            <Label fx:id="userStatsLabel" text="Admins: 0, Managers: 0, Users: 0" style="-fx-text-fill: #858796;"/>
+                                        </VBox>
+                                    </HBox>
+                                    
+                                    <!-- Country Statistics -->
+                                    <HBox alignment="CENTER_LEFT" spacing="15">
+                                        <Circle radius="25" fill="#1cc88a"/>
+                                        <VBox>
+                                            <Label text="Country Statistics" style="-fx-font-weight: bold;"/>
+                                            <Label fx:id="countryStatsLabel" text="No country data" style="-fx-text-fill: #858796;"/>
+                                        </VBox>
+                                    </HBox>
+                                    
+                                    <!-- Gender Statistics -->
+                                    <HBox alignment="CENTER_LEFT" spacing="15">
+                                        <Circle radius="25" fill="#e74a3b"/>
+                                        <VBox>
+                                            <Label text="Gender Statistics" style="-fx-font-weight: bold;"/>
+                                            <Label fx:id="genderStatsLabel" text="Male: 0, Female: 0, Other: 0" style="-fx-text-fill: #858796;"/>
+                                        </VBox>
+                                    </HBox>
+                                </VBox>
+                            </VBox>
+                        </HBox>
+                        
+                        <!-- Team Statistics Row -->
+                        <HBox spacing="25">
+                            <!-- Left Side: Team Size Comparison -->
+                            <VBox styleClass="card" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0); -fx-border-color: #e3e6f0; -fx-border-width: 1; -fx-border-radius: 5; -fx-pref-width: 600;">
+                                <!-- Card Header -->
+                                <HBox style="-fx-padding: 15 20; -fx-background-color: #f8f9fc; -fx-border-color: #e3e6f0; -fx-border-width: 0 0 1 0;">
+                                    <Label text="Team Size Comparison" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #6f42c1;"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label text="⋮" style="-fx-font-size: 18px; -fx-text-fill: #dddfeb; -fx-cursor: hand;"/>
+                                </HBox>
+                                
+                                <!-- Card Body -->
+                                <VBox style="-fx-padding: 15 20 25 20;">
+                                    <HBox spacing="10">
+                                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                            <Label text="Top Teams by Member Count" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                                            
+                                            <TableView fx:id="teamStatsTable" prefHeight="280">
+                                                <columns>
+                                                    <TableColumn fx:id="teamNameColumn" text="Team Name" prefWidth="200"/>
+                                                    <TableColumn fx:id="teamMembersColumn" text="Members" prefWidth="80"/>
+                                                    <TableColumn fx:id="teamTypeColumn" text="Type" prefWidth="150"/>
+                                                </columns>
+                                            </TableView>
+                                        </VBox>
+                                    </HBox>
+                                </VBox>
+                            </VBox>
+                            
+                            <!-- Right Side: Team Type Distribution -->
+                            <VBox styleClass="card" VBox.vgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0); -fx-border-color: #e3e6f0; -fx-border-width: 1; -fx-border-radius: 5; -fx-pref-width: 400;">
+                                <!-- Card Header -->
+                                <HBox style="-fx-padding: 15 20; -fx-background-color: #f8f9fc; -fx-border-color: #e3e6f0; -fx-border-width: 0 0 1 0;">
+                                    <Label text="Active Users By Team" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1cc88a;"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label text="⋮" style="-fx-font-size: 18px; -fx-text-fill: #dddfeb; -fx-cursor: hand;"/>
+                                </HBox>
+                                
+                                <!-- Card Body -->
+                                <VBox spacing="15" alignment="CENTER" style="-fx-padding: 15 20 25 20;">
+                                    <?import javafx.scene.chart.PieChart?>
+                                    <PieChart fx:id="teamDistributionChart" legendVisible="false" prefHeight="200" prefWidth="200" labelsVisible="true"/>
+                                    
+                                    <!-- Legend -->
+                                    <HBox spacing="15" alignment="CENTER" style="-fx-padding: 15 0 0 0;">
+                                        <HBox alignment="CENTER" spacing="5">
+                                            <Circle radius="5" fill="#6f42c1"/>
+                                            <Label text="Department Teams" style="-fx-font-size: 12px;"/>
+                                        </HBox>
+                                        
+                                        <HBox alignment="CENTER" spacing="5">
+                                            <Circle radius="5" fill="#1cc88a"/>
+                                            <Label text="Project Teams" style="-fx-font-size: 12px;"/>
+                                        </HBox>
+                                    </HBox>
+                                </VBox>
+                            </VBox>
+                        </HBox>
+                        
+                        <!-- System Activity Table -->
+                        <VBox styleClass="card" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0); -fx-border-color: #e3e6f0; -fx-border-width: 1; -fx-border-radius: 5;">
+                            <!-- Card Header -->
+                            <HBox style="-fx-padding: 15 20; -fx-background-color: #f8f9fc; -fx-border-color: #e3e6f0; -fx-border-width: 0 0 1 0;">
+                                <Label text="Recent System Activity" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4e73df;"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Button text="View All" styleClass="btn, btn-link" style="-fx-cursor: hand;"/>
+                            </HBox>
+                            
+                            <!-- Card Body -->
+                            <VBox style="-fx-padding: 0;">
+                                <TableView fx:id="activityTable" VBox.vgrow="ALWAYS" prefHeight="300" style="-fx-background-color: white; -fx-border-width: 0;">
+                                    <columns>
+                                        <TableColumn fx:id="activityTypeColumn" text="Activity Type" prefWidth="150"/>
+                                        <TableColumn fx:id="activityUserColumn" text="User" prefWidth="150"/>
+                                        <TableColumn fx:id="activityDescriptionColumn" text="Description" prefWidth="500"/>
+                                        <TableColumn fx:id="activityTimeColumn" text="Time" prefWidth="150"/>
+                                    </columns>
+                                    <placeholder>
+                                        <Label text="No activity data available" style="-fx-text-fill: #858796;"/>
+                                    </placeholder>
+                                </TableView>
+                            </VBox>
+                        </VBox>
+                        
+                        <!-- Footer -->
+                        <HBox alignment="CENTER" style="-fx-padding: 20 0;">
+                            <Label text="Copyright © User Management System 2025" style="-fx-text-fill: #858796; -fx-font-size: 12px;"/>
+                        </HBox>
+                    </VBox>
+                </content>
+            </ScrollPane>
+        </VBox>
+    </center>
+</BorderPane>

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.shape.Circle?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="tn.esprit.testpifx.controllers.TeamManagementController"
+            stylesheets="@../styles/modern.css"
+            styleClass="full-screen-container">
+
+    <!-- Left Sidebar Navigation -->
+    <left>
+        <VBox styleClass="sidebar" style="-fx-background-color: linear-gradient(to bottom, #4e73df, #224abe); -fx-padding: 0; -fx-pref-width: 220;">
+            <!-- Brand Logo and Title -->
+            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 15 20; -fx-background-color: rgba(0,0,0,0.1);">
+                <Label text="👑" style="-fx-font-size: 20px; -fx-text-fill: white; -fx-rotate: -15;"/>
+                <Label text="SBAdmin" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            </HBox>
+            
+            <Separator style="-fx-background-color: rgba(255,255,255,0.15);"/>
+            
+            <!-- Dashboard Link -->
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="nav-item, sidebar-button"
+                  style="-fx-padding: 12 15 12 20; -fx-cursor: hand;" onMouseClicked="#handleHome">
+                <Label text="📊" style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px;"/>
+                <Label text="Dashboard" style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px;"/>
+            </HBox>
+            
+            <Separator style="-fx-background-color: rgba(255,255,255,0.15);"/>
+            
+            <Label text="MANAGEMENT" style="-fx-text-fill: rgba(255,255,255,0.4); -fx-font-size: 11px; -fx-padding: 12 15 5 20; -fx-font-weight: bold;"/>
+            
+            <!-- User Management Link -->
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="nav-item, sidebar-button"
+                  style="-fx-padding: 12 15 12 20; -fx-cursor: hand;" onMouseClicked="#handleUserManagement">
+                <Label text="👥" style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px;"/>
+                <Label text="User Management" style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px;"/>
+            </HBox>
+            
+            <!-- Team Management Link (active) -->
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="nav-item, sidebar-button-active" 
+                  style="-fx-padding: 12 15 12 20; -fx-background-color: rgba(255,255,255,0.1);">
+                <Label text="👪" style="-fx-text-fill: white; -fx-font-size: 14px;"/>
+                <Label text="Team Management" style="-fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+            </HBox>
+            
+            <!-- Profile Link -->
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="nav-item, sidebar-button"
+                  style="-fx-padding: 12 15 12 20; -fx-cursor: hand;" onMouseClicked="#handleProfile">
+                <Label text="🧑" style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px;"/>
+                <Label text="My Profile" style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px;"/>
+            </HBox>
+            
+            <!-- Logout Link -->
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="nav-item, sidebar-button"
+                  style="-fx-padding: 12 15 12 20; -fx-cursor: hand;" onMouseClicked="#handleLogout">
+                <Label text="🚪" style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px;"/>
+                <Label text="Logout" style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px;"/>
+            </HBox>
+            
+            <Region VBox.vgrow="ALWAYS"/>
+            
+            <!-- Collapse Sidebar Button -->
+            <HBox alignment="CENTER" spacing="10" styleClass="btn, btn-icon, rounded-circle" 
+                  style="-fx-padding: 15; -fx-background-color: rgba(0,0,0,0.1); -fx-cursor: hand;">
+                <Circle radius="10" fill="rgba(255,255,255,0.1)"/>
+                <Label text="←" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+            </HBox>
+        </VBox>
+    </left>
+
+    <top>
+        <HBox styleClass="header-modern">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <Label text="Team Management" styleClass="header-label">
+                <font>
+                    <Font size="24.0" />
+                </font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS"/>
+            <ProgressIndicator fx:id="loadingIndicator" visible="false" styleClass="progress-indicator"/>
+            <Button fx:id="homeButton" text="Home" onAction="#handleHome" styleClass="secondary-button"/>
+            <Button text="Logout" onAction="#handleLogout" styleClass="danger-button"/>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;" VBox.vgrow="ALWAYS">
+            <content>
+                <VBox spacing="25" styleClass="dashboard-container">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+                    
+                    <!-- Page Header with Title and Button -->
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="Teams" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #5a5c69;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="addTeamButton" text="Add New Team" onAction="#handleAddTeam" styleClass="btn-primary">
+                            <graphic>
+                                <Label text="➕" style="-fx-text-fill: white;"/>
+                            </graphic>
+                        </Button>
+                    </HBox>
+                    
+                    <!-- Teams Table Card -->
+                    <VBox styleClass="card-table" VBox.vgrow="ALWAYS">
+                        <!-- Card Header with Search and Filter Options -->
+                        <HBox styleClass="card-header" alignment="CENTER_LEFT">
+                            <Label text="Team Directory" styleClass="text-primary">
+                                <font>
+                                    <Font size="18.0" name="System Bold" />
+                                </font>
+                            </Label>
+                            <Region HBox.hgrow="ALWAYS" />
+                            <HBox spacing="15" alignment="CENTER_RIGHT">
+                                <ComboBox fx:id="filterComboBox" promptText="All Teams" styleClass="entries-combo" prefWidth="150" />
+                                <HBox styleClass="search-box-container" alignment="CENTER_LEFT">
+                                    <TextField fx:id="searchField" promptText="Search teams..." styleClass="search-box-modern" onKeyReleased="#handleRefresh" />
+                                    <Button styleClass="search-button">
+                                        <graphic>
+                                            <Label text="🔍" style="-fx-text-fill: white;"/>
+                                        </graphic>
+                                    </Button>
+                                </HBox>
+                            </HBox>
+                        </HBox>
+                        
+                        <!-- Team Table with List on Left, Details on Right -->
+                        <HBox VBox.vgrow="ALWAYS">
+                            <!-- Team List Area (30% width) -->
+                            <VBox HBox.hgrow="NEVER" prefWidth="300" style="-fx-border-color: #e3e6f0; -fx-border-width: 0 1 0 0;">
+                                <padding>
+                                    <Insets bottom="10"/>
+                                </padding>
+                                <ListView fx:id="teamListView" VBox.vgrow="ALWAYS" styleClass="modern-list-view"/>
+                            </VBox>
+                            
+                            <!-- Team Details Area (70% width) -->
+                            <VBox HBox.hgrow="ALWAYS" spacing="15">
+                                <padding>
+                                    <Insets top="15" right="15" bottom="15" left="15"/>
+                                </padding>
+                                
+                                <!-- Team Info Header -->
+                                <HBox alignment="CENTER_LEFT" spacing="15">
+                                    <Circle radius="30" styleClass="team-avatar" fill="#4e73df"/>
+                                    <VBox spacing="2">
+                                        <Label fx:id="teamNameLabel" text="[Team Name]" styleClass="team-name">
+                                            <font>
+                                                <Font size="18" name="System Bold"/>
+                                            </font>
+                                        </Label>
+                                        <Label fx:id="teamDescriptionLabel" text="[Team Description]" styleClass="team-description"/>
+                                    </VBox>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <VBox alignment="CENTER_RIGHT" spacing="5">
+                                        <HBox alignment="CENTER_RIGHT" spacing="10">
+                                            <Button fx:id="editTeamButton" text="Edit Team" styleClass="btn-info"/>
+                                            <Button fx:id="deleteTeamButton" text="Delete Team" styleClass="btn-danger"/>
+                                        </HBox>
+                                        <HBox alignment="CENTER_RIGHT" spacing="10">
+                                            <Label text="Created by:" style="-fx-text-fill: #858796;"/>
+                                            <Label fx:id="teamCreatorLabel" text="[Creator]" style="-fx-font-weight: bold;"/>
+                                            <Label fx:id="teamMemberCountLabel" text="0 members" style="-fx-text-fill: #4e73df;"/>
+                                        </HBox>
+                                    </VBox>
+                                </HBox>
+                                
+                                <Separator/>
+                                
+                                <!-- Team Members Table Header -->
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Label text="Team Members" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Button fx:id="addMemberButton" text="Add Member" styleClass="btn-primary" onAction="#handleAddMember"/>
+                                </HBox>
+                                
+                                <!-- Team Members Table -->
+                                <TableView fx:id="teamMembersTable" VBox.vgrow="ALWAYS" styleClass="table-modern">
+                                    <columns>
+                                        <TableColumn fx:id="usernameColumn" text="Username" prefWidth="180"/>
+                                        <TableColumn fx:id="emailColumn" text="Email" prefWidth="250"/>
+                                        <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="120"/>
+                                    </columns>
+                                    <placeholder>
+                                        <Label text="No team members found" style="-fx-text-fill: #858796;"/>
+                                    </placeholder>
+                                </TableView>
+                            </VBox>
+                        </HBox>
+                        
+                        <!-- Card Footer -->
+                        <HBox styleClass="card-footer" alignment="CENTER_LEFT">
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="Refresh" onAction="#handleRefresh" styleClass="btn-light">
+                                <graphic>
+                                    <Label text="🔄" style="-fx-font-size: 14px;"/>
+                                </graphic>
+                            </Button>
+                        </HBox>
+                    </VBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>
